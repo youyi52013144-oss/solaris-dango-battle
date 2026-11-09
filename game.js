@@ -9,10 +9,17 @@
   const DEFAULT_ROUND_SECONDS = 50;
   const WINNING_SCORE = 2;
   const PARALYSIS_DURATION = 10;
+  const DAMAGE_CATEGORIES = Object.freeze({
+    NORMAL: "normal",
+    MELEE: "melee",
+    RANGED: "ranged",
+    SPECIAL: "special"
+  });
 
   const FIGHTERS = [
     {
       id: "kakarot-test",
+      voiceOrder: 1,
       name: "卡卡罗团子",
       element: "雷 · 共鸣型",
       tagline: "银发雷光，越战越凶。",
@@ -46,6 +53,7 @@
     },
     {
       id: "anko-test",
+      voiceOrder: 2,
       name: "安可团子",
       element: "火 · 召唤型",
       tagline: "白咩常伴，低血生角。",
@@ -80,6 +88,7 @@
     },
     {
       id: "01",
+      voiceOrder: 3,
       name: "漂泊者团子",
       element: "衍射 · 时序型",
       tagline: "一刃刺穿时间。",
@@ -112,6 +121,7 @@
     },
     {
       id: "02",
+      voiceOrder: 4,
       name: "漂泊者（湮灭）",
       element: "暗 · 双形态",
       tagline: "暗涌苏醒，万律俱灭。",
@@ -153,6 +163,7 @@
     },
     {
       id: "03",
+      voiceOrder: 5,
       name: "鉴心团子",
       element: "风 · 守御型",
       tagline: "风障护心，引敌入渊。",
@@ -192,7 +203,8 @@
       cooldown: 30
     },
     {
-      id: "04",
+      id: "06",
+      voiceOrder: 6,
       name: "维里奈团子",
       element: "光 · 生长型",
       tagline: "嫩芽生光，藤蔓护场。",
@@ -218,7 +230,7 @@
       verinaSproutsForVine: 6,
       vineSlowMultiplier: 0.5,
       vineTickInterval: 0.05,
-      vineDamageDivisor: 500,
+      vineDamageDivisor: 100,
       ultimateType: "verinaBloom",
       ultimateCooldown: 10,
       verinaUltimateEnemyHeal: 300,
@@ -227,8 +239,89 @@
       abilityIcon: "❧",
       abilityDesc: "场上存在藤时解锁；为所有敌人恢复 300 生命，并为自身增加 500 最大生命。冷却 10 秒。",
       cooldown: 10
+    },
+    {
+      id: "04",
+      voiceOrder: 7,
+      name: "布兰特团子",
+      element: "火 · 航海型",
+      tagline: "宝箱、船锚与火药。",
+      color: "#c481ad",
+      dark: "#40233f",
+      symbol: "锚",
+      image: "assets/brant.png",
+      weaponImage: "assets/brant-sword.png",
+      rangedWeaponImage: "assets/brant-gun.png",
+      hp: 800,
+      power: 1,
+      speed: 8,
+      radius: 27,
+      stats: { power: 86, speed: 100, hp: 100 },
+      display: { attack: "剑50 / 枪25", speed: "8.0格/s", hp: "800" },
+      attackType: "hybrid",
+      meleeAttackDamage: 50,
+      rangedAttackDamage: 25,
+      meleeAttackCooldown: 1.5,
+      rangedAttackCooldown: 2,
+      attackRange: 3,
+      projectileSpeed: 12,
+      ultimateType: "brantOverdrive",
+      ultimateDuration: 10,
+      ultimateCooldown: 30,
+      brantChestInterval: 10,
+      brantChestDuration: 24,
+      brantChestLimit: 3,
+      brantTreasureSpeedMultiplier: 4,
+      brantPickupShield: 50,
+      brantSpecialMax: 100,
+      brantHitEnergy: 5,
+      brantPickupEnergy: 25,
+      brantAnchorEnergy: 50,
+      brantAirborneDuration: 8,
+      brantAnchorDamage: 180,
+      brantAnchorWindup: 0.4,
+      brantSmallRadiusX: 5.5,
+      brantSmallRadiusY: 3.5,
+      brantBigRadiusX: 7.15,
+      brantBigRadiusY: 4.45,
+      ability: "船长狂想",
+      abilityIcon: "⚓",
+      abilityDesc: "共鸣能量满后获得 10 秒双倍移速，宝箱生成速度提高 300%；冷却 30 秒。",
+      cooldown: 30
     }
   ];
+
+  const VOICE_LIBRARY = {
+    "kakarot-test": {
+      intro: ["assets/voices/kakarot/intro.mp3"],
+      attack: ["assets/voices/kakarot/attack-1.mp3", "assets/voices/kakarot/attack-2.mp3"],
+      ultimate: ["assets/voices/kakarot/ultimate.mp3"],
+      deathSentence: ["assets/voices/kakarot/death-sentence.mp3"],
+      death: ["assets/voices/kakarot/death.mp3"],
+      victory: ["assets/voices/kakarot/victory.mp3"]
+    },
+    "anko-test": {
+      intro: [
+        "assets/voices/anko/intro-1.mp3",
+        "assets/voices/anko/intro-2.mp3",
+        "assets/voices/anko/intro-3.mp3"
+      ],
+      ultimate: [
+        "assets/voices/anko/ultimate-1.mp3",
+        "assets/voices/anko/ultimate-2.mp3"
+      ],
+      whiteSheepAttack: [
+        "assets/voices/anko/white-attack-1.mp3",
+        "assets/voices/anko/white-attack-2.mp3"
+      ],
+      blackSheepAttack: [
+        "assets/voices/anko/black-attack-1.mp3",
+        "assets/voices/anko/black-attack-2.mp3"
+      ],
+      death: ["assets/voices/anko/death.mp3"],
+      victory: ["assets/voices/anko/victory.mp3"]
+    }
+  };
 
   const FIGHTER_DETAILS = {
     "kakarot-test": {
@@ -238,9 +331,9 @@
       mechanics: [
         "普攻为 360° 弧形横扫，使用专属乐器武器，造成 30 点伤害。",
         "普攻命中积累 1 格死告能量；共鸣解放期间积累 2 格。",
-        "死告能量满 3 格后倒计时 2 秒，瞬身至敌人附近并造成 150 点伤害。",
+        "死告能量满 3 格后倒计时 2 秒，瞬身至敌人附近并造成 150 点特殊伤害。",
         "生命低于 600 且冷却就绪时自动开启 6 秒共鸣解放。",
-        "共鸣解放期间移速从 8 格/秒提升至 16 格/秒，能量获取效率翻倍。",
+        "共鸣解放期间移速从 8 格/秒提升至 16 格/秒，能量获取效率翻倍，期间横扫伤害属于特殊伤害。",
         "共鸣解放冷却为 18 秒；结束后生命仍低于 600 会再次自动开启。"
       ]
     },
@@ -255,7 +348,8 @@
         "爆炸留下半径 5 格的圆形爆炎弹坑，持续 4 秒，每 0.5 秒造成 10 点伤害。",
         "安可生命低于 400 时永久切换为羊角形态。",
         "羊角形态下，敌人进入半径 2 格索敌范围后召唤黑咩；前摇 0.3 秒，可移动躲避。",
-        "黑咩砸地命中半径为 4 格，造成 230 点伤害，冷却 2 秒。"
+        "黑咩砸地命中半径为 4 格，造成 230 点伤害，冷却 2 秒。",
+        "白咩火球、爆炎弹坑与黑咩砸击均属于特殊伤害。"
       ]
     },
     "01": {
@@ -267,7 +361,7 @@
         "普攻命中积累 1 格时序能量。",
         "首次达到 1 格时永久召唤一柄飞刀，3 秒环绕一圈，伤害不增加时序能量。",
         "此后每轮时序能量首次达到第 1 格时，都会额外增加一柄永久飞刀；第 2、3 格不会增加飞刀。飞刀沿半径 3 格轨道均匀环绕。",
-        "飞刀经过敌人时造成 25 点伤害。",
+        "飞刀经过敌人时造成 25 点特殊伤害。",
         "达到 2 格时释放时序之力，自身移动与攻击速度提高 30%，对手降低 30%，持续 5 秒。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
         "其他团子进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击。",
@@ -289,7 +383,7 @@
         "触碰地图边缘后自动追踪敌人，命中一次后恢复原来的直线移动方向。",
         "形态内造成伤害时恢复伤害量 50% 的生命值，大招伤害同样生效。",
         "共鸣能量满且处于镰刀形态时，索敌最近敌人；敌人进入半径 5 格后自动释放湮灭万律。",
-        "湮灭万律以该敌人为中心造成半径 5 格的 300 点暗能量伤害，自身不会位移。",
+        "湮灭万律以该敌人为中心造成半径 5 格的 300 点特殊伤害，自身不会位移。",
         "释放后固定恢复 50 暗涌；冷却 15 秒。"
       ]
     },
@@ -302,17 +396,17 @@
         "自身不进行普通攻击，但碰撞仍然会造成和承受 20 点伤害。",
         "每 8 秒在脚下生成半径 8 格的圆形风场，持续 5 秒。",
         "风场以 6 格/秒牵引敌人向中心移动，敌人可用自身移速向外对抗。",
-        "风场结束时爆炸，对仍处于范围内的敌人造成 50 点伤害。",
+        "风场结束时爆炸，对仍处于范围内的敌人造成 50 点特殊伤害。",
         "爆炸时若鉴心仍站在自己的风场内，获得 50 点护盾。",
         "共鸣解放需要原地蓄力 3 秒，期间不能移动，但仍会正常受到伤害。",
         "生命高于 300 且拥有护盾时：消耗 300 生命并增加 300 护盾，随后清空全部护盾。",
         "清空护盾后向最近敌人发出可穿透、半径 8 格、速度 10 格/秒的弧形风波。",
-        "风波造成实际清空护盾值一半的伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
+        "风波造成实际清空护盾值一半的特殊伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
         "不满足护盾与生命条件时：不消耗生命，蓄力结束后获得 300 点护盾。",
         "共鸣解放冷却固定为 30 秒。"
       ]
     },
-    "04": {
+    "06": {
       role: "光属性场地养成 / 生命控制",
       range: "芽半径 2 格；藤作用于全场",
       interval: "种芽 10 秒 / 共鸣解放 10 秒",
@@ -321,11 +415,28 @@
         "登场时在场地正中央种下第一颗芽，此后每 10 秒在自身脚下种下一颗芽。",
         "芽没有实体、不可被索敌，也不会移动。",
         "每颗芽以自身为中心形成半径 2 格领域：维里奈处于范围内时每 0.05 秒恢复 1 生命。",
-        "敌人处于芽的半径 2 格范围内时，每 0.05 秒受到 1 点伤害。",
+        "敌人处于芽的半径 2 格范围内时，每 0.05 秒受到 1 点特殊伤害。",
         "场上芽的数量达到 6 颗时，正中央的芽生长为藤。",
-        "藤会使全场敌人移动速度降低 50%，并每 0.05 秒造成相当于维里奈最大生命值 1/500 的伤害。",
+        "藤会使全场敌人移动速度降低 50%，并每 0.05 秒造成相当于维里奈最大生命值 1/100 的特殊伤害。",
         "生命庭院需要场上存在藤才能释放；为所有敌人恢复 300 生命，自身最大生命增加 500。",
         "生命庭院冷却 10 秒。"
+      ]
+    },
+    "04": {
+      role: "近战远程双武器 / 宝箱船锚",
+      range: "剑半径 3 格；枪全图锁定",
+      interval: "近战 1.5 秒 / 远程 2 秒 / 共鸣解放 30 秒",
+      mechanics: [
+        "生命 800、移动速度 8 格/秒；敌人进入半径 3 格内使用剑前刺，否则使用全图锁定手枪。",
+        "近战伤害 50、冷却 1.5 秒；远程伤害 25、冷却 2 秒，弹速 12 格/秒。",
+        "近战时隐藏手枪，远程时隐藏剑。",
+        "每 10 秒在场地随机位置生成宝箱，存在 24 秒，场上最多同时存在 3 个；宝箱拾取范围为半径 1 格。",
+        "拾取宝箱获得 50 护盾和 25 点船锚能量，并在宝箱位置召唤船锚，前摇 0.4 秒后造成 180 点椭圆范围特殊伤害，覆盖面积约 60 格。",
+        "普通攻击命中获得 5 点船锚能量；小宝箱船锚命中获得 50 点，大船锚不会增加能量。",
+        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间免疫近战伤害，仍可攻击。",
+        "空中状态结束后在地图中心降下大船锚，造成 180 点椭圆范围特殊伤害，不增加船锚能量，覆盖面积约 100 格。",
+        "特殊伤害不属于近战伤害，无法被空中状态免疫。",
+        "共鸣解放持续 10 秒，移速翻倍，宝箱生成速度为原来的 4 倍；冷却 30 秒。"
       ]
     }
   };
@@ -364,6 +475,9 @@
     poolItems: document.getElementById("poolItems"),
     slowButton: document.getElementById("slowButton"),
     fastButton: document.getElementById("fastButton"),
+    pauseButton: document.getElementById("pauseButton"),
+    pauseOverlay: document.getElementById("pauseOverlay"),
+    pauseResumeButton: document.getElementById("pauseResumeButton"),
     gameSpeedText: document.getElementById("gameSpeedText"),
     gameOverlay: document.getElementById("gameOverlay"),
     overlayEyebrow: document.getElementById("overlayEyebrow"),
@@ -393,6 +507,10 @@
     enemyAbyssGauge: document.getElementById("enemyAbyssGauge"),
     playerAbyssText: document.getElementById("playerAbyssText"),
     enemyAbyssText: document.getElementById("enemyAbyssText"),
+    playerBrantGauge: document.getElementById("playerBrantGauge"),
+    enemyBrantGauge: document.getElementById("enemyBrantGauge"),
+    playerBrantText: document.getElementById("playerBrantText"),
+    enemyBrantText: document.getElementById("enemyBrantText"),
     abilityButton: document.getElementById("abilityButton"),
     abilityKey: document.getElementById("abilityKey"),
     abilityLabel: document.getElementById("abilityLabel"),
@@ -449,7 +567,7 @@
   let player = null;
   let enemy = null;
   let multiFighters = [];
-  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "04"];
+  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "06", "04"];
   let score = [0, 0];
   let round = 1;
   let roundSeconds = DEFAULT_ROUND_SECONDS;
@@ -465,6 +583,7 @@
   let arenaItemsEnabled = true;
   let gameSpeedIndex = 3;
   let gameSpeed = 1;
+  let manualPaused = false;
   let audioContext = null;
   let screenShake = 0;
   let collisionLock = 0;
@@ -485,8 +604,22 @@
   let windSequence = 0;
   let verinaPlants = [];
   let verinaPlantSequence = 0;
+  let brantChests = [];
+  let brantAnchors = [];
+  let brantSequence = 0;
   let pickups = [];
   let floatingTexts = [];
+  const voiceJobs = [];
+  let activeVoiceJob = null;
+  let activeVoiceEntry = null;
+  let activeVoiceAudio = null;
+  let activeAttackVoice = null;
+  let voicePauseActive = false;
+  let voiceFocusFighter = null;
+  let voiceCameraMix = 0;
+  let voiceEntryStartedAt = 0;
+  let roundResultVoicePending = false;
+  let multiResultVoicePending = false;
   const GAME_SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
   const keys = Object.create(null);
   const touchDirection = { up: false, down: false, left: false, right: false };
@@ -512,6 +645,8 @@
       formGender: gender
     };
   }
+  const voiceOrderOf = (fighter) => Number(fighter?.template?.voiceOrder ?? fighter?.voiceOrder ?? Number.MAX_SAFE_INTEGER);
+  const sortFightersByVoiceOrder = (fighters) => [...fighters].sort((a, b) => voiceOrderOf(a) - voiceOrderOf(b));
   const formatNumber = (value) => Math.max(0, Math.round(value)).toLocaleString("zh-CN");
   const getConfigId = () => mode === "multi" || configSide === "left" ? selectedId : enemyId;
   const getActiveFighters = () => mode === "multi" ? multiFighters : [player, enemy].filter(Boolean);
@@ -557,6 +692,15 @@
       maxShield: Math.max(template.startingShield || 0, template.alternateShield || 0, 1),
       skillClock: template.skillCooldown || 0,
       verinaSlowTimer: 0,
+      brantSpecialEnergy: 0,
+      brantUltimateTimer: 0,
+      brantAirborneTimer: 0,
+      brantChestClock: template.brantChestInterval || 0,
+      brantMeleeMode: false,
+      brantAimAngle: 0,
+      voiceUltimatePending: false,
+      voiceDeathSentencePending: false,
+      deathVoicePlayed: false,
       charge: null,
       knockback: null,
       frenzy: 0,
@@ -625,6 +769,7 @@
       button.type = "button";
       button.className = `fighter-card${fighter.placeholder ? " is-placeholder" : ""}${visual.image ? " has-portrait" : ""}`;
       button.dataset.fighterId = fighter.id;
+      button.dataset.voiceOrder = String(fighter.voiceOrder);
       button.setAttribute("role", "option");
       button.setAttribute("aria-selected", String(fighter.id === getConfigId()));
       button.style.setProperty("--ball-color", fighter.color);
@@ -796,10 +941,16 @@
       dom.abilityButton.title = "共鸣能量满后蓄力 3 秒并释放涤罪心渊";
       return;
     }
-    if (fighter.id === "04") {
+    if (fighter.id === "06") {
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "生命庭院";
       dom.abilityButton.title = "场上存在藤且共鸣能量满后释放";
+      return;
+    }
+    if (fighter.id === "04") {
+      dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
+      dom.abilityLabel.textContent = "船长狂想";
+      dom.abilityButton.title = "共鸣能量满后获得双倍移速和宝箱加速";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -890,6 +1041,221 @@
     if (state === "idle" || state === "matchEnd") showSelectOverlay();
   }
 
+  function syncPauseControl() {
+    const canPause = (state === "playing" || state === "countdown") && !voicePauseActive;
+    dom.pauseButton.disabled = !canPause;
+    dom.pauseButton.textContent = manualPaused ? "继续" : "暂停";
+    dom.pauseButton.setAttribute("aria-pressed", String(manualPaused));
+    dom.pauseButton.setAttribute("aria-label", manualPaused ? "继续对局" : "暂停对局");
+    dom.pauseOverlay.hidden = !manualPaused;
+  }
+
+  function setManualPaused(paused) {
+    if (paused && voicePauseActive) return;
+    if (paused && state !== "playing" && state !== "countdown") return;
+    manualPaused = Boolean(paused);
+    if (manualPaused) {
+      Object.keys(keys).forEach((key) => {
+        keys[key] = false;
+      });
+      Object.keys(touchDirection).forEach((direction) => {
+        touchDirection[direction] = false;
+      });
+      dom.battleStatus.textContent = "对局已暂停";
+      dom.abilityButton.disabled = true;
+      dom.abilityButton.classList.remove("is-ready");
+    } else if (state === "countdown") {
+      dom.battleStatus.textContent = "倒计时";
+    }
+    syncPauseControl();
+    if (!manualPaused && player && enemy) updateHud();
+  }
+
+  function togglePause() {
+    setManualPaused(!manualPaused);
+  }
+
+  function voiceClipsFor(fighter, type) {
+    const id = fighter?.template?.id || fighter?.id;
+    const clips = VOICE_LIBRARY[id]?.[type];
+    return Array.isArray(clips) ? clips.filter(Boolean) : [];
+  }
+
+  function voiceEntriesFor(fighters, type) {
+    return sortFightersByVoiceOrder(fighters)
+      .filter((fighter) => fighter && voiceClipsFor(fighter, type).length > 0)
+      .map((fighter) => ({ fighter, type }));
+  }
+
+  function stopAttackVoice() {
+    if (!activeAttackVoice) return;
+    activeAttackVoice.pause();
+    activeAttackVoice = null;
+  }
+
+  function playAttackVoice(fighter, type = "attack") {
+    if (!soundEnabled || voicePauseActive) return;
+    const clips = voiceClipsFor(fighter, type);
+    if (!clips.length) return;
+    stopAttackVoice();
+    const audio = new Audio(clips[Math.floor(Math.random() * clips.length)]);
+    audio.volume = 0.72;
+    activeAttackVoice = audio;
+    audio.addEventListener("ended", () => {
+      if (activeAttackVoice === audio) activeAttackVoice = null;
+    }, { once: true });
+    audio.play().catch(() => {
+      if (activeAttackVoice === audio) activeAttackVoice = null;
+    });
+  }
+
+  function enqueueVoiceSequence(entries, options = {}) {
+    const validEntries = entries.filter((entry) => (
+      entry?.fighter && voiceClipsFor(entry.fighter, entry.type).length > 0
+    ));
+    voiceJobs.push({
+      entries: validEntries,
+      index: 0,
+      pauseGame: options.pauseGame !== false,
+      onComplete: typeof options.onComplete === "function" ? options.onComplete : null
+    });
+    processVoiceQueue();
+  }
+
+  function processVoiceQueue() {
+    if (activeVoiceJob) return;
+    if (!soundEnabled) {
+      while (voiceJobs.length) {
+        const job = voiceJobs.shift();
+        if (job.onComplete) job.onComplete();
+      }
+      voicePauseActive = false;
+      voiceFocusFighter = null;
+      syncPauseControl();
+      return;
+    }
+    const job = voiceJobs.shift();
+    if (!job) {
+      voicePauseActive = false;
+      voiceFocusFighter = null;
+      syncPauseControl();
+      return;
+    }
+    activeVoiceJob = job;
+    voicePauseActive = job.pauseGame;
+    syncPauseControl();
+    playNextVoiceInJob();
+  }
+
+  function playNextVoiceInJob() {
+    if (!activeVoiceJob) return;
+    const job = activeVoiceJob;
+    while (job.index < job.entries.length && !soundEnabled) job.index += 1;
+    if (job.index >= job.entries.length || !soundEnabled) {
+      finishVoiceJob();
+      return;
+    }
+    const entry = job.entries[job.index];
+    const clips = voiceClipsFor(entry.fighter, entry.type);
+    if (!clips.length) {
+      job.index += 1;
+      playNextVoiceInJob();
+      return;
+    }
+
+    stopAttackVoice();
+    activeVoiceEntry = entry;
+    voiceEntryStartedAt = visualTime;
+    voiceFocusFighter = entry.focus === false ? null : entry.fighter;
+    const labels = {
+      intro: "出场",
+      ultimate: "共鸣解放",
+      deathSentence: "死告",
+      death: "战败",
+      victory: "胜利"
+    };
+    dom.battleStatus.textContent = `${labels[entry.type] || "语音"} · ${entry.fighter.template.name}`;
+    announce(`${entry.fighter.template.name} · ${labels[entry.type] || "语音"}`, entry.fighter.template.color, 1);
+
+    const audio = new Audio(clips[Math.floor(Math.random() * clips.length)]);
+    audio.volume = 0.9;
+    activeVoiceAudio = audio;
+    let settled = false;
+    let fallbackTimer = null;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      if (fallbackTimer) clearTimeout(fallbackTimer);
+      if (activeVoiceAudio === audio) activeVoiceAudio = null;
+      activeVoiceEntry = null;
+      voiceEntryStartedAt = 0;
+      job.index += 1;
+      playNextVoiceInJob();
+    };
+    audio.addEventListener("ended", finish, { once: true });
+    audio.addEventListener("error", finish, { once: true });
+    fallbackTimer = setTimeout(finish, 15000);
+    audio.play().catch(finish);
+  }
+
+  function finishVoiceJob() {
+    const job = activeVoiceJob;
+    activeVoiceJob = null;
+    activeVoiceEntry = null;
+    voiceEntryStartedAt = 0;
+    if (activeVoiceAudio) {
+      activeVoiceAudio.pause();
+      activeVoiceAudio = null;
+    }
+    voicePauseActive = false;
+    voiceFocusFighter = null;
+    syncPauseControl();
+    if (job?.onComplete) job.onComplete();
+    processVoiceQueue();
+  }
+
+  function cancelVoicePlayback(completePending = false) {
+    const pendingJobs = activeVoiceJob ? [activeVoiceJob, ...voiceJobs] : [...voiceJobs];
+    if (activeVoiceAudio) {
+      activeVoiceAudio.pause();
+      activeVoiceAudio = null;
+    }
+    stopAttackVoice();
+    activeVoiceJob = null;
+    activeVoiceEntry = null;
+    voiceEntryStartedAt = 0;
+    voiceJobs.length = 0;
+    voicePauseActive = false;
+    voiceFocusFighter = null;
+    syncPauseControl();
+    if (completePending) {
+      pendingJobs.forEach((job) => {
+        if (job.onComplete) job.onComplete();
+      });
+    }
+  }
+
+  function playIntroVoices() {
+    const entries = voiceEntriesFor(getActiveFighters(), "intro");
+    if (!entries.length) return;
+    enqueueVoiceSequence(entries, {
+      pauseGame: true,
+      onComplete: () => {
+        if (state !== "countdown") return;
+        countdownClock = 3.05;
+        countdownBeat = 3;
+        showCountdown("3");
+        dom.battleStatus.textContent = "倒计时";
+      }
+    });
+  }
+
+  function updateVoiceCamera(dt) {
+    const target = voicePauseActive && voiceFocusFighter ? 1 : 0;
+    voiceCameraMix += (target - voiceCameraMix) * Math.min(1, dt * 6);
+    if (target === 0 && voiceCameraMix < 0.002) voiceCameraMix = 0;
+  }
+
   function resetScores() {
     score = [0, 0];
     round = 1;
@@ -899,6 +1265,9 @@
   }
 
   function startMatch() {
+    manualPaused = false;
+    roundResultVoicePending = false;
+    multiResultVoicePending = false;
     if (mode === "multi") {
       startMultiMatch();
       return;
@@ -908,6 +1277,7 @@
   }
 
   function resetBattleTransient() {
+    cancelVoicePlayback();
     particles = [];
     effects = [];
     projectiles = [];
@@ -921,6 +1291,9 @@
     windSequence = 0;
     verinaPlants = [];
     verinaPlantSequence = 0;
+    brantChests = [];
+    brantAnchors = [];
+    brantSequence = 0;
     pickups = [];
     floatingTexts = [];
     timeStopOwner = null;
@@ -954,6 +1327,7 @@
     countdownBeat = 4;
     round = 1;
     state = "countdown";
+    syncPauseControl();
     syncWandererFormState();
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
@@ -968,6 +1342,7 @@
     addLog(`${multiFighters.length} 只团子进入多团混战。`, "system");
     announce("多团混战", "#ffd84d");
     playSound("round");
+    playIntroVoices();
   }
 
   function startRound() {
@@ -983,6 +1358,7 @@
     countdownClock = 3.05;
     countdownBeat = 4;
     state = "countdown";
+    syncPauseControl();
     syncWandererFormState();
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
@@ -996,6 +1372,7 @@
     addLog(`${chosen.name} 对上 ${rival.name}，第 ${round} 局蓄势待发。`, "system");
     announce("准备碰撞", "#ffd84d");
     playSound("round");
+    playIntroVoices();
   }
 
   function showCountdown(value) {
@@ -1065,6 +1442,10 @@
     if (state === "playing") updateFighter(enemy, player, dt, false);
     if (player.vortexLockTimer <= 0) updateStatuses(player, dt);
     if (enemy.vortexLockTimer <= 0) updateStatuses(enemy, dt);
+    if (voicePauseActive) {
+      updateHud();
+      return;
+    }
     updateTimeVortices(dt);
     updateWindFields(dt);
     updateWindWaves(dt);
@@ -1072,6 +1453,10 @@
       resolveLockedCollision();
     } else {
       resolveCollision();
+    }
+    if (voicePauseActive) {
+      updateHud();
+      return;
     }
     player.contactFxClock -= dt;
     enemy.contactFxClock -= dt;
@@ -1095,8 +1480,13 @@
     }
     updateSummons(dt);
     updateVerinaPlants(dt);
+    updateBrantSystem(dt);
     updateBlackSlams(dt);
     updateCombat(dt);
+    if (voicePauseActive) {
+      updateHud();
+      return;
+    }
     updateProjectiles(dt);
     updatePickups();
     updateTrails(dt);
@@ -1146,24 +1536,37 @@
     getActiveFighters().forEach((fighter) => {
       if (fighter.hp > 0 && fighter.vortexLockTimer <= 0) updateStatuses(fighter, dt);
     });
+    if (voicePauseActive) {
+      updateHud();
+      return;
+    }
     updateTimeVortices(dt);
     updateWindFields(dt);
     updateWindWaves(dt);
     resolveMultiCollisions();
+    if (voicePauseActive) {
+      updateHud();
+      return;
+    }
     updateSummons(dt);
     updateVerinaPlants(dt);
+    updateBrantSystem(dt);
     updateBlackSlams(dt);
     updateMultiCombat(dt);
+    if (voicePauseActive) {
+      updateHud();
+      return;
+    }
     updateProjectiles(dt);
     updatePickups();
     updateTrails(dt);
 
     const alive = getActiveFighters().filter((fighter) => fighter.hp > 0);
     if (alive.length <= 1) {
-      finishMultiMatch(alive[0] || null);
+      finishMultiMatch(alive[0] || null, "KO");
     } else if (battleTimer <= 0) {
       const winner = [...alive].sort((a, b) => b.hp - a.hp)[0];
-      finishMultiMatch(winner);
+      finishMultiMatch(winner, "时间到");
     }
     updateHud();
   }
@@ -1178,7 +1581,7 @@
       updateWandererCombatState(fighter, opponent, dt);
       if (state !== "playing") break;
       handleAbility(fighter, opponent, dt);
-      if (state !== "playing") break;
+      if (state !== "playing" || voicePauseActive) break;
       tryBasicAttack(fighter, opponent);
     }
   }
@@ -1196,6 +1599,7 @@
     addResonanceEnergy(caster, 3 * dt);
     updateFighter(caster, target, dt, caster === player);
     updateStatuses(caster, dt);
+    if (voicePauseActive) return;
     if (target) {
       updateWandererCombatState(caster, target, dt);
       frozenFighters.forEach((fighter) => keepCasterOutsideFrozenTarget(caster, fighter));
@@ -1204,7 +1608,7 @@
     updateTrails(dt);
     if (mode === "multi" && state === "playing") {
       const alive = getActiveFighters().filter((fighter) => fighter.hp > 0);
-      if (alive.length <= 1) finishMultiMatch(alive[0] || null);
+      if (alive.length <= 1) finishMultiMatch(alive[0] || null, "KO");
     }
     if (timeStopTimer === 0) {
       addLog("时序停界结束，全图时间恢复流动。", "ability");
@@ -1281,6 +1685,10 @@
       const speed = getEffectiveMoveSpeed(fighter);
       fighter.vx = Math.cos(angle) * speed;
       fighter.vy = Math.sin(angle) * speed;
+    }
+    if (fighter.template.id === "04" && opponent) {
+      fighter.brantMeleeMode = distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE;
+      fighter.brantAimAngle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
     }
 
     if (isPlayer && mode === "play") {
@@ -1376,7 +1784,7 @@
         if (fighter.charge.timer === 0) resolveJianxinCharge(fighter);
       }
     }
-    if (fighter.template.id === "04" && fighter.hp > 0) {
+    if (fighter.template.id === "06" && fighter.hp > 0) {
       if (fighter.skillClock > 0) fighter.skillClock = Math.max(0, fighter.skillClock - dt);
       if (fighter.skillClock === 0) {
         spawnVerinaPlant(fighter, fighter.x, fighter.y, false);
@@ -1408,9 +1816,28 @@
       && fighter.hp > 0
       && fighter.hp < fighter.template.ultimateThreshold
       && fighter.ultimateCooldown <= 0
+      && !fighter.voiceUltimatePending
     ) {
-      fighter.overclock = fighter.template.ultimateDuration;
       fighter.ultimateCooldown = fighter.template.ultimateCooldown;
+      const voiceEntries = voiceEntriesFor([fighter], "ultimate")
+        .map((entry) => ({ ...entry, focus: false }));
+      if (voiceEntries.length) {
+        fighter.voiceUltimatePending = true;
+        enqueueVoiceSequence(voiceEntries, {
+          pauseGame: true,
+          onComplete: () => {
+            fighter.voiceUltimatePending = false;
+            activateKakarotOverclock(fighter);
+          }
+        });
+      } else {
+        activateKakarotOverclock(fighter);
+      }
+    }
+
+    function activateKakarotOverclock(fighter) {
+      if (fighter.hp <= 0) return;
+      fighter.overclock = fighter.template.ultimateDuration;
       fighter.flash = 1;
       effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 14, growth: 760, life: 0.7, maxLife: 0.7, color: "#6df0e8", width: 10 });
       spawnBurst(fighter.x, fighter.y, "#9ffff3", 40, 310);
@@ -1418,7 +1845,30 @@
       addLog(`${fighter.template.name} 生命低于 600，自动开启共鸣解放。`, "ability");
       playSound("lightning");
     }
-    if (fighter.template.transformThreshold && !fighter.horned && fighter.hp < fighter.template.transformThreshold) {
+    if (
+      fighter.template.transformThreshold
+      && !fighter.horned
+      && fighter.hp < fighter.template.transformThreshold
+      && !fighter.voiceUltimatePending
+    ) {
+      const voiceEntries = voiceEntriesFor([fighter], "ultimate")
+        .map((entry) => ({ ...entry, focus: false }));
+      if (voiceEntries.length) {
+        fighter.voiceUltimatePending = true;
+        enqueueVoiceSequence(voiceEntries, {
+          pauseGame: true,
+          onComplete: () => {
+            fighter.voiceUltimatePending = false;
+            activateAnkoHornedForm(fighter);
+          }
+        });
+        return;
+      }
+      activateAnkoHornedForm(fighter);
+    }
+
+    function activateAnkoHornedForm(fighter) {
+      if (fighter.hp <= 0 || fighter.horned) return;
       fighter.horned = true;
       fighter.attackClock = Math.min(fighter.attackClock, 0.35);
       fighter.flash = 1;
@@ -1538,13 +1988,15 @@
       applyDamage(player, collisionDamage, enemy, "碰撞", {
         color: enemy.template.color,
         noEnergy: true,
-        quiet: true
+        quiet: true,
+        melee: true
       });
       if (state === "playing") {
         applyDamage(enemy, collisionDamage, player, "碰撞", {
           color: player.template.color,
           noEnergy: true,
-          quiet: true
+          quiet: true,
+          melee: true
         });
       }
 
@@ -1628,9 +2080,9 @@
             addResonanceEnergy(second, 20);
             spawnEnergyGain(first, 20);
             spawnEnergyGain(second, 20);
-            applyDamage(first, 20, second, "碰撞", { color: second.template.color, noEnergy: true, quiet: true });
+            applyDamage(first, 20, second, "碰撞", { color: second.template.color, noEnergy: true, quiet: true, melee: true });
             if (state === "playing") {
-              applyDamage(second, 20, first, "碰撞", { color: first.template.color, noEnergy: true, quiet: true });
+              applyDamage(second, 20, first, "碰撞", { color: first.template.color, noEnergy: true, quiet: true, melee: true });
             }
             const contactX = first.x + nx * first.r;
             const contactY = first.y + ny * first.r;
@@ -1659,6 +2111,7 @@
     if (fighter.timeForceTimer > 0) multiplier *= 1.3;
     if (fighter.timeSlowTimer > 0) multiplier *= 0.7;
     if (fighter.verinaSlowTimer > 0) multiplier *= 0.5;
+    if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) multiplier *= 2;
     return baseSpeed * multiplier;
   }
 
@@ -1683,16 +2136,16 @@
     if (enemy.vortexLockTimer <= 0) updateWandererCombatState(enemy, player, dt);
     if (state !== "playing") return;
     handleAbility(player, enemy, dt);
-    if (state !== "playing") return;
+    if (state !== "playing" || voicePauseActive) return;
     handleAbility(enemy, player, dt);
-    if (state !== "playing") return;
+    if (state !== "playing" || voicePauseActive) return;
     tryBasicAttack(player, enemy);
-    if (state === "playing") tryBasicAttack(enemy, player);
+    if (state === "playing" && !voicePauseActive) tryBasicAttack(enemy, player);
   }
 
   function updateCombatSingle(fighter, opponent, dt) {
     handleAbility(fighter, opponent, dt);
-    if (state === "playing") tryBasicAttack(fighter, opponent);
+    if (state === "playing" && !voicePauseActive) tryBasicAttack(fighter, opponent);
   }
 
   function updateWandererCombatState(fighter, opponent, dt) {
@@ -1730,7 +2183,7 @@
           width: 5
         });
         spawnBurst(target.x, target.y, "#ffd76b", 18, 180);
-        applyDamage(target, fighter.template.knifeDamage, fighter, "时序飞刃", {
+        applySpecialDamage(target, fighter.template.knifeDamage, fighter, "时序飞刃", {
           color: "#ffd76b",
           noEnergy: true
         });
@@ -1800,7 +2253,8 @@
       color
     });
     spawnDamageText(fighter.x, fighter.y - fighter.r, `${Math.round(amount)} 护盾`, color, true);
-    spawnBurst(fighter.x, fighter.y, color, 22, 190);
+    spawnBurst(fighter.x, fighter.y, fighter.template.id === "04" ? "#9f508d" : color, 22, 190);
+    if (fighter.template.id === "04") spawnBurst(fighter.x, fighter.y, "#e58d9d", 12, 125);
   }
 
   function spawnWindField(owner) {
@@ -1878,7 +2332,7 @@
           && Math.hypot(target.x - field.x, target.y - field.y) <= field.radius
         ))
         .forEach((target) => {
-          applyDamage(target, field.owner.template.windFieldDamage, field.owner, "风场爆裂", {
+          applySpecialDamage(target, field.owner.template.windFieldDamage, field.owner, "风场爆裂", {
             color: "#b9f3a4",
             noEnergy: true
           });
@@ -2090,7 +2544,7 @@
         ) return;
         wave.hitIds.add(target);
         if (wave.damage > 0) {
-          applyDamage(target, wave.damage, wave.owner, "弧形风波", {
+          applySpecialDamage(target, wave.damage, wave.owner, "弧形风波", {
             color: "#d8ffca",
             noEnergy: true
           });
@@ -2254,6 +2708,7 @@
   }
 
   function performAbyssSweep(fighter, opponent) {
+    playAttackVoice(fighter);
     fighter.abyssScytheSwing = 0.34;
     fighter.thrustAngle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
     const dealt = applyDamage(opponent, fighter.template.abyssScytheDamage, fighter, "暗涌镰刀", {
@@ -2304,14 +2759,14 @@
 
   function setupVerinaPlants() {
     getActiveFighters().forEach((fighter) => {
-      if (fighter.template.id === "04") {
+      if (fighter.template.id === "06") {
         spawnVerinaPlant(fighter, ARENA_SIZE / 2, ARENA_SIZE / 2, true);
       }
     });
   }
 
   function spawnVerinaPlant(owner, x, y, atCenter = false) {
-    if (!owner || owner.hp <= 0 || owner.template.id !== "04") return;
+    if (!owner || owner.hp <= 0 || owner.template.id !== "06") return;
     const plant = {
       id: ++verinaPlantSequence,
       owner,
@@ -2388,7 +2843,7 @@
           .filter((target) => target !== plant.owner && target.hp > 0)
           .forEach((target) => {
             target.verinaSlowTimer = Math.max(target.verinaSlowTimer, plant.owner.template.vineTickInterval * 3);
-            applyDamage(target, plant.owner.maxHp / plant.owner.template.vineDamageDivisor, plant.owner, "藤蔓侵蚀", {
+            applySpecialDamage(target, plant.owner.maxHp / plant.owner.template.vineDamageDivisor, plant.owner, "藤蔓侵蚀", {
               color: "#d7e76d",
               noEnergy: true,
               quiet: true,
@@ -2416,7 +2871,7 @@
             ownerHealed += healed;
           }
         } else {
-          applyDamage(target, plant.owner.template.verinaDamagePerTick, plant.owner, "嫩芽灼伤", {
+          applySpecialDamage(target, plant.owner.template.verinaDamagePerTick, plant.owner, "嫩芽灼伤", {
             color: "#d9ef7d",
             noEnergy: true,
             quiet: true,
@@ -2447,6 +2902,169 @@
     }
   }
 
+  function getBrantChestInterval(fighter) {
+    return fighter.brantUltimateTimer > 0
+      ? fighter.template.brantChestInterval / fighter.template.brantTreasureSpeedMultiplier
+      : fighter.template.brantChestInterval;
+  }
+
+  function spawnBrantChest(owner) {
+    if (!owner || owner.hp <= 0 || owner.template.id !== "04") return;
+    if (brantChests.filter((chest) => chest.owner === owner).length >= owner.template.brantChestLimit) return;
+    let x = random(BOUNDARY + CELL_SIZE * 2, ARENA_SIZE - BOUNDARY - CELL_SIZE * 2);
+    let y = random(BOUNDARY + CELL_SIZE * 2, ARENA_SIZE - BOUNDARY - CELL_SIZE * 2);
+    for (let attempt = 0; attempt < 16; attempt += 1) {
+      if (getActiveFighters().every((fighter) => Math.hypot(fighter.x - x, fighter.y - y) > CELL_SIZE * 2)) break;
+      x = random(BOUNDARY + CELL_SIZE * 2, ARENA_SIZE - BOUNDARY - CELL_SIZE * 2);
+      y = random(BOUNDARY + CELL_SIZE * 2, ARENA_SIZE - BOUNDARY - CELL_SIZE * 2);
+    }
+    brantChests.push({
+      id: ++brantSequence,
+      owner,
+      x,
+      y,
+      r: CELL_SIZE,
+      life: owner.template.brantChestDuration,
+      maxLife: owner.template.brantChestDuration,
+      phase: random(0, Math.PI * 2)
+    });
+    effects.push({ type: "ring", x, y, radius: 6, growth: 190, life: 0.5, maxLife: 0.5, color: "#d7749b", width: 3 });
+    addLog("布兰特团子的宝箱在赛场中出现了。", "item");
+    playSound("pickup");
+  }
+
+  function gainBrantSpecialEnergy(fighter, amount) {
+    if (!fighter || fighter.template.id !== "04" || fighter.hp <= 0 || fighter.brantAirborneTimer > 0) return;
+    const previous = fighter.brantSpecialEnergy;
+    fighter.brantSpecialEnergy = Math.min(fighter.template.brantSpecialMax, fighter.brantSpecialEnergy + amount);
+    if (fighter.brantSpecialEnergy > previous) {
+      spawnDamageText(fighter.x, fighter.y - fighter.r, `+${amount} 船锚`, "#d7749b", true);
+    }
+    if (previous < fighter.template.brantSpecialMax && fighter.brantSpecialEnergy >= fighter.template.brantSpecialMax) {
+      startBrantAirborne(fighter);
+    }
+  }
+
+  function startBrantAirborne(fighter) {
+    fighter.brantSpecialEnergy = 0;
+    fighter.brantAirborneTimer = fighter.template.brantAirborneDuration;
+    fighter.flash = 1;
+    effects.push({ type: "brantAirborne", fighter, life: 0.7, maxLife: 0.7, color: "#d3658f" });
+    spawnBurst(fighter.x, fighter.y, "#e58ab0", 34, 250);
+    announce(`${fighter.template.name} · 绳索巡航`, "#efa0c1", 1.2);
+    addLog(`${fighter.template.name} 登上绳索，8 秒内免疫近战伤害。`, "ability");
+    playSound("blade");
+  }
+
+  function finishBrantAirborne(fighter) {
+    fighter.brantAirborneTimer = 0;
+    spawnBrantAnchor(fighter, ARENA_SIZE / 2, ARENA_SIZE / 2, "big", 0.25);
+    announce(`${fighter.template.name} · 大船锚坠落`, "#ef9aba", 1.2);
+    addLog(`${fighter.template.name} 结束空中巡航，地图中心落下大船锚。`, "ability");
+  }
+
+  function spawnBrantAnchor(owner, x, y, kind, windup) {
+    brantAnchors.push({
+      id: ++brantSequence,
+      owner,
+      x,
+      y,
+      kind,
+      timer: windup,
+      maxTimer: Math.max(0.001, windup),
+      angle: random(0, Math.PI * 2),
+      phase: random(0, Math.PI * 2)
+    });
+  }
+
+  function resolveBrantAnchor(anchor) {
+    if (!anchor.owner || anchor.owner.hp <= 0) return;
+    const isBig = anchor.kind === "big";
+    const radiusX = (isBig ? anchor.owner.template.brantBigRadiusX : anchor.owner.template.brantSmallRadiusX) * CELL_SIZE;
+    const radiusY = (isBig ? anchor.owner.template.brantBigRadiusY : anchor.owner.template.brantSmallRadiusY) * CELL_SIZE;
+    const cos = Math.cos(anchor.angle);
+    const sin = Math.sin(anchor.angle);
+    let hitAny = false;
+    getActiveFighters()
+      .filter((target) => target !== anchor.owner && target.hp > 0)
+      .forEach((target) => {
+        const dx = target.x - anchor.x;
+        const dy = target.y - anchor.y;
+        const localX = dx * cos + dy * sin;
+        const localY = -dx * sin + dy * cos;
+        if ((localX * localX) / (radiusX * radiusX) + (localY * localY) / (radiusY * radiusY) > 1) return;
+        hitAny = true;
+        applySpecialDamage(target, anchor.owner.template.brantAnchorDamage, anchor.owner, isBig ? "大船锚" : "火焰船锚", {
+          color: isBig ? "#ef7da5" : "#d95d86",
+          noEnergy: true
+        });
+        spawnBurst(target.x, target.y, "#df6f96", isBig ? 34 : 22, isBig ? 300 : 220);
+      });
+    if (!isBig && hitAny) gainBrantSpecialEnergy(anchor.owner, anchor.owner.template.brantAnchorEnergy);
+    effects.push({
+      type: "brantAnchorImpact",
+      x: anchor.x,
+      y: anchor.y,
+      radiusX,
+      radiusY,
+      angle: anchor.angle,
+      life: 0.72,
+      maxLife: 0.72,
+      color: isBig ? "#ef7da5" : "#d95d86"
+    });
+    screenShake = Math.max(screenShake, isBig ? 12 : 7);
+    playSound("abyss");
+    addLog(`${anchor.owner.template.name} 的${isBig ? "大船锚" : "火焰船锚"}命中${hitAny ? "敌人" : "空地"}。`, "ability");
+  }
+
+  function updateBrantSystem(dt) {
+    const brants = getActiveFighters().filter((fighter) => fighter.template.id === "04" && fighter.hp > 0);
+    brants.forEach((fighter) => {
+      if (fighter.brantUltimateTimer > 0) {
+        fighter.brantUltimateTimer = Math.max(0, fighter.brantUltimateTimer - dt);
+        if (fighter.brantUltimateTimer === 0) {
+          announce(`${fighter.template.name} 共鸣解放结束`, "#d7749b", 1);
+        }
+      }
+      fighter.brantChestClock -= dt;
+      if (fighter.brantChestClock <= 0) {
+        spawnBrantChest(fighter);
+        fighter.brantChestClock = getBrantChestInterval(fighter);
+      }
+      if (fighter.brantAirborneTimer > 0) {
+        fighter.brantAirborneTimer = Math.max(0, fighter.brantAirborneTimer - dt);
+        if (fighter.brantAirborneTimer === 0) finishBrantAirborne(fighter);
+      }
+    });
+
+    for (let i = brantChests.length - 1; i >= 0; i -= 1) {
+      const chest = brantChests[i];
+      chest.life -= dt;
+      const owner = chest.owner;
+      const picked = owner
+        && owner.hp > 0
+        && distance(owner, chest) <= chest.r + owner.r * 0.25;
+      if (picked && state === "playing") {
+        addShield(owner, owner.template.brantPickupShield, "#d7749b");
+        gainBrantSpecialEnergy(owner, owner.template.brantPickupEnergy);
+        spawnBrantAnchor(owner, chest.x, chest.y, "small", owner.template.brantAnchorWindup);
+        announce(`${owner.template.name} · 宝箱开启`, "#ef9aba", 0.8);
+        addLog(`${owner.template.name} 获取宝箱，获得 ${owner.template.brantPickupShield} 护盾并召唤火焰船锚。`, "item");
+        spawnBurst(chest.x, chest.y, "#e38cb1", 24, 210);
+        playSound("pickup");
+      }
+      if (picked || chest.life <= 0 || (owner && owner.hp <= 0)) brantChests.splice(i, 1);
+    }
+
+    for (let i = brantAnchors.length - 1; i >= 0; i -= 1) {
+      const anchor = brantAnchors[i];
+      anchor.timer -= dt;
+      if (anchor.timer > 0) continue;
+      resolveBrantAnchor(anchor);
+      brantAnchors.splice(i, 1);
+    }
+  }
+
   function spawnWhiteSheep(owner) {
     if (!owner || owner.template.summonType !== "whiteSheep") return;
     const angle = random(0, Math.PI * 2);
@@ -2464,6 +3082,7 @@
   }
 
   function launchWhiteSheepFireball(unit, opponent) {
+    playAttackVoice(unit.owner, "whiteSheepAttack");
     const origin = { x: unit.x, y: unit.y };
     const speed = 4.2 * CELL_SIZE;
     const interceptTime = calculateInterceptTime(
@@ -2537,7 +3156,7 @@
       .forEach((target) => {
         const inBlast = Math.hypot(target.x - projectile.x, target.y - projectile.y) <= blastRadius + target.r * 0.2;
         if (target === directTarget || inBlast) {
-          applyDamage(target, 30, projectile.owner, "白咩火球", { color: "#ff9d5d" });
+          applySpecialDamage(target, 30, projectile.owner, "白咩火球", { color: "#ff9d5d" });
         }
       });
     addLog(`火球在半径 ${projectile.owner.template.fireballBlastRadius} 格范围内爆炸，并留下持续 4 秒的爆炎弹坑。`, "ability");
@@ -2557,7 +3176,7 @@
           .filter((fighter) => fighter !== crater.owner && fighter.hp > 0)
           .forEach((target) => {
             if (Math.hypot(target.x - crater.x, target.y - crater.y) <= radius + target.r * 0.25) {
-              applyDamage(target, 10, crater.owner, "爆炎", {
+              applySpecialDamage(target, 10, crater.owner, "爆炎", {
                 color: "#ff8d57",
                 noEnergy: true,
                 quiet: true
@@ -2596,6 +3215,16 @@
         performAbyssSweep(fighter, opponent);
         fighter.attackClock = fighter.template.abyssScytheCooldown;
       }
+    } else if (fighter.template.id === "04") {
+      const melee = distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE;
+      fighter.brantMeleeMode = melee;
+      if (melee) {
+        performBrantMelee(fighter, opponent);
+        fighter.attackClock = fighter.template.meleeAttackCooldown;
+      } else {
+        fireBrantShot(fighter, opponent);
+        fighter.attackClock = fighter.template.rangedAttackCooldown;
+      }
     } else if (fighter.template.attackType === "thrust") {
       if (inMeleeRange(fighter, opponent)) {
         performThrust(fighter, opponent);
@@ -2617,7 +3246,78 @@
     }
   }
 
+  function performBrantMelee(fighter, opponent) {
+    playAttackVoice(fighter);
+    const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    fighter.thrustAngle = angle;
+    fighter.thrustTime = 0.28;
+    effects.push({
+      type: "thrust",
+      fighter,
+      angle,
+      range: fighter.template.attackRange * CELL_SIZE,
+      life: 0.28,
+      maxLife: 0.28,
+      color: "#d26083"
+    });
+    getActiveFighters()
+      .filter((target) => (
+        target !== fighter
+        && target.hp > 0
+        && distance(fighter, target) <= fighter.template.attackRange * CELL_SIZE
+      ))
+      .forEach((target) => {
+        applyDamage(target, fighter.template.meleeAttackDamage, fighter, "船长剑刺", {
+          color: "#d26083",
+          melee: true,
+          brantAttack: true
+        });
+        spawnBurst(target.x, target.y, "#d26083", 14, 190);
+      });
+    addLog(`${fighter.template.name} 挥剑前刺，造成 ${fighter.template.meleeAttackDamage} 点伤害。`, "ability");
+    playSound("thrust");
+  }
+
+  function fireBrantShot(fighter, opponent) {
+    playAttackVoice(fighter);
+    const speed = fighter.template.projectileSpeed * CELL_SIZE;
+    const interceptTime = calculateInterceptTime(fighter, opponent, speed);
+    const aimX = opponent.x + opponent.vx * interceptTime;
+    const aimY = opponent.y + opponent.vy * interceptTime;
+    const angle = Math.atan2(aimY - fighter.y, aimX - fighter.x);
+    fighter.brantAimAngle = angle;
+    projectiles.push({
+      owner: fighter,
+      target: opponent,
+      kind: "brantShot",
+      x: fighter.x + Math.cos(angle) * (fighter.r + 8),
+      y: fighter.y + Math.sin(angle) * (fighter.r + 8),
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      r: 7,
+      life: 10,
+      homing: 0,
+      damage: fighter.template.rangedAttackDamage,
+      color: "#c46cff",
+      brantAttack: true
+    });
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: 7,
+      growth: 320,
+      life: 0.28,
+      maxLife: 0.28,
+      color: "#c46cff",
+      width: 5
+    });
+    addLog(`${fighter.template.name} 开枪射击，弹速 12 格/秒。`, "normal");
+    playSound("shot");
+  }
+
   function performThrust(fighter, opponent) {
+    playAttackVoice(fighter);
     const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
     fighter.thrustTime = 0.34;
     fighter.thrustAngle = angle;
@@ -2649,6 +3349,7 @@
   }
 
   function startBlackSheepSlam(fighter, opponent) {
+    playAttackVoice(fighter, "blackSheepAttack");
     blackSlams.push({
       attacker: fighter,
       target: opponent,
@@ -2680,7 +3381,7 @@
         width: 8
       });
       if (hit) {
-        applyDamage(target, attacker.template.hornedDamage, attacker, "黑咩砸击", { color: "#c8ced8" });
+        applySpecialDamage(target, attacker.template.hornedDamage, attacker, "黑咩砸击", { color: "#c8ced8" });
         spawnBurst(target.x, target.y, "#d8dee8", 32, 280);
         screenShake = Math.max(screenShake, 8);
         announce(`${attacker.template.name} · 黑咩砸击`, "#d8dee8", 0.9);
@@ -2695,6 +3396,7 @@
   }
 
   function fireProjectile(fighter, opponent, empowered) {
+    playAttackVoice(fighter);
     const speed = fighter.template.projectileSpeed * CELL_SIZE;
     const interceptTime = calculateInterceptTime(fighter, opponent, speed);
     const aimX = opponent.x + opponent.vx * interceptTime;
@@ -2714,7 +3416,8 @@
       homing: 0,
       damage: empowered ? 54 : fighter.template.attackDamage,
       color: fighter.template.color,
-      empowered
+      empowered,
+      category: empowered ? DAMAGE_CATEGORIES.SPECIAL : DAMAGE_CATEGORIES.NORMAL
     });
     effects.push({
       type: "ring",
@@ -2752,6 +3455,7 @@
   }
 
   function performSweep(fighter, opponent, empowered) {
+    playAttackVoice(fighter);
     const overclocked = fighter.overclock > 0;
     const rangeCells = getAttackRangeCells(fighter);
     const range = rangeCells * CELL_SIZE;
@@ -2769,7 +3473,8 @@
       color: fighter.template.color,
       empowered: empowered || overclocked
     });
-    applyDamage(opponent, damage, fighter, overclocked ? "共鸣横扫" : empowered ? "回旋斩" : "横扫", {
+    const strikeDamage = overclocked || empowered ? applySpecialDamage : applyDamage;
+    strikeDamage(opponent, damage, fighter, overclocked ? "共鸣横扫" : empowered ? "回旋斩" : "横扫", {
       color: fighter.template.color
     });
     if (fighter.template.id === "kakarot-test" && opponent.hp > 0 && state === "playing") {
@@ -2793,8 +3498,27 @@
 
   function triggerDeathSentence(fighter, opponent) {
     if (!opponent || opponent.hp <= 0 || state !== "playing") return;
+    if (fighter.voiceDeathSentencePending) return;
     fighter.specialEnergy = 0;
     fighter.deathSentenceClock = 0;
+    const voiceEntries = voiceEntriesFor([fighter], "deathSentence")
+      .map((entry) => ({ ...entry, focus: false }));
+    if (voiceEntries.length) {
+      fighter.voiceDeathSentencePending = true;
+      enqueueVoiceSequence(voiceEntries, {
+        pauseGame: true,
+        onComplete: () => {
+          fighter.voiceDeathSentencePending = false;
+          executeDeathSentence(fighter, opponent);
+        }
+      });
+      return;
+    }
+    executeDeathSentence(fighter, opponent);
+  }
+
+  function executeDeathSentence(fighter, opponent) {
+    if (!opponent || opponent.hp <= 0 || state !== "playing") return;
     const oldX = fighter.x;
     const oldY = fighter.y;
     let angle = Math.atan2(fighter.y - opponent.y, fighter.x - opponent.x);
@@ -2806,7 +3530,7 @@
     effects.push({ type: "ring", x: opponent.x, y: opponent.y, radius: 8, growth: 650, life: 0.56, maxLife: 0.56, color: "#e8ffff", width: 9 });
     spawnBurst(opponent.x, opponent.y, "#9ff9ef", 38, 330);
     screenShake = Math.max(screenShake, 10);
-    applyDamage(opponent, fighter.template.deathSentenceDamage, fighter, "死告", {
+    applySpecialDamage(opponent, fighter.template.deathSentenceDamage, fighter, "死告", {
       color: "#c9fffb"
     });
     announce("死告 · 三格共鸣", "#d9fffb", 1);
@@ -2837,8 +3561,9 @@
     }
   }
 
-  function useAbility(fighter = player, opponent = enemy) {
+  function useAbility(fighter = player, opponent = enemy, options = {}) {
     if (!fighter || !opponent || state !== "playing") return;
+    if (fighter.voiceUltimatePending) return;
     if (fighter.charge || fighter.knockback) return;
     if (fighter.template.transformThreshold) return;
     if (fighter.template.ultimateType === "autoThreshold") return;
@@ -2851,6 +3576,21 @@
     if (fighter.template.ultimateType === "verinaBloom" && !hasVerinaVine(fighter)) return;
     if (fighter.template.ultimateType === "overclock" && fighter.overclock > 0) return;
     if (fighter.template.attackType === "melee" && fighter.template.ultimateType !== "overclock" && !inMeleeRange(fighter, opponent)) return;
+    if (!options.voicePlayed) {
+      const voiceEntries = voiceEntriesFor([fighter], "ultimate")
+        .map((entry) => ({ ...entry, focus: false }));
+      if (voiceEntries.length) {
+        fighter.voiceUltimatePending = true;
+        enqueueVoiceSequence(voiceEntries, {
+          pauseGame: true,
+          onComplete: () => {
+            fighter.voiceUltimatePending = false;
+            useAbility(fighter, opponent, { voicePlayed: true });
+          }
+        });
+        return;
+      }
+    }
     fighter.energy = 0;
     fighter.fullEnergyTime = 0;
     fighter.abilityCooldown = fighter.template.ultimateCooldown ?? fighter.template.cooldown;
@@ -2870,7 +3610,7 @@
       getActiveFighters()
         .filter((target) => target !== fighter && target.hp > 0 && Math.hypot(target.x - blastX, target.y - blastY) <= blastRadius)
         .forEach((target) => {
-          totalDamage += applyDamage(target, fighter.template.ultimateDamage, fighter, "湮灭万律", {
+          totalDamage += applySpecialDamage(target, fighter.template.ultimateDamage, fighter, "湮灭万律", {
             color: "#c878ff"
           }) || 0;
         });
@@ -2906,6 +3646,13 @@
       spawnBurst(fighter.x, fighter.y, "#eaff9d", 54, 360);
       addLog(`${fighter.template.name} 释放生命庭院：敌人恢复 300 生命，自身最大生命提升至 ${Math.round(fighter.maxHp)}。`, "ability");
       playSound("shield");
+    } else if (fighter.template.ultimateType === "brantOverdrive") {
+      fighter.brantUltimateTimer = fighter.template.ultimateDuration;
+      fighter.brantChestClock = Math.min(fighter.brantChestClock, getBrantChestInterval(fighter));
+      effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 14, growth: 780, life: 0.7, maxLife: 0.7, color: "#d7749b", width: 9 });
+      spawnBurst(fighter.x, fighter.y, "#e58ab0", 42, 320);
+      addLog(`${fighter.template.name} 开启船长狂想：移速翻倍，宝箱生成速度提高 300%。`, "ability");
+      playSound("timeStop");
     } else if (fighter.template.ultimateType === "timeStop") {
       timeStopOwner = fighter;
       timeStopTimer = fighter.template.ultimateDuration;
@@ -2929,6 +3676,21 @@
   function applyDamage(target, amount, source, label, options = {}) {
     if (!target || target.hp <= 0 || state !== "playing") return;
     let finalAmount = Math.max(1, amount);
+    const specialDamage = options.category === DAMAGE_CATEGORIES.SPECIAL;
+    const meleeDamage = !specialDamage && (options.melee === true
+      || source?.template.attackType === "melee"
+      || source?.template.attackType === "thrust"
+      || Boolean(source?.horned || source?.abyssForm));
+    if (
+      target.template.id === "04"
+      && target.brantAirborneTimer > 0
+      && meleeDamage
+      && !options.ignoreAirborneImmunity
+    ) {
+      spawnDamageText(target.x, target.y - target.r, "空中免疫", "#e7a2c5", true);
+      target.flash = Math.max(target.flash, 0.3);
+      return 0;
+    }
     if (target.paralyzed > 0 && !options.ignoreVulnerability) finalAmount *= 1.1;
     let absorbed = 0;
 
@@ -2937,7 +3699,16 @@
       target.shield = Math.max(0, target.shield - absorbed);
       finalAmount -= absorbed;
       if (!options.noText) {
-        spawnBurst(target.x, target.y, "#b9f3a4", target.shield === 0 ? 22 : 9, target.shield === 0 ? 230 : 130);
+        spawnBurst(
+          target.x,
+          target.y,
+          target.template.id === "04" ? "#9f508d" : "#b9f3a4",
+          target.shield === 0 ? 22 : 9,
+          target.shield === 0 ? 230 : 130
+        );
+        if (target.template.id === "04") {
+          spawnBurst(target.x, target.y, "#e58d9d", target.shield === 0 ? 14 : 6, 115);
+        }
       }
       if (target.shield === 0) {
         effects.push({
@@ -2947,17 +3718,20 @@
           radius: target.r + 12,
           life: 0.55,
           maxLife: 0.55,
-          color: "#b9f3a4"
+          color: target.template.id === "04" ? "#d77b96" : "#b9f3a4"
         });
-        announce("风障破碎", "#d8ffca", 0.75);
+        announce(target.template.id === "04" ? "船长护盾破碎" : "风障破碎", target.template.id === "04" ? "#e7a4b4" : "#d8ffca", 0.75);
       }
     }
 
     target.hp = Math.max(0, target.hp - finalAmount);
     target.flash = options.noText ? Math.max(target.flash, 0.16) : (finalAmount > 0 ? 1 : 0.45);
     if (target.template.id === "02" && !target.abyssForm && !options.selfDrain) gainAbyssEnergy(target, 20);
+    if (source?.template.id === "04" && options.brantAttack) {
+      gainBrantSpecialEnergy(source, source.template.brantHitEnergy);
+    }
     if (source && !options.noEnergy) {
-      const recovery = source.template.attackType === "melee" || source.template.attackType === "thrust" || source.horned ? 20 : 5;
+      const recovery = meleeDamage ? 20 : 5;
       addResonanceEnergy(source, recovery);
       spawnEnergyGain(source, recovery);
     }
@@ -2969,7 +3743,7 @@
         x: target.x,
         y: target.y - target.r - (finalAmount > 0 ? 15 : 0),
         text: `护盾 −${Math.round(absorbed)}`,
-        color: "#d8ffca",
+        color: target.template.id === "04" ? "#e9a1b2" : "#d8ffca",
         life: 0.82,
         maxLife: 0.82,
         drift: random(-8, 8)
@@ -2997,11 +3771,23 @@
       if (mode === "multi") {
         target.vx = 0;
         target.vy = 0;
+        if (!target.deathVoicePlayed) {
+          target.deathVoicePlayed = true;
+          animateDefeat(target);
+          enqueueVoiceSequence([{ fighter: target, type: "death", focus: false }], { pauseGame: true });
+        }
       } else {
         finishRound(target.side === 0 ? 1 : 0, "KO");
       }
     }
     return finalAmount;
+  }
+
+  function applySpecialDamage(target, amount, source, label, options = {}) {
+    return applyDamage(target, amount, source, label, {
+      ...options,
+      category: DAMAGE_CATEGORIES.SPECIAL
+    });
   }
 
   function dealRawDamage(target, amount, source, label, color) {
@@ -3033,9 +3819,51 @@
     }
   }
 
+  function animateDefeat(loser, winner = null) {
+    if (!loser) return;
+    const accent = winner?.template.color || loser.template.color;
+    spawnBurst(loser.x, loser.y, accent, 55, 430);
+    effects.push({
+      type: "ring",
+      x: loser.x,
+      y: loser.y,
+      radius: 15,
+      growth: 900,
+      life: 0.8,
+      maxLife: 0.8,
+      color: accent,
+      width: 10
+    });
+    screenShake = Math.max(screenShake, 12);
+    playSound("hit");
+  }
+
   function finishRound(winnerSide, reason) {
     if (state !== "playing") return;
+    if (roundResultVoicePending) return;
+    roundResultVoicePending = true;
+    const winner = winnerSide === 0 ? player : enemy;
+    const loser = winnerSide === 0 ? enemy : player;
+    if (loser.hp <= 0) animateDefeat(loser, winner);
+    const voiceEntries = loser.hp <= 0
+      ? [
+        { fighter: loser, type: "death", focus: false },
+        { fighter: winner, type: "victory", focus: false }
+      ]
+      : [];
+    enqueueVoiceSequence(voiceEntries, {
+      pauseGame: true,
+      onComplete: () => {
+        roundResultVoicePending = false;
+        commitRoundFinish(winnerSide, reason);
+      }
+    });
+  }
+
+  function commitRoundFinish(winnerSide, reason) {
+    if (state !== "playing") return;
     state = "roundEnd";
+    syncPauseControl();
     roundEndTimer = 2.6;
     score[winnerSide] += 1;
     const winner = winnerSide === 0 ? player : enemy;
@@ -3050,9 +3878,6 @@
     dom.matchState.textContent = score[0] === WINNING_SCORE || score[1] === WINNING_SCORE ? "胜负已定" : "继续战斗";
     announce(`${reason} · ${winner.template.name} 拿下本局`, winner.template.color, 2.2);
     addLog(`${reason}！${winner.template.name} 赢下第 ${round} 局。`, "round");
-    spawnBurst(loser.x, loser.y, winner.template.color, 55, 430);
-    effects.push({ type: "ring", x: loser.x, y: loser.y, radius: 15, growth: 900, life: 0.8, maxLife: 0.8, color: winner.template.color, width: 10 });
-    screenShake = 12;
     playSound("roundWin");
     dom.screenReaderStatus.textContent = `${winner.template.name}赢下本局，比分${score[0]}比${score[1]}`;
   }
@@ -3071,6 +3896,8 @@
 
   function finishMatch(winnerSide) {
     state = "matchEnd";
+    manualPaused = false;
+    syncPauseControl();
     syncWandererFormState();
     dom.battleStatus.textContent = "比赛结束";
     dom.liveBadge.classList.remove("is-live");
@@ -3089,9 +3916,27 @@
     dom.screenReaderStatus.textContent = playerWon ? "你赢下了比赛" : "你输掉了比赛";
   }
 
-  function finishMultiMatch(winner) {
+  function finishMultiMatch(winner, reason = "KO") {
+    if (state !== "playing") return;
+    if (multiResultVoicePending) return;
+    multiResultVoicePending = true;
+    const voiceEntries = winner && reason === "KO"
+      ? [{ fighter: winner, type: "victory", focus: false }]
+      : [];
+    enqueueVoiceSequence(voiceEntries, {
+      pauseGame: true,
+      onComplete: () => {
+        multiResultVoicePending = false;
+        commitMultiMatch(winner);
+      }
+    });
+  }
+
+  function commitMultiMatch(winner) {
     if (state !== "playing") return;
     state = "matchEnd";
+    manualPaused = false;
+    syncPauseControl();
     syncWandererFormState();
     dom.battleStatus.textContent = "混战结束";
     dom.liveBadge.classList.remove("is-live");
@@ -3111,6 +3956,8 @@
 
   function showSelectOverlay() {
     state = "idle";
+    manualPaused = false;
+    syncPauseControl();
     syncWandererFormState();
     if (mode === "multi") {
       dom.overlayEyebrow.textContent = "FREE-FOR-ALL";
@@ -3238,7 +4085,11 @@
         if (projectile.kind === "fireball") {
           explodeFireball(projectile, true);
         } else {
-          applyDamage(target, projectile.damage, projectile.owner, "弹丸", { color: projectile.color });
+          const damageHandler = projectile.category === DAMAGE_CATEGORIES.SPECIAL ? applySpecialDamage : applyDamage;
+          damageHandler(target, projectile.damage, projectile.owner, projectile.kind === "brantShot" ? "船长手枪" : "弹丸", {
+            color: projectile.color,
+            brantAttack: Boolean(projectile.brantAttack)
+          });
           spawnBurst(projectile.x, projectile.y, projectile.color, 10, 150);
         }
         projectiles.splice(i, 1);
@@ -3361,7 +4212,9 @@
             <div class="multi-info">
               <strong>${template.name}</strong>
               <div class="multi-bar hp"><i></i></div>
-              ${template.startingShield ? '<div class="multi-bar shield"><i></i></div>' : ""}
+              ${template.startingShield || template.alternateShield || template.brantPickupShield
+                ? `<div class="multi-bar shield${template.id === "04" ? " brant-shield" : ""}"><i></i></div>`
+                : ""}
               <div class="multi-bar energy"><i></i></div>
             </div>
             <small class="multi-state"></small>
@@ -3399,7 +4252,9 @@
         else if (fighter.charge) status = "蓄力";
         else if (fighter.stunned > 0) status = "眩晕";
         else if (fighter.abyssForm) status = "镰刀";
-        else if (fighter.template.id === "04" && hasVerinaVine(fighter)) status = "藤";
+        else if (fighter.template.id === "06" && hasVerinaVine(fighter)) status = "藤";
+        else if (fighter.template.id === "04" && fighter.brantAirborneTimer > 0) status = "空中";
+        else if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) status = "加速";
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
         return {
@@ -3418,7 +4273,7 @@
       dom.timerText.textContent = String(Math.ceil(battleTimer)).padStart(2, "0");
       dom.timerOrb.classList.toggle("is-low", battleTimer <= 10 && state === "playing");
       dom.abilityButton.disabled = true;
-      if (state === "playing") {
+      if (state === "playing" && !voicePauseActive) {
         if (timeStopOwner && timeStopTimer > 0) {
           dom.battleStatus.textContent = `${timeStopOwner.template.name}时停 ${timeStopTimer.toFixed(1)}s`;
         } else {
@@ -3439,6 +4294,8 @@
     const enemyHasShield = enemy.shield > 0;
     dom.playerShield.hidden = !playerHasShield;
     dom.enemyShield.hidden = !enemyHasShield;
+    dom.playerShield.classList.toggle("is-brant", player.template.id === "04");
+    dom.enemyShield.classList.toggle("is-brant", enemy.template.id === "04");
     if (playerHasShield) {
       dom.playerShieldBar.style.width = `${clamp(player.shield / Math.max(1, player.maxShield), 0, 1) * 100}%`;
       dom.playerShieldText.textContent = `护盾 ${formatNumber(player.shield)}`;
@@ -3467,10 +4324,14 @@
     const enemyHasSpecial = enemy.template.id === "kakarot-test" || enemy.template.id === "01";
     const playerHasAbyss = player.template.id === "02";
     const enemyHasAbyss = enemy.template.id === "02";
+    const playerHasBrant = player.template.id === "04";
+    const enemyHasBrant = enemy.template.id === "04";
     dom.playerSpecialGauge.hidden = !playerHasSpecial;
     dom.enemySpecialGauge.hidden = !enemyHasSpecial;
     dom.playerAbyssGauge.hidden = !playerHasAbyss;
     dom.enemyAbyssGauge.hidden = !enemyHasAbyss;
+    dom.playerBrantGauge.hidden = !playerHasBrant;
+    dom.enemyBrantGauge.hidden = !enemyHasBrant;
     if (playerHasSpecial) {
       const isTime = player.template.id === "01";
       dom.playerSpecialLabel.textContent = isTime ? "时序" : "死告";
@@ -3489,6 +4350,14 @@
       dom.enemyAbyssGauge.querySelector("i").style.width = `${clamp(enemy.abyssEnergy, 0, 100)}%`;
       dom.enemyAbyssText.textContent = `${Math.round(enemy.abyssEnergy)}`;
     }
+    if (playerHasBrant) {
+      dom.playerBrantGauge.querySelector("i").style.width = `${clamp(player.brantSpecialEnergy, 0, 100)}%`;
+      dom.playerBrantText.textContent = `${Math.round(player.brantSpecialEnergy)}`;
+    }
+    if (enemyHasBrant) {
+      dom.enemyBrantGauge.querySelector("i").style.width = `${clamp(enemy.brantSpecialEnergy, 0, 100)}%`;
+      dom.enemyBrantText.textContent = `${Math.round(enemy.brantSpecialEnergy)}`;
+    }
     const abyssTarget = player.template.ultimateType === "abyssBurst" ? nearestOpponent(player) : null;
     const abyssInRange = player.template.ultimateType !== "abyssBurst"
       || (abyssTarget && distance(player, abyssTarget) <= player.template.ultimateSeekRadius * CELL_SIZE);
@@ -3500,10 +4369,10 @@
       && abyssInRange
       && verinaUnlocked
       && !(player.template.ultimateType === "overclock" && player.overclock > 0);
-    const ready = mode === "play" && energy >= 100 && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing";
+    const ready = mode === "play" && energy >= 100 && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
     dom.abilityButton.classList.toggle("is-ready", ready);
-    if (state === "playing") {
+    if (state === "playing" && !voicePauseActive) {
       if (player.vortexLockTimer > 0) {
         dom.battleStatus.textContent = `时间乱流锁定 ${player.vortexLockTimer.toFixed(1)}s`;
       } else if (player.charge) {
@@ -3522,10 +4391,14 @@
         dom.battleStatus.textContent = `共鸣解放 ${player.overclock.toFixed(1)}s`;
       } else if (player.abyssForm) {
         dom.battleStatus.textContent = `恐怖镰刀人 · 暗涌 ${Math.ceil(player.abyssEnergy)}`;
-      } else if (player.template.id === "04" && hasVerinaVine(player)) {
+      } else if (player.template.id === "06" && hasVerinaVine(player)) {
         dom.battleStatus.textContent = "藤蔓复苏 · 全场侵蚀";
-      } else if (player.template.id === "04" && player.verinaSlowTimer > 0) {
+      } else if (player.template.id === "06" && player.verinaSlowTimer > 0) {
         dom.battleStatus.textContent = "藤蔓束缚 · 移速 -50%";
+      } else if (player.template.id === "04" && player.brantAirborneTimer > 0) {
+        dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s`;
+      } else if (player.template.id === "04" && player.brantUltimateTimer > 0) {
+        dom.battleStatus.textContent = `船长狂想 ${player.brantUltimateTimer.toFixed(1)}s`;
       } else if (player.timeForceTimer > 0) {
         dom.battleStatus.textContent = `时序加速 ${player.timeForceTimer.toFixed(1)}s`;
       } else if (player.horned) {
@@ -3623,8 +4496,17 @@
     const shakeY = screenShake > 0 ? random(-screenShake, screenShake) : 0;
     ctx.save();
     ctx.clearRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+    ctx.fillStyle = "#0d111b";
+    ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+    if (voiceCameraMix > 0 && voiceFocusFighter) {
+      const zoom = 1 + voiceCameraMix * 0.48;
+      ctx.translate(ARENA_SIZE / 2, ARENA_SIZE / 2);
+      ctx.scale(zoom, zoom);
+      ctx.translate(-voiceFocusFighter.x, -voiceFocusFighter.y);
+    }
     ctx.translate(shakeX, shakeY);
     drawArena();
+    drawBrantTreasures();
     drawVerinaPlants();
     drawWindFields();
     drawCraters();
@@ -3636,7 +4518,9 @@
     drawProjectiles();
     drawEffects(true);
     getActiveFighters().forEach((fighter, index) => {
-      if (fighter.hp > 0) drawFighter(fighter, visualTime + index * 0.7);
+      if (fighter.hp > 0 || (voicePauseActive && voiceFocusFighter === fighter)) {
+        drawFighter(fighter, visualTime + index * 0.7);
+      }
     });
     drawWandererKnives();
     drawPendingBlackSlams();
@@ -3644,6 +4528,67 @@
     drawWindWaves();
     drawEffects(false);
     drawFloatingTexts();
+    drawVoicePauseEffect();
+    ctx.restore();
+  }
+
+  function drawVoicePauseEffect() {
+    if (!voicePauseActive || !activeVoiceEntry?.fighter) return;
+    const fighter = activeVoiceEntry.fighter;
+    const age = Math.max(0, visualTime - voiceEntryStartedAt);
+    const entrance = Math.min(1, age / 0.22);
+    const pulse = 1 + Math.sin(visualTime * 6.2) * 0.055;
+    const radius = fighter.r + 24;
+    ctx.save();
+    ctx.fillStyle = `rgba(8, 7, 16, ${0.14 * entrance})`;
+    ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+
+    ctx.globalCompositeOperation = "lighter";
+    const halo = ctx.createRadialGradient(fighter.x, fighter.y, 2, fighter.x, fighter.y, radius * 2.35);
+    halo.addColorStop(0, colorWithAlpha("#fff4cf", entrance * 0.2));
+    halo.addColorStop(0.34, colorWithAlpha(fighter.template.color, entrance * 0.16));
+    halo.addColorStop(1, colorWithAlpha(fighter.template.color, 0));
+    ctx.fillStyle = halo;
+    ctx.beginPath();
+    ctx.arc(fighter.x, fighter.y, radius * 2.35, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.translate(fighter.x, fighter.y);
+    ctx.strokeStyle = colorWithAlpha("#fff6d7", entrance * 0.82);
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = fighter.template.color;
+    ctx.shadowBlur = 22;
+    ctx.setLineDash([6, 8]);
+    ctx.lineDashOffset = -visualTime * 34;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * pulse, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    for (let i = 0; i < 10; i += 1) {
+      const angle = visualTime * 0.9 + (i / 10) * Math.PI * 2;
+      const distance = radius + 8 + Math.sin(visualTime * 4.5 + i) * 5;
+      const dotRadius = i % 2 ? 2.2 : 1.5;
+      ctx.fillStyle = colorWithAlpha(i % 2 ? "#ffe9b0" : fighter.template.color, entrance * 0.86);
+      ctx.beginPath();
+      ctx.arc(Math.cos(angle) * distance, Math.sin(angle) * distance, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.strokeStyle = colorWithAlpha(fighter.template.color, entrance * 0.32);
+    ctx.lineWidth = 1.2;
+    for (let i = 0; i < 3; i += 1) {
+      const start = -visualTime * (0.55 + i * 0.18) + i * 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * (0.88 + i * 0.2), start, start + Math.PI * 1.25);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = colorWithAlpha("#fff8df", entrance * 0.72);
+    ctx.font = "800 7px 'Trebuchet MS'";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("VOICE LOCK", 0, -radius - 14);
     ctx.restore();
   }
 
@@ -3736,6 +4681,112 @@
         ctx.fill();
       });
     });
+    ctx.restore();
+  }
+
+  function drawBrantTreasures() {
+    const chestPortrait = summonPortraits.get("brant-chest");
+    brantChests.forEach((chest) => {
+      const pulse = 1 + Math.sin(visualTime * 4 + chest.phase) * 0.06;
+      const fade = chest.life < 2 ? 0.45 + Math.sin(visualTime * 12) * 0.25 : 1;
+      ctx.save();
+      ctx.globalAlpha = fade;
+      ctx.strokeStyle = "rgba(218, 105, 151, 0.48)";
+      ctx.fillStyle = "rgba(169, 65, 111, 0.07)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 6]);
+      ctx.lineDashOffset = -visualTime * 12;
+      ctx.beginPath();
+      ctx.arc(chest.x, chest.y, chest.r * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (chestPortrait?.complete) {
+        const height = CELL_SIZE * 1.5;
+        const width = height * (chestPortrait.naturalWidth / chestPortrait.naturalHeight);
+        ctx.shadowColor = "#d7749b";
+        ctx.shadowBlur = 15;
+        ctx.drawImage(
+          chestPortrait,
+          chest.x - width / 2,
+          chest.y - height / 2 + Math.sin(visualTime * 2.7 + chest.phase) * 3,
+          width,
+          height
+        );
+      }
+      ctx.restore();
+    });
+
+    getActiveFighters().forEach((fighter) => {
+      if (fighter?.template.id !== "04" || fighter.brantAirborneTimer <= 0) return;
+      ctx.save();
+      ctx.strokeStyle = "rgba(225, 126, 167, 0.72)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 6]);
+      ctx.lineDashOffset = -visualTime * 28;
+      ctx.beginPath();
+      ctx.moveTo(fighter.x, 0);
+      ctx.lineTo(fighter.x + Math.sin(visualTime * 2.2) * 8, fighter.y - fighter.r);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    });
+
+    brantAnchors.forEach((anchor) => {
+      const radiusX = (anchor.kind === "big" ? anchor.owner.template.brantBigRadiusX : anchor.owner.template.brantSmallRadiusX) * CELL_SIZE;
+      const radiusY = (anchor.kind === "big" ? anchor.owner.template.brantBigRadiusY : anchor.owner.template.brantSmallRadiusY) * CELL_SIZE;
+      const progress = 1 - Math.max(0, anchor.timer) / anchor.maxTimer;
+      ctx.save();
+      ctx.translate(anchor.x, anchor.y);
+      ctx.rotate(anchor.angle);
+      ctx.fillStyle = "rgba(157, 45, 92, 0.1)";
+      ctx.strokeStyle = "rgba(229, 121, 162, 0.72)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 7]);
+      ctx.lineDashOffset = -visualTime * 14;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      drawBrantAnchorGlyph(
+        anchor.x,
+        anchor.y - (1 - progress) * 170,
+        anchor.kind === "big" ? 1.25 : 0.85,
+        anchor.kind === "big" ? "#ed7ea7" : "#cb5a82",
+        0.82
+      );
+    });
+  }
+
+  function drawBrantAnchorGlyph(x, y, scale, color, alpha = 1) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 18;
+    ctx.beginPath();
+    ctx.moveTo(0, -24);
+    ctx.lineTo(0, 20);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, -24, 7, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-17, 7);
+    ctx.quadraticCurveTo(-15, 27, 0, 27);
+    ctx.quadraticCurveTo(15, 27, 17, 7);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-8, -7);
+    ctx.lineTo(8, -7);
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -4120,6 +5171,20 @@
     ctx.save();
     ctx.translate(fighter.x, fighter.y);
     ctx.rotate(clamp(fighter.tilt, -0.13, 0.13));
+    if (fighter.hp <= 0) ctx.globalAlpha = 0.55;
+
+    if (voicePauseActive && voiceFocusFighter === fighter) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = colorWithAlpha(fighter.template.color, 0.75);
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = fighter.template.color;
+      ctx.shadowBlur = 22;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius + 18 + Math.sin(visualTime * 4) * 3, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
 
     if (fighter.template.attackType === "melee" || fighter.template.attackType === "thrust" || fighter.horned) {
       const range = getAttackRangeCells(fighter) * CELL_SIZE;
@@ -4238,6 +5303,8 @@
     } else if (fighter.template.id === "02") {
       if (fighter.abyssForm) drawAbyssScythe(fighter, radius, t);
       else drawWandererWeapon(fighter, radius, t);
+    } else if (fighter.template.id === "04") {
+      drawBrantWeapons(fighter, radius, t);
     }
 
     if (fighter.overclock > 0) {
@@ -4253,6 +5320,18 @@
 
     if (fighter.abyssForm) {
       drawAbyssAura(radius, t);
+    }
+    if (fighter.template.id === "04" && fighter.brantAirborneTimer > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(238, 143, 179, 0.72)";
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = "#d65f8e";
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius + 13 + Math.sin(t * 5.2) * 3, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
     }
 
     if (fighter.paralyzed > 0) {
@@ -4295,18 +5374,32 @@
 
     if (fighter.shield > 0) {
       const shieldPulse = 1 + Math.sin(t * 7) * 0.045;
-      ctx.strokeStyle = colorWithAlpha("#b8ff9f", 0.65);
-      ctx.fillStyle = colorWithAlpha("#91e77a", 0.08);
+      const brantShield = fighter.template.id === "04";
+      const shieldGradient = brantShield
+        ? ctx.createLinearGradient(-radius - 12, 0, radius + 12, 0)
+        : null;
+      if (shieldGradient) {
+        shieldGradient.addColorStop(0, colorWithAlpha("#71356f", 0.92));
+        shieldGradient.addColorStop(0.52, colorWithAlpha("#b55d9b", 0.82));
+        shieldGradient.addColorStop(1, colorWithAlpha("#f0a0aa", 0.9));
+      }
+      ctx.strokeStyle = brantShield ? shieldGradient : colorWithAlpha("#b8ff9f", 0.65);
+      ctx.fillStyle = brantShield ? "rgba(115, 46, 107, 0.1)" : colorWithAlpha("#91e77a", 0.08);
       ctx.lineWidth = 2.2;
+      if (brantShield) {
+        ctx.shadowColor = "#a95598";
+        ctx.shadowBlur = 16;
+      }
       ctx.beginPath();
       ctx.arc(0, 0, (radius + 11) * shieldPulse, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
+      ctx.shadowBlur = 0;
       for (let i = 0; i < 8; i += 1) {
         const angle = (i / 8) * Math.PI * 2 + t * 0.2;
         const x = Math.cos(angle) * (radius + 13);
         const y = Math.sin(angle) * (radius + 13);
-        ctx.fillStyle = "#b8ff9f";
+        ctx.fillStyle = brantShield ? (i % 2 ? "#ef9da9" : "#a65a9c") : "#b8ff9f";
         ctx.beginPath();
         ctx.arc(x, y, 2, 0, Math.PI * 2);
         ctx.fill();
@@ -4438,6 +5531,48 @@
     ctx.shadowColor = fighter.template.color;
     ctx.shadowBlur = fighter.thrustTime > 0 ? 24 : 10;
     ctx.drawImage(weapon, -width / 2, -radius * 0.3, width, height);
+    ctx.restore();
+  }
+
+  function drawBrantWeapons(fighter, radius, t) {
+    if (fighter.brantMeleeMode) {
+      const sword = weaponPortraits.get("04");
+      if (!sword?.complete || !sword.naturalWidth) return;
+      const height = radius * 3.45;
+      const width = height * (sword.naturalWidth / sword.naturalHeight);
+      ctx.save();
+      if (fighter.thrustTime > 0) {
+        const progress = 1 - fighter.thrustTime / 0.28;
+        const thrustDistance = Math.sin(progress * Math.PI) * radius * 1.45;
+        ctx.translate(
+          Math.cos(fighter.thrustAngle) * thrustDistance,
+          Math.sin(fighter.thrustAngle) * thrustDistance
+        );
+        ctx.rotate(fighter.thrustAngle - Math.PI / 2);
+      } else {
+        ctx.translate(radius * 0.72, 0);
+        ctx.rotate(0.4 + Math.sin(t * 1.7) * 0.025);
+      }
+      ctx.shadowColor = "#cf6f9f";
+      ctx.shadowBlur = fighter.thrustTime > 0 ? 26 : 13;
+      ctx.drawImage(sword, -width / 2, -radius * 0.32, width, height);
+      ctx.restore();
+      return;
+    }
+
+    const gun = weaponPortraits.get("04:ranged");
+    if (!gun?.complete || !gun.naturalWidth) return;
+    const width = radius * 2.45;
+    const height = width * (gun.naturalHeight / gun.naturalWidth);
+    ctx.save();
+    ctx.translate(
+      Math.cos(fighter.brantAimAngle) * radius * 0.7,
+      Math.sin(fighter.brantAimAngle) * radius * 0.7
+    );
+    ctx.rotate(fighter.brantAimAngle + Math.PI);
+    ctx.shadowColor = "#bd62e8";
+    ctx.shadowBlur = 18;
+    ctx.drawImage(gun, -width / 2, -height / 2, width, height);
     ctx.restore();
   }
 
@@ -4605,7 +5740,7 @@
   function drawEffects(front) {
     effects.forEach((effect) => {
       const alpha = clamp(effect.life / effect.maxLife, 0, 1);
-      const isFront = ["impact", "lightning", "shield"].includes(effect.type);
+      const isFront = ["impact", "lightning", "shield", "brantAnchorImpact"].includes(effect.type);
       if (isFront !== front) return;
       ctx.save();
       ctx.globalAlpha = alpha;
@@ -4811,11 +5946,57 @@
         ctx.arc(effect.fighter.x, effect.fighter.y, effect.fighter.r + 26, 0, Math.PI * 2);
         ctx.stroke();
         ctx.setLineDash([]);
+      } else if (effect.type === "brantAnchorImpact") {
+        const progress = 1 - alpha;
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        const scale = 0.72 + progress * 0.45;
+        const blast = ctx.createRadialGradient(0, 0, 3, 0, 0, effect.radiusX * scale);
+        blast.addColorStop(0, colorWithAlpha("#ffe0eb", alpha * 0.78));
+        blast.addColorStop(0.35, colorWithAlpha(effect.color, alpha * 0.42));
+        blast.addColorStop(1, colorWithAlpha("#6f2448", 0));
+        ctx.save();
+        ctx.scale(1, effect.radiusY / effect.radiusX);
+        ctx.fillStyle = blast;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radiusX * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.85);
+        ctx.lineWidth = 7 * alpha;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radiusX * (0.45 + progress * 0.65), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      } else if (effect.type === "brantAirborne") {
+        if (!effect.fighter) return;
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.8);
+        ctx.lineWidth = 3;
+        ctx.setLineDash([4, 5]);
+        ctx.lineDashOffset = -visualTime * 30;
+        ctx.beginPath();
+        ctx.arc(effect.fighter.x, effect.fighter.y, effect.fighter.r + 16 + (1 - alpha) * 45, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
       } else if (effect.type === "shield") {
         if (!effect.fighter) return;
-        ctx.strokeStyle = effect.color;
+        if (effect.fighter.template.id === "04") {
+          const shieldRing = ctx.createLinearGradient(
+            effect.fighter.x - effect.fighter.r,
+            effect.fighter.y,
+            effect.fighter.x + effect.fighter.r,
+            effect.fighter.y
+          );
+          shieldRing.addColorStop(0, "#74366f");
+          shieldRing.addColorStop(0.55, "#b25b98");
+          shieldRing.addColorStop(1, "#efa0aa");
+          ctx.strokeStyle = shieldRing;
+          ctx.shadowColor = "#b25b98";
+        } else {
+          ctx.strokeStyle = effect.color;
+          ctx.shadowColor = effect.color;
+        }
         ctx.lineWidth = 3;
-        ctx.shadowColor = effect.color;
         ctx.shadowBlur = 22;
         ctx.beginPath();
         ctx.arc(effect.fighter.x, effect.fighter.y, effect.fighter.r + 14 + (1 - alpha) * 40, 0, Math.PI * 2);
@@ -5025,6 +6206,7 @@
 
   function setSound(enabled) {
     soundEnabled = enabled;
+    if (!enabled) cancelVoicePlayback(true);
     dom.soundButton.setAttribute("aria-pressed", String(enabled));
     dom.soundButton.setAttribute("aria-label", enabled ? "关闭音效" : "开启音效");
     if (enabled) {
@@ -5166,6 +6348,18 @@
     const steps = Math.min(12, Math.max(1, Math.ceil(simulatedDt / 0.025)));
     const dt = simulatedDt / steps;
     lastFrame = now;
+    updateVoiceCamera(realDt);
+    if (manualPaused) {
+      draw();
+      requestAnimationFrame(frame);
+      return;
+    }
+    if (voicePauseActive) {
+      updateVisualEffects(realDt);
+      draw();
+      requestAnimationFrame(frame);
+      return;
+    }
     for (let step = 0; step < steps; step += 1) {
       updateVisualEffects(dt);
       if (state === "idle" || state === "matchEnd") {
@@ -5191,8 +6385,16 @@
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(event.code)) {
       event.preventDefault();
     }
+    if (event.code === "Space" && !event.repeat) {
+      togglePause();
+      return;
+    }
+    if (event.code === "Escape" && manualPaused) {
+      setManualPaused(false);
+      return;
+    }
     if (event.code === "KeyE" && !event.repeat) {
-      if (mode === "play" && state === "playing") useAbility(player, enemy);
+      if (mode === "play" && state === "playing" && !manualPaused) useAbility(player, enemy);
     }
     if (event.code === "KeyR" && !event.repeat) {
       startMatch();
@@ -5224,7 +6426,7 @@
     startMatch();
   });
   dom.abilityButton.addEventListener("click", () => {
-    if (mode === "play") useAbility(player, enemy);
+    if (mode === "play" && !manualPaused) useAbility(player, enemy);
   });
   dom.soundButton.addEventListener("click", () => {
     setSound(!soundEnabled);
@@ -5239,6 +6441,8 @@
   dom.itemToggle.addEventListener("click", () => setArenaItemsEnabled(!arenaItemsEnabled));
   dom.slowButton.addEventListener("click", () => changeGameSpeed(-1));
   dom.fastButton.addEventListener("click", () => changeGameSpeed(1));
+  dom.pauseButton.addEventListener("click", togglePause);
+  dom.pauseResumeButton.addEventListener("click", () => setManualPaused(false));
   dom.durationInput.addEventListener("change", () => setRoundSeconds(dom.durationInput.value));
   dom.durationInput.addEventListener("blur", () => setRoundSeconds(dom.durationInput.value));
   document.querySelectorAll("[data-config-side]").forEach((button) => {
@@ -5295,7 +6499,7 @@
       }
     }
   });
-  ["white-sheep", "black-sheep"].forEach((name) => {
+  ["white-sheep", "black-sheep", "brant-chest"].forEach((name) => {
     const image = new Image();
     image.src = `assets/${name}.png`;
     summonPortraits.set(name, image);
@@ -5304,6 +6508,11 @@
     const weapon = new Image();
     weapon.src = fighter.weaponImage;
     weaponPortraits.set(fighter.id, weapon);
+    if (fighter.rangedWeaponImage) {
+      const rangedWeapon = new Image();
+      rangedWeapon.src = fighter.rangedWeaponImage;
+      weaponPortraits.set(`${fighter.id}:ranged`, rangedWeapon);
+    }
   });
   FIGHTERS.filter((fighter) => fighter.knifeImage).forEach((fighter) => {
     const knife = new Image();
@@ -5318,6 +6527,7 @@
   document.querySelector(".fighter-card")?.classList.add("is-selected");
   syncRosterSelection();
   syncWandererFormState();
+  syncPauseControl();
   updateChosenPanel();
   preparePreview();
   setRoundSeconds(dom.durationInput.value);

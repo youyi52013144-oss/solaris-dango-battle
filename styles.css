@@ -937,6 +937,10 @@ h2 {
   background: linear-gradient(90deg, #65c66d, #d8ffca);
 }
 
+.multi-bar.shield.brant-shield i {
+  background: linear-gradient(90deg, #71346f, #b45d99 55%, #ef9daa);
+}
+
 .multi-bar.shield[hidden] {
   display: none;
 }
@@ -1099,12 +1103,20 @@ h2 {
   white-space: nowrap;
 }
 
+.shield-line.is-brant > span {
+  color: #e8a0b0;
+}
+
 .shield-track {
   flex: 1;
   height: 3px;
   overflow: hidden;
   border-radius: 4px;
   background: rgba(185, 243, 164, 0.12);
+}
+
+.shield-line.is-brant .shield-track {
+  background: rgba(162, 82, 145, 0.16);
 }
 
 .shield-track i {
@@ -1115,6 +1127,11 @@ h2 {
   background: linear-gradient(90deg, #65c66d, #d8ffca);
   box-shadow: 0 0 7px rgba(185, 243, 164, 0.42);
   transition: width 200ms ease;
+}
+
+.shield-line.is-brant .shield-track i {
+  background: linear-gradient(90deg, #71346f, #b45d99 55%, #ef9daa);
+  box-shadow: 0 0 8px rgba(197, 102, 159, 0.48);
 }
 
 .fighter-readout-right .shield-line {
@@ -1226,6 +1243,45 @@ h2 {
 }
 
 .abyss-gauge b {
+  min-width: 18px;
+  color: var(--muted);
+  font-size: 6px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.brant-gauge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  color: #e38db8;
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.brant-gauge[hidden] {
+  display: none;
+}
+
+.brant-track {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgba(189, 91, 145, 0.16);
+}
+
+.brant-track i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #71345f, #d66a91);
+  box-shadow: 0 0 7px rgba(214, 106, 145, 0.48);
+}
+
+.brant-gauge b {
   min-width: 18px;
   color: var(--muted);
   font-size: 6px;
@@ -1465,6 +1521,57 @@ h2 {
   transition: opacity 260ms ease, visibility 260ms ease;
 }
 
+.pause-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 216, 77, 0.11), transparent 30%),
+    rgba(6, 8, 13, 0.72);
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.pause-overlay[hidden] {
+  display: none;
+}
+
+.pause-overlay > span {
+  color: var(--yellow);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+}
+
+.pause-overlay > strong {
+  font-size: clamp(28px, 5vw, 50px);
+  letter-spacing: -0.04em;
+}
+
+.pause-overlay > p {
+  margin: 2px 0 8px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pause-overlay > button {
+  min-height: 38px;
+  padding: 0 17px;
+  border: 1px solid rgba(255, 216, 77, 0.32);
+  border-radius: 11px;
+  color: #17140b;
+  background: var(--yellow);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
 .game-overlay.is-hidden {
   opacity: 0;
   visibility: hidden;
@@ -1631,6 +1738,11 @@ h2 {
 .playback-controls button:hover:not(:disabled) {
   color: var(--text);
   background: rgba(255, 255, 255, 0.055);
+}
+
+#pauseButton[aria-pressed="true"] {
+  color: #16130b;
+  background: var(--yellow);
 }
 
 .playback-controls button:disabled {

@@ -59,7 +59,7 @@
             <span class="eyebrow">FIGHTER SELECT</span>
             <h2 id="rosterTitle">选择出战团子</h2>
           </div>
-          <span class="count-badge" id="rosterCount">06</span>
+          <span class="count-badge" id="rosterCount">07</span>
         </div>
         <p class="panel-copy">自动观战时，左右两侧团子可分别选择；对局时长也可自定义。</p>
         <div class="config-side" role="group" aria-label="选择要配置的团子阵营">
@@ -68,7 +68,7 @@
         </div>
         <div id="multiHint" class="multi-hint" hidden>
           <span>点击角色加入或移出混战</span>
-          <b><span id="multiCount">6</span> 只参战</b>
+          <b><span id="multiCount">7</span> 只参战</b>
         </div>
         <label class="map-select" for="mapSelect">
           <span>对战地图</span>
@@ -139,6 +139,9 @@
               <div class="abyss-gauge" id="playerAbyssGauge" hidden>
                 <span>暗涌</span><div class="abyss-track"><i></i></div><b id="playerAbyssText">0</b>
               </div>
+              <div class="brant-gauge" id="playerBrantGauge" hidden>
+                <span>船锚</span><div class="brant-track"><i></i></div><b id="playerBrantText">0</b>
+              </div>
             </div>
             <span class="hp-number" id="playerHpText">1000</span>
           </div>
@@ -173,6 +176,9 @@
               <div class="abyss-gauge" id="enemyAbyssGauge" hidden>
                 <span>暗涌</span><div class="abyss-track"><i></i></div><b id="enemyAbyssText">0</b>
               </div>
+              <div class="brant-gauge" id="enemyBrantGauge" hidden>
+                <span>船锚</span><div class="brant-track"><i></i></div><b id="enemyBrantText">0</b>
+              </div>
             </div>
             <div class="fighter-avatar" id="enemyMini" aria-hidden="true"><span></span></div>
           </div>
@@ -192,6 +198,13 @@
           <div id="announcement" class="announcement" aria-live="polite"></div>
           <div id="comboBadge" class="combo-badge" aria-hidden="true">
             <b id="comboValue">2</b><span>连击</span>
+          </div>
+
+          <div id="pauseOverlay" class="pause-overlay" aria-live="polite" hidden>
+            <span>PAUSED</span>
+            <strong>对局已暂停</strong>
+            <p>点击继续或按空格键恢复对局</p>
+            <button id="pauseResumeButton" type="button">继续战斗</button>
           </div>
 
           <div id="gameOverlay" class="game-overlay">
@@ -218,6 +231,7 @@
             <button id="slowButton" type="button" aria-label="减速">− 减速</button>
             <b id="gameSpeedText" aria-live="polite">1×</b>
             <button id="fastButton" type="button" aria-label="快进">快进 +</button>
+            <button id="pauseButton" type="button" aria-label="暂停对局" aria-pressed="false">暂停</button>
           </div>
           <button id="abilityButton" class="ability-button" type="button" disabled title="共鸣能量满后释放共鸣解放">
             <span class="ability-key" id="abilityKey">AUTO</span>
@@ -233,6 +247,7 @@
           <div class="key-guide" id="keyGuide" hidden>
             <span><kbd>WASD</kbd><kbd>↑↓←→</kbd> 移动</span>
             <span><kbd>E</kbd> 共鸣解放</span>
+            <span><kbd>空格</kbd> 暂停/继续</span>
             <span><kbd>R</kbd> 重新开局</span>
           </div>
           <button id="restartButton" class="ghost-button" type="button">重新开局 ↻</button>
