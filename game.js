@@ -87,6 +87,7 @@
       dark: "#7e632d",
       symbol: "析",
       image: "assets/wanderer.png",
+      femaleImage: "assets/wanderer-female.png",
       weaponImage: "assets/wanderer-weapon.png",
       knifeImage: "assets/wanderer-knife.png",
       hp: 1000,
@@ -119,6 +120,8 @@
       symbol: "湮",
       image: "assets/wanderer.png",
       altImage: "assets/wanderer-abyss-form.png",
+      femaleImage: "assets/wanderer-female.png",
+      femaleAltImage: "assets/wanderer-abyss-female.png",
       weaponImage: "assets/wanderer-weapon.png",
       hp: 1200,
       power: 1,
@@ -433,6 +436,14 @@
   let enemyId = "anko-test";
   let configSide = "left";
   let archiveSelectedId = "kakarot-test";
+  let wandererForms = { "01": "male", "02": "male" };
+  try {
+    const savedForms = JSON.parse(localStorage.getItem("solaris-wanderer-forms") || "null");
+    if (savedForms?.["01"] === "female" || savedForms?.["01"] === "male") wandererForms["01"] = savedForms["01"];
+    if (savedForms?.["02"] === "female" || savedForms?.["02"] === "male") wandererForms["02"] = savedForms["02"];
+  } catch {
+    // Local file privacy modes can disable storage; defaults still apply.
+  }
   let mode = "watch";
   let state = "idle";
   let player = null;
@@ -487,7 +498,20 @@
   const random = (min, max) => min + Math.random() * (max - min);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-  const templateById = (id) => FIGHTERS.find((fighter) => fighter.id === id) || FIGHTERS[0];
+  function templateById(id) {
+    const fighter = FIGHTERS.find((item) => item.id === id) || FIGHTERS[0];
+    if (fighter.id !== "01" && fighter.id !== "02") return fighter;
+    const gender = wandererForms[fighter.id] || "male";
+    const female = gender === "female";
+    return {
+      ...fighter,
+      image: female ? fighter.femaleImage : fighter.image,
+      altImage: female ? (fighter.femaleAltImage || fighter.femaleImage) : fighter.altImage,
+      portraitKey: `${fighter.id}:${gender}`,
+      altPortraitKey: `${fighter.id}:${gender}:alt`,
+      formGender: gender
+    };
+  }
   const formatNumber = (value) => Math.max(0, Math.round(value)).toLocaleString("zh-CN");
   const getConfigId = () => mode === "multi" || configSide === "left" ? selectedId : enemyId;
   const getActiveFighters = () => mode === "multi" ? multiFighters : [player, enemy].filter(Boolean);
@@ -596,18 +620,19 @@
 
   function createRoster() {
     FIGHTERS.forEach((fighter) => {
+      const visual = templateById(fighter.id);
       const button = document.createElement("button");
       button.type = "button";
-      button.className = `fighter-card${fighter.placeholder ? " is-placeholder" : ""}${fighter.image ? " has-portrait" : ""}`;
+      button.className = `fighter-card${fighter.placeholder ? " is-placeholder" : ""}${visual.image ? " has-portrait" : ""}`;
       button.dataset.fighterId = fighter.id;
       button.setAttribute("role", "option");
       button.setAttribute("aria-selected", String(fighter.id === getConfigId()));
       button.style.setProperty("--ball-color", fighter.color);
-      if (fighter.image) button.style.setProperty("--portrait", `url("${fighter.image}")`);
+      if (visual.image) button.style.setProperty("--portrait", `url("${visual.image}")`);
       button.innerHTML = `
-        <span class="card-orb${fighter.image ? " has-image" : ""}" aria-hidden="true">
-          ${fighter.image
-            ? `<img class="card-portrait" src="${fighter.image}" alt="">`
+        <span class="card-orb${visual.image ? " has-image" : ""}" aria-hidden="true">
+          ${visual.image
+            ? `<img class="card-portrait" src="${visual.image}" alt="">`
             : `<span>${fighter.symbol}</span>`}
         </span>
         <strong>${fighter.name}</strong>
@@ -617,6 +642,47 @@
       dom.rosterGrid.appendChild(button);
     });
     dom.rosterCount.textContent = String(FIGHTERS.length).padStart(2, "0");
+  }
+
+  function syncWandererFormState() {
+    const locked = state !== "idle" && state !== "matchEnd";
+    document.querySelectorAll("[data-wanderer-form]").forEach((button) => {
+      const fighterId = button.dataset.wandererForm;
+      const active = wandererForms[fighterId] === button.dataset.gender;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+      button.disabled = locked;
+    });
+    ["01", "02"].forEach((fighterId) => {
+      const fighter = templateById(fighterId);
+      const card = dom.rosterGrid.querySelector(`[data-fighter-id="${fighterId}"]`);
+      if (!card) return;
+      card.style.setProperty("--portrait", `url("${fighter.image}")`);
+      const portrait = card.querySelector(".card-portrait");
+      if (portrait && portrait.getAttribute("src") !== fighter.image) portrait.src = fighter.image;
+      const archiveButton = dom.archiveList.querySelector(`[data-fighter-id="${fighterId}"]`);
+      const archivePortrait = archiveButton?.querySelector("img");
+      if (archivePortrait && archivePortrait.getAttribute("src") !== fighter.image) archivePortrait.src = fighter.image;
+    });
+  }
+
+  function setWandererForm(fighterId, gender) {
+    if (fighterId !== "01" && fighterId !== "02") return;
+    if (gender !== "male" && gender !== "female") return;
+    if (state !== "idle" && state !== "matchEnd") return;
+    wandererForms[fighterId] = gender;
+    try {
+      localStorage.setItem("solaris-wanderer-forms", JSON.stringify(wandererForms));
+    } catch {
+      // Persistence is optional.
+    }
+    syncWandererFormState();
+    syncRosterSelection();
+    updateChosenPanel();
+    if (state === "idle" || state === "matchEnd") preparePreview();
+    if (mode === "multi") renderMultiSetupBoard();
+    if (dom.fighterArchive.open) renderArchive();
+    playSound("select");
   }
 
   function selectFighter(id) {
@@ -888,6 +954,7 @@
     countdownBeat = 4;
     round = 1;
     state = "countdown";
+    syncWandererFormState();
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
     dom.abilityButton.classList.remove("is-ready");
@@ -916,6 +983,7 @@
     countdownClock = 3.05;
     countdownBeat = 4;
     state = "countdown";
+    syncWandererFormState();
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
     dom.abilityButton.classList.remove("is-ready");
@@ -3003,6 +3071,7 @@
 
   function finishMatch(winnerSide) {
     state = "matchEnd";
+    syncWandererFormState();
     dom.battleStatus.textContent = "比赛结束";
     dom.liveBadge.classList.remove("is-live");
     const playerWon = winnerSide === 0;
@@ -3023,6 +3092,7 @@
   function finishMultiMatch(winner) {
     if (state !== "playing") return;
     state = "matchEnd";
+    syncWandererFormState();
     dom.battleStatus.textContent = "混战结束";
     dom.liveBadge.classList.remove("is-live");
     dom.overlayEyebrow.textContent = "FREE-FOR-ALL COMPLETE";
@@ -3041,6 +3111,7 @@
 
   function showSelectOverlay() {
     state = "idle";
+    syncWandererFormState();
     if (mode === "multi") {
       dom.overlayEyebrow.textContent = "FREE-FOR-ALL";
       dom.overlayTitle.textContent = "多团混战";
@@ -4147,7 +4218,10 @@
     ctx.stroke();
     ctx.restore();
 
-    const portraitKey = (fighter.horned || fighter.abyssForm) && fighter.template.altImage ? `${fighter.template.id}:alt` : fighter.template.id;
+    const usesAlternate = (fighter.horned || fighter.abyssForm) && fighter.template.altImage;
+    const portraitKey = usesAlternate
+      ? (fighter.template.altPortraitKey || `${fighter.template.id}:alt`)
+      : (fighter.template.portraitKey || fighter.template.id);
     const portrait = fighterPortraits.get(portraitKey);
     if (portrait?.complete && portrait.naturalWidth > 0) {
       drawFighterPortrait(
@@ -5012,13 +5086,14 @@
   function buildArchiveList() {
     dom.archiveList.innerHTML = "";
     FIGHTERS.forEach((fighter) => {
+      const visual = templateById(fighter.id);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "archive-item";
       button.dataset.fighterId = fighter.id;
       button.style.setProperty("--archive-color", fighter.color);
       button.innerHTML = `
-        <span class="archive-avatar" aria-hidden="true">${fighter.image ? `<img src="${fighter.image}" alt="">` : fighter.symbol}</span>
+        <span class="archive-avatar" aria-hidden="true">${visual.image ? `<img src="${visual.image}" alt="">` : fighter.symbol}</span>
         <span><strong>${fighter.name}</strong><small>${FIGHTER_DETAILS[fighter.id].role}</small></span>
       `;
       button.addEventListener("click", () => {
@@ -5172,6 +5247,11 @@
   document.querySelectorAll(".mode-button").forEach((button) => {
     button.addEventListener("click", () => setMode(button.dataset.mode));
   });
+  document.querySelectorAll("[data-wanderer-form]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setWandererForm(button.dataset.wandererForm, button.dataset.gender);
+    });
+  });
   document.querySelectorAll(".dpad button").forEach((button) => {
     const direction = button.dataset.dir;
     const release = () => {
@@ -5193,10 +5273,26 @@
     const portrait = new Image();
     portrait.src = fighter.image;
     fighterPortraits.set(fighter.id, portrait);
+    if (fighter.id === "01" || fighter.id === "02") {
+      fighterPortraits.set(`${fighter.id}:male`, portrait);
+    }
     if (fighter.altImage) {
       const alternate = new Image();
       alternate.src = fighter.altImage;
       fighterPortraits.set(`${fighter.id}:alt`, alternate);
+      if (fighter.id === "01" || fighter.id === "02") {
+        fighterPortraits.set(`${fighter.id}:male:alt`, alternate);
+      }
+    }
+    if (fighter.femaleImage) {
+      const female = new Image();
+      female.src = fighter.femaleImage;
+      fighterPortraits.set(`${fighter.id}:female`, female);
+      if (fighter.femaleAltImage) {
+        const femaleAlternate = new Image();
+        femaleAlternate.src = fighter.femaleAltImage;
+        fighterPortraits.set(`${fighter.id}:female:alt`, femaleAlternate);
+      }
     }
   });
   ["white-sheep", "black-sheep"].forEach((name) => {
@@ -5221,6 +5317,7 @@
   buildArchiveList();
   document.querySelector(".fighter-card")?.classList.add("is-selected");
   syncRosterSelection();
+  syncWandererFormState();
   updateChosenPanel();
   preparePreview();
   setRoundSeconds(dom.durationInput.value);

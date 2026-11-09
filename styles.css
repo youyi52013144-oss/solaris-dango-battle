@@ -636,6 +636,83 @@ h2 {
   font-size: 8px;
 }
 
+.wanderer-form-card {
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.wanderer-form-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wanderer-form-heading span {
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.wanderer-form-heading small {
+  color: var(--muted-2);
+  font-size: 7px;
+}
+
+.wanderer-form-row {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 7px;
+}
+
+.wanderer-form-row + .wanderer-form-row {
+  margin-top: 7px;
+}
+
+.wanderer-form-row > span {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.form-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.form-buttons button {
+  min-height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.form-buttons button:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.form-buttons button[aria-pressed="true"] {
+  border-color: rgba(255, 216, 77, 0.42);
+  color: #16130b;
+  background: linear-gradient(135deg, var(--yellow), #ffbf59);
+}
+
+.form-buttons button:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+
 .pool-card {
   margin-top: 14px;
   padding: 12px;
