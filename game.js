@@ -210,7 +210,7 @@
       attackDamage: 0,
       attackCooldown: 0,
       attackRange: 0,
-      skillCooldown: 10,
+      skillCooldown: 15,
       verinaFieldRadius: 2,
       verinaTickInterval: 0.05,
       verinaHealPerTick: 1,
@@ -218,7 +218,7 @@
       verinaSproutsForVine: 6,
       vineSlowMultiplier: 0.5,
       vineTickInterval: 0.05,
-      vineDamageDivisor: 100,
+      vineDamageDivisor: 500,
       ultimateType: "verinaBloom",
       ultimateCooldown: 10,
       verinaUltimateEnemyHeal: 300,
@@ -315,15 +315,15 @@
     "04": {
       role: "光属性场地养成 / 生命控制",
       range: "芽半径 2 格；藤作用于全场",
-      interval: "种芽 10 秒 / 共鸣解放 10 秒",
+      interval: "种芽 15 秒 / 共鸣解放 10 秒",
       mechanics: [
         "生命 500、移动速度 5 格/秒，自身没有普通攻击。",
-        "登场时在场地正中央种下第一颗芽，此后每 10 秒在自身脚下种下一颗芽。",
+        "登场时在场地正中央种下第一颗芽，此后每 15 秒在自身脚下种下一颗芽。",
         "芽没有实体、不可被索敌，也不会移动。",
         "每颗芽以自身为中心形成半径 2 格领域：维里奈处于范围内时每 0.05 秒恢复 1 生命。",
         "敌人处于芽的半径 2 格范围内时，每 0.05 秒受到 1 点伤害。",
         "场上芽的数量达到 6 颗时，正中央的芽生长为藤。",
-        "藤会使全场敌人移动速度降低 50%，并每 0.05 秒造成相当于维里奈最大生命值 1% 的伤害。",
+        "藤会使全场敌人移动速度降低 50%，并每 0.05 秒造成相当于维里奈最大生命值 1/500 的伤害。",
         "生命庭院需要场上存在藤才能释放；为所有敌人恢复 300 生命，自身最大生命增加 500。",
         "生命庭院冷却 10 秒。"
       ]
