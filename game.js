@@ -210,7 +210,7 @@
       attackDamage: 0,
       attackCooldown: 0,
       attackRange: 0,
-      skillCooldown: 15,
+      skillCooldown: 10,
       verinaFieldRadius: 2,
       verinaTickInterval: 0.05,
       verinaHealPerTick: 1,
@@ -315,10 +315,10 @@
     "04": {
       role: "光属性场地养成 / 生命控制",
       range: "芽半径 2 格；藤作用于全场",
-      interval: "种芽 15 秒 / 共鸣解放 10 秒",
+      interval: "种芽 10 秒 / 共鸣解放 10 秒",
       mechanics: [
         "生命 500、移动速度 5 格/秒，自身没有普通攻击。",
-        "登场时在场地正中央种下第一颗芽，此后每 15 秒在自身脚下种下一颗芽。",
+        "登场时在场地正中央种下第一颗芽，此后每 10 秒在自身脚下种下一颗芽。",
         "芽没有实体、不可被索敌，也不会移动。",
         "每颗芽以自身为中心形成半径 2 格领域：维里奈处于范围内时每 0.05 秒恢复 1 生命。",
         "敌人处于芽的半径 2 格范围内时，每 0.05 秒受到 1 点伤害。",
