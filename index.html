@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090b12">
+  <title>索拉里斯团子大对决</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="game.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="索拉里斯团子大对决首页">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i>
+        </span>
+        <span>
+          <b>索拉里斯</b>
+          <small>SOLARIS CLASH</small>
+        </span>
+      </a>
+
+      <div class="top-actions">
+        <div class="mode-switch" role="group" aria-label="游戏模式">
+          <button class="mode-button is-active" type="button" data-mode="watch" aria-pressed="true">
+            <span class="mode-icon" aria-hidden="true">◉</span>
+            自动观战
+          </button>
+          <button class="mode-button" type="button" data-mode="play" aria-pressed="false">
+            <span class="mode-icon" aria-hidden="true">⌁</span>
+            亲自挑战
+          </button>
+          <button class="mode-button" type="button" data-mode="multi" aria-pressed="false">
+            <span class="mode-icon" aria-hidden="true">✦</span>
+            多团混战
+          </button>
+        </div>
+        <label class="duration-control" for="durationInput" title="设置每局对局时长">
+          <span>对局</span>
+          <input id="durationInput" type="number" min="10" max="300" step="5" value="50" inputmode="numeric" aria-label="对局时长，单位秒">
+          <span>秒</span>
+        </label>
+        <button id="soundButton" class="icon-button" type="button" aria-pressed="true" aria-label="关闭音效" title="开关音效">
+          <span class="sound-on" aria-hidden="true">♪</span>
+          <span class="sound-off" aria-hidden="true">×</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="game-layout">
+      <aside class="side-panel roster-panel" aria-labelledby="rosterTitle">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">FIGHTER SELECT</span>
+            <h2 id="rosterTitle">选择出战团子</h2>
+          </div>
+          <span class="count-badge" id="rosterCount">06</span>
+        </div>
+        <p class="panel-copy">自动观战时，左右两侧团子可分别选择；对局时长也可自定义。</p>
+        <div class="config-side" role="group" aria-label="选择要配置的团子阵营">
+          <button class="is-active" type="button" data-config-side="left" aria-pressed="true">左侧团子</button>
+          <button type="button" data-config-side="right" aria-pressed="false">右侧团子</button>
+        </div>
+        <div id="multiHint" class="multi-hint" hidden>
+          <span>点击角色加入或移出混战</span>
+          <b><span id="multiCount">6</span> 只参战</b>
+        </div>
+        <label class="map-select" for="mapSelect">
+          <span>对战地图</span>
+          <select id="mapSelect">
+            <option value="20" selected>星环 · 20 × 20</option>
+            <option value="30">标准 · 30 × 30</option>
+          </select>
+        </label>
+        <div id="rosterGrid" class="roster-grid" role="listbox" aria-label="选择出战团子"></div>
+
+        <div class="pool-card">
+          <div class="pool-title">
+            <span>赛场道具</span>
+            <button id="itemToggle" class="pool-switch" type="button" aria-pressed="true" aria-label="关闭赛场道具">
+              <span class="pool-switch-track" aria-hidden="true"><i></i></span>
+              <b id="itemSwitchText">开启</b>
+            </button>
+          </div>
+          <div id="poolItems" class="pool-items">
+            <span><b class="pool-dot heal">+</b> 修复果</span>
+            <span><b class="pool-dot rage">⚡</b> 超能芯</span>
+            <span><b class="pool-dot speed">»</b> 疾风羽</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="stage-column" aria-label="游戏区域">
+        <div id="multiBoard" class="multi-board" aria-label="混战状态" hidden></div>
+        <div class="match-head">
+          <div class="fighter-readout fighter-readout-left">
+            <div class="fighter-avatar" id="playerMini" aria-hidden="true"><span></span></div>
+            <div class="fighter-info">
+              <span class="fighter-meta">
+                <span class="fighter-team">左侧团子</span>
+                <span class="fighter-energy-text" id="playerEnergyText">共鸣 0%</span>
+              </span>
+              <strong id="playerName">卡卡罗团子</strong>
+              <div class="health-track"><i id="playerHpBar"></i></div>
+              <div class="shield-line" id="playerShield" hidden>
+                <span id="playerShieldText">护盾 300</span>
+                <div class="shield-track"><i id="playerShieldBar"></i></div>
+              </div>
+              <div class="energy-track hud-energy-track"><i id="playerEnergyBar"></i></div>
+              <div class="special-gauge" id="playerSpecialGauge" hidden>
+                <span id="playerSpecialLabel">死告</span><i></i><i></i><i></i><b id="playerSpecialText">0/3</b>
+              </div>
+              <div class="abyss-gauge" id="playerAbyssGauge" hidden>
+                <span>暗涌</span><div class="abyss-track"><i></i></div><b id="playerAbyssText">0</b>
+              </div>
+            </div>
+            <span class="hp-number" id="playerHpText">1000</span>
+          </div>
+
+          <div class="score-box" aria-label="比分">
+            <span class="round-label" id="roundLabel">第 1 局</span>
+            <div class="score-line">
+              <b id="playerScore">0</b>
+              <span>:</span>
+              <b id="enemyScore">0</b>
+            </div>
+            <span class="match-state" id="matchState">三局两胜</span>
+          </div>
+
+          <div class="fighter-readout fighter-readout-right">
+            <span class="hp-number" id="enemyHpText">1000</span>
+            <div class="fighter-info">
+              <span class="fighter-meta">
+                <span class="fighter-energy-text" id="enemyEnergyText">共鸣 0%</span>
+                <span class="fighter-team">右侧团子</span>
+              </span>
+              <strong id="enemyName">安可团子</strong>
+              <div class="health-track"><i id="enemyHpBar"></i></div>
+              <div class="shield-line" id="enemyShield" hidden>
+                <span id="enemyShieldText">护盾 300</span>
+                <div class="shield-track"><i id="enemyShieldBar"></i></div>
+              </div>
+              <div class="energy-track hud-energy-track"><i id="enemyEnergyBar"></i></div>
+              <div class="special-gauge" id="enemySpecialGauge" hidden>
+                <span id="enemySpecialLabel">死告</span><i></i><i></i><i></i><b id="enemySpecialText">0/3</b>
+              </div>
+              <div class="abyss-gauge" id="enemyAbyssGauge" hidden>
+                <span>暗涌</span><div class="abyss-track"><i></i></div><b id="enemyAbyssText">0</b>
+              </div>
+            </div>
+            <div class="fighter-avatar" id="enemyMini" aria-hidden="true"><span></span></div>
+          </div>
+        </div>
+
+        <div class="arena-frame" id="arenaFrame">
+          <canvas id="gameCanvas" width="720" height="720" aria-label="多只团子在竞技场内碰撞反弹、积蓄共鸣能量并释放共鸣解放的游戏画面">
+            你的浏览器需要支持 Canvas 才能游玩。
+          </canvas>
+          <div class="arena-scanlines" aria-hidden="true"></div>
+          <div class="timer-orb" aria-label="剩余时间">
+            <span>TIME</span>
+            <b id="timerText">50</b>
+          </div>
+
+          <div id="countdown" class="countdown" aria-live="assertive"></div>
+          <div id="announcement" class="announcement" aria-live="polite"></div>
+          <div id="comboBadge" class="combo-badge" aria-hidden="true">
+            <b id="comboValue">2</b><span>连击</span>
+          </div>
+
+          <div id="gameOverlay" class="game-overlay">
+            <div class="overlay-orb" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </div>
+            <span class="overlay-eyebrow" id="overlayEyebrow">READY TO BOUNCE?</span>
+            <h1 id="overlayTitle">直线遭遇战</h1>
+            <p id="overlayCopy">20×20 格地图。团子沿随机直线移动，只在碰撞或触边后改变方向。</p>
+            <button id="overlayButton" class="primary-button" type="button">
+              <span>开始对战</span>
+              <i aria-hidden="true">→</i>
+            </button>
+            <span class="overlay-hint" id="overlayHint">自动观战 · 无需操作</span>
+          </div>
+        </div>
+
+        <div class="battle-toolbar">
+          <div class="status-chip">
+            <i id="statusDot" aria-hidden="true"></i>
+            <span id="battleStatus">等待开局</span>
+          </div>
+          <div class="playback-controls" role="group" aria-label="战斗播放速度">
+            <button id="slowButton" type="button" aria-label="减速">− 减速</button>
+            <b id="gameSpeedText" aria-live="polite">1×</b>
+            <button id="fastButton" type="button" aria-label="快进">快进 +</button>
+          </div>
+          <button id="abilityButton" class="ability-button" type="button" disabled title="共鸣能量满后释放共鸣解放">
+            <span class="ability-key" id="abilityKey">AUTO</span>
+            <span id="abilityLabel">自动解放</span>
+          </button>
+        </div>
+
+        <div class="control-strip" id="controlStrip">
+          <div class="control-copy" id="controlCopy">
+            <span class="control-kicker">观战模式</span>
+            <p>开局随机确定方向，全程直线移动，只在碰撞或触边后改变方向。</p>
+          </div>
+          <div class="key-guide" id="keyGuide" hidden>
+            <span><kbd>WASD</kbd><kbd>↑↓←→</kbd> 移动</span>
+            <span><kbd>E</kbd> 共鸣解放</span>
+            <span><kbd>R</kbd> 重新开局</span>
+          </div>
+          <button id="restartButton" class="ghost-button" type="button">重新开局 ↻</button>
+        </div>
+
+        <div id="touchPad" class="touch-pad" aria-label="触屏方向控制" hidden>
+          <div class="dpad">
+            <button type="button" data-dir="up" aria-label="向上">▲</button>
+            <button type="button" data-dir="left" aria-label="向左">◀</button>
+            <button type="button" data-dir="down" aria-label="向下">▼</button>
+            <button type="button" data-dir="right" aria-label="向右">▶</button>
+          </div>
+          <span>按住方向键移动</span>
+        </div>
+      </section>
+
+      <aside class="side-panel intel-panel" aria-labelledby="intelTitle">
+        <div class="panel-heading compact">
+          <div>
+            <span class="eyebrow">FIGHTER INTEL</span>
+            <h2 id="intelTitle">出战资料</h2>
+          </div>
+          <div class="panel-actions">
+            <button id="archiveButton" class="archive-trigger" type="button">角色档案</button>
+            <button id="shuffleButton" class="mini-button" type="button" title="随机更换对手">↻</button>
+          </div>
+        </div>
+
+        <div class="chosen-fighter" id="chosenFighter">
+          <div class="chosen-top">
+            <div class="chosen-orb" id="chosenOrb" aria-hidden="true"><span></span></div>
+            <div>
+              <span class="element-tag" id="chosenElement">雷 · 共鸣型</span>
+              <h3 id="chosenName">卡卡罗团子</h3>
+              <p id="chosenTagline">银发雷光，越战越凶。</p>
+            </div>
+          </div>
+
+          <div class="stat-list">
+            <div class="stat-row">
+              <span>攻击力</span>
+              <div class="stat-track"><i id="powerStat"></i></div>
+              <b id="powerValue">30</b>
+            </div>
+            <div class="stat-row">
+              <span>移动速度</span>
+              <div class="stat-track"><i id="speedStat"></i></div>
+              <b id="speedValue">8.0格/s</b>
+            </div>
+            <div class="stat-row">
+              <span>生命值</span>
+              <div class="stat-track"><i id="hpStat"></i></div>
+              <b id="hpValue">1000</b>
+            </div>
+          </div>
+
+          <div class="skill-card">
+            <div class="skill-head">
+              <span class="skill-glyph" id="skillGlyph" aria-hidden="true">ϟ</span>
+              <div>
+                <span>共鸣解放</span>
+                <h4 id="skillName">低血共鸣</h4>
+              </div>
+            </div>
+            <p id="skillDesc">生命低于 600 且冷却就绪时自动开启 6 秒；移速与死告能量获取翻倍，横扫范围扩大至直径 8 格。</p>
+          </div>
+        </div>
+
+        <div class="enemy-preview">
+          <span>对侧团子</span>
+          <div>
+            <i id="enemyDot" aria-hidden="true"></i>
+            <strong id="enemyPreviewName">安可团子</strong>
+            <small id="enemyPreviewTag">白咩常伴，低血生角。</small>
+          </div>
+        </div>
+
+        <div class="log-card">
+          <div class="log-heading">
+            <h3>战况速报</h3>
+            <span id="liveBadge"><i></i> LIVE</span>
+          </div>
+          <ol id="battleLog" class="battle-log" aria-live="polite">
+            <li><time>00:00</time><span>擂台正在等待第一声碰撞。</span></li>
+          </ol>
+        </div>
+
+        <button id="fightButton" class="primary-button side-start" type="button">
+          开始对战 <span aria-hidden="true">↗</span>
+        </button>
+      </aside>
+    </div>
+
+    <footer class="app-footer">
+      <span>索拉里斯团子 · 共鸣能量对战</span>
+      <span id="footerSettings">三局两胜 · 每局 50 秒</span>
+    </footer>
+  </main>
+
+  <dialog id="fighterArchive" class="archive-dialog" aria-labelledby="archiveTitle">
+    <div class="archive-header">
+      <div>
+        <span class="eyebrow">SOLARIS ARCHIVE</span>
+        <h2 id="archiveTitle">角色详细档案</h2>
+      </div>
+      <button id="archiveClose" class="archive-close" type="button" aria-label="关闭角色档案">×</button>
+    </div>
+    <div class="archive-body">
+      <nav id="archiveList" class="archive-list" aria-label="角色列表"></nav>
+      <article id="archiveDetail" class="archive-detail" aria-live="polite"></article>
+    </div>
+  </dialog>
+
+  <div id="screenReaderStatus" class="sr-only" aria-live="polite"></div>
+</body>
+</html>
