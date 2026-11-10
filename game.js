@@ -571,7 +571,7 @@
       mechanics: [
         "生命 900、移动速度 6 格/秒。",
         "初始普攻索敌半径 6 格，使用长刃进行从上而下的劈砍，攻击时显示金色椭圆范围闪光，对前方约 25 格的椭圆形区域造成 5 点伤害。",
-        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，攻击时显示金色椭圆范围闪光并造成 65 点伤害。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，使用弧形斩击造成 65 点伤害。",
         "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
         "每次切换普攻形态时解锁技能；自身停滞 1 秒，在最近敌人脚下生成半径 6 格光圈，恢复移动。",
         "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 0.7 秒，随后技能重新锁定。",
@@ -7934,44 +7934,19 @@
         ctx.translate(fighter.x, fighter.y);
         ctx.rotate(effect.angle);
         ctx.globalCompositeOperation = "lighter";
-        const centerX = effect.radius * 0.3;
-        const radiusX = effect.radius * (0.68 + progress * 0.04);
-        const radiusY = effect.radius * (0.53 + progress * 0.03);
-        const rangeGlow = ctx.createRadialGradient(centerX, 0, 3, centerX, 0, radiusX);
-        rangeGlow.addColorStop(0, `rgba(255, 254, 222, ${alpha * 0.68})`);
-        rangeGlow.addColorStop(0.32, colorWithAlpha(effect.color, alpha * 0.34));
-        rangeGlow.addColorStop(0.72, colorWithAlpha("#ffc940", alpha * 0.16));
-        rangeGlow.addColorStop(1, "rgba(255, 191, 42, 0)");
-        ctx.fillStyle = rangeGlow;
+        const radius = effect.radius * (0.82 + progress * 0.18);
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.82);
+        ctx.lineWidth = 14 * alpha + 2;
         ctx.shadowColor = effect.color;
-        ctx.shadowBlur = 24;
+        ctx.shadowBlur = 26;
         ctx.beginPath();
-        ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.92);
-        ctx.lineWidth = 3.5 * alpha + 1;
-        ctx.beginPath();
-        ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.arc(0, 0, radius, -effect.arcHalfAngle, effect.arcHalfAngle);
         ctx.stroke();
-        const flash = Math.max(0, 1 - progress * 2.6);
-        ctx.globalAlpha = alpha * (0.28 + flash * 0.72);
-        ctx.fillStyle = "rgba(255, 251, 211, 0.72)";
+        ctx.strokeStyle = `rgba(255, 255, 232, ${alpha * 0.9})`;
+        ctx.lineWidth = 2.4;
         ctx.beginPath();
-        ctx.ellipse(centerX, 0, radiusX * (0.64 + flash * 0.36), radiusY * (0.54 + flash * 0.46), 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = `rgba(255, 255, 235, ${alpha * (0.28 + flash * 0.68)})`;
-        ctx.lineWidth = 1.5;
-        for (let i = 0; i < 10; i += 1) {
-          const angle = i / 10 * Math.PI * 2;
-          const innerX = centerX + Math.cos(angle) * radiusX * 0.84;
-          const innerY = Math.sin(angle) * radiusY * 0.84;
-          const outerX = centerX + Math.cos(angle) * radiusX * (0.94 + flash * 0.11);
-          const outerY = Math.sin(angle) * radiusY * (0.94 + flash * 0.11);
-          ctx.beginPath();
-          ctx.moveTo(innerX, innerY);
-          ctx.lineTo(outerX, outerY);
-          ctx.stroke();
-        }
+        ctx.arc(0, 0, radius * 0.96, -effect.arcHalfAngle, effect.arcHalfAngle);
+        ctx.stroke();
       } else if (effect.type === "jinhsiBeamSpark") {
         const nx = -Math.sin(effect.angle);
         const ny = Math.cos(effect.angle);
