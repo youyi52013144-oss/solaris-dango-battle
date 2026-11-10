@@ -321,6 +321,7 @@
       umbrellaHits: 6,
       umbrellaSpeed: 2,
       umbrellaDistance: 15,
+      umbrellaAttackRadius: 2,
       jellyHp: 30,
       jellySpeed: 5,
       jellyRadius: 11,
@@ -335,10 +336,11 @@
       ultimateDuration: 8,
       ultimateCooldown: 18,
       mirageSlowMultiplier: 0.2,
-      mirageBonusDamage: 150,
+      mirageBonusDamage: 170,
+      mirageFallbackDamage: 130,
       ability: "蜃境迷梦",
       abilityIcon: "梦",
-      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 150 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时追加 150 点伤害。冷却 18 秒。",
+      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时追加 130 点伤害。冷却 18 秒。",
       cooldown: 18
     }
   ];
@@ -498,7 +500,7 @@
       mechanics: [
         "生命 660、移动速度 3 格/秒。",
         "敌人或可索敌召唤物进入半径 4 格后，坎特蕾拉沿攻击方向丢出雨伞。",
-        "雨伞以 2 格/秒直线飞行约 15 格，对每个接触目标最多造成 6 段、每段 10 点伤害并沿飞行方向击退。",
+        "雨伞保持 4 格索敌，以 2 格/秒直线飞行约 15 格，命中判定半径为 2 格；对每个接触目标最多造成 6 段、每段 10 点伤害并沿飞行方向击退。",
         "雨伞可以拦截敌方远程子弹，雨伞攻击冷却 4 秒。",
         "登场时在身边召唤 3 只水母，此后每 2 秒召唤 1 只。",
         "水母生命 30、移速 5 格/秒，具有碰撞体积且可被索敌，会自动追踪最近敌人。",
@@ -506,8 +508,8 @@
         "每只水母死亡时为坎特蕾拉恢复 10 点生命，并累计蜃境解锁进度。",
         "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
         "蜃境持续 8 秒，使场上所有单位移速降至 20%，敌方单位获得迷梦。",
-        "迷梦单位首次受击追加 150 点伤害，并立即解除迷梦与蜃境减速。",
-        "若蜃境持续期间没有对敌方造成伤害，结束时对仍存活的敌方单位追加 150 点特殊伤害；冷却 18 秒。"
+        "迷梦单位首次受击追加 170 点伤害，并立即解除迷梦与蜃境减速。",
+        "若蜃境持续期间没有对敌方造成伤害，结束时对仍存活的敌方单位追加 130 点特殊伤害；冷却 18 秒。"
       ]
     }
   };
@@ -3449,7 +3451,7 @@
       speed,
       traveled: 0,
       maxDistance: fighter.template.umbrellaDistance * CELL_SIZE,
-      r: CELL_SIZE * 0.82,
+      r: fighter.template.umbrellaAttackRadius * CELL_SIZE,
       hitCounts: new Map(),
       hitCooldowns: new Map(),
       spin: 0,
@@ -3609,9 +3611,9 @@
         });
         spawnBurst(fighter.x, fighter.y, "#d9a8ff", 38, 280);
         announce(`${fighter.template.name} · 蜃境回响`, "#e2baff", 1.1);
-        addLog(`${fighter.template.name} 的蜃境期间未造成伤害，结束时引发 150 点蜃境回响。`, "ability");
+        addLog(`${fighter.template.name} 的蜃境期间未造成伤害，结束时引发 ${fighter.template.mirageFallbackDamage} 点蜃境回响。`, "ability");
         targets.forEach((target) => {
-          applySpecialDamage(target, 150, fighter, "蜃境回响", {
+          applySpecialDamage(target, fighter.template.mirageFallbackDamage, fighter, "蜃境回响", {
             color: "#e0b5ff"
           });
         });
@@ -3892,11 +3894,11 @@
       maxLife: 0.34,
       color: fighter.template.color
     });
-    applyDamage(opponent, fighter.template.attackDamage, fighter, "前刺", {
+    const dealt = applyDamage(opponent, fighter.template.attackDamage, fighter, "前刺", {
       color: fighter.template.color
-    });
+    }) || 0;
     releaseVortexLock(opponent, true);
-    if (opponent.hp > 0 && state === "playing") {
+    if (dealt > 0 && state === "playing") {
       if (fighter.template.id === "01") gainWandererSpecialEnergy(fighter, opponent);
     }
     spawnBurst(
@@ -4279,10 +4281,11 @@
       return 0;
     }
     if (target.cantarellaDreamed && !options.ignoreDream) {
-      finalAmount += 150;
+      const dreamBonus = source?.template.mirageBonusDamage || 170;
+      finalAmount += dreamBonus;
       target.cantarellaDreamed = false;
       target.cantarellaSlowTimer = 0;
-      spawnDamageText(target.x, target.y - target.r - 16, "+150 迷梦", "#e0b9ff", true);
+      spawnDamageText(target.x, target.y - target.r - 16, `+${dreamBonus} 迷梦`, "#e0b9ff", true);
       effects.push({
         type: "dreamBreak",
         x: target.x,
