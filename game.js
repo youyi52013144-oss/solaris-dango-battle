@@ -552,6 +552,8 @@
     timerOrb: document.querySelector(".timer-orb"),
     itemToggle: document.getElementById("itemToggle"),
     itemSwitchText: document.getElementById("itemSwitchText"),
+    mobileItemToggle: document.getElementById("mobileItemToggle"),
+    mobileItemToggleText: document.getElementById("mobileItemToggleText"),
     poolItems: document.getElementById("poolItems"),
     slowButton: document.getElementById("slowButton"),
     fastButton: document.getElementById("fastButton"),
@@ -7309,6 +7311,9 @@
     dom.itemToggle.setAttribute("aria-pressed", String(enabled));
     dom.itemToggle.setAttribute("aria-label", enabled ? "关闭赛场道具" : "开启赛场道具");
     dom.itemSwitchText.textContent = enabled ? "开启" : "关闭";
+    dom.mobileItemToggle.setAttribute("aria-pressed", String(enabled));
+    dom.mobileItemToggle.setAttribute("aria-label", enabled ? "关闭赛场道具" : "开启赛场道具");
+    dom.mobileItemToggleText.textContent = enabled ? "道具开" : "道具关";
     dom.poolItems.classList.toggle("is-disabled", !enabled);
     if (!enabled) pickups = [];
     if (player && enemy) {
@@ -7534,6 +7539,7 @@
   });
   dom.mapSelect.addEventListener("change", () => setMapSize(dom.mapSelect.value));
   dom.itemToggle.addEventListener("click", () => setArenaItemsEnabled(!arenaItemsEnabled));
+  dom.mobileItemToggle.addEventListener("click", () => setArenaItemsEnabled(!arenaItemsEnabled));
   dom.slowButton.addEventListener("click", () => changeGameSpeed(-1));
   dom.fastButton.addEventListener("click", () => changeGameSpeed(1));
   dom.pauseButton.addEventListener("click", togglePause);

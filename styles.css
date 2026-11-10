@@ -1758,6 +1758,24 @@ h2 {
   font-variant-numeric: tabular-nums;
 }
 
+.mobile-item-toggle {
+  display: none !important;
+  align-items: center;
+  gap: 3px;
+}
+
+.mobile-item-toggle b {
+  min-width: 0;
+  color: inherit;
+  font-size: inherit;
+  font-variant-numeric: inherit;
+}
+
+.mobile-item-toggle[aria-pressed="true"] {
+  color: var(--green);
+  background: rgba(140, 233, 133, 0.08);
+}
+
 .status-chip {
   display: flex;
   align-items: center;
@@ -2634,6 +2652,10 @@ kbd {
     display: none;
   }
 
+  .mobile-item-toggle {
+    display: inline-flex !important;
+  }
+
   .chosen-orb {
     width: 52px;
     height: 52px;
@@ -2865,6 +2887,14 @@ kbd {
 
   .duration-control input {
     width: 39px;
+  }
+
+  .playback-controls {
+    gap: 1px;
+  }
+
+  .playback-controls button {
+    padding-inline: 6px;
   }
 
   .game-overlay {
