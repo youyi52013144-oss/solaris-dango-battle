@@ -390,7 +390,7 @@
       ultimateCooldown: 0,
       ability: "天光龙吟",
       abilityIcon: "龙",
-      abilityDesc: "强化普攻命中 4 次后解锁，无需共鸣能量。停滞 2 秒后腾空 3 秒；追踪敌人的半径 10 格光圈以 2 格/秒跟随，随后巨大光柱坠落并造成 600 点范围伤害。释放后大招重新锁定，强化普攻恢复为初始形态。",
+      abilityDesc: "强化普攻命中 4 次后解锁，无需共鸣能量。停滞 2 秒后伴随金龙飞升腾空 3 秒；追踪敌人的半径 10 格光圈以 2 格/秒跟随，随后金龙俯冲砸地并造成 600 点范围伤害。释放后大招重新锁定，强化普攻恢复为初始形态。",
       cooldown: 0
     }
   ];
@@ -570,15 +570,15 @@
       interval: "普攻 1.2 秒 / 技能切换形态时解锁 / 大招解锁后可用",
       mechanics: [
         "生命 900、移动速度 6 格/秒。",
-        "初始普攻索敌半径 6 格，使用长刃进行从上而下的劈砍，对前方约 25 格的椭圆形区域造成 5 点伤害。",
-        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现环绕金龙，弧形劈砍造成 65 点伤害。",
+        "初始普攻索敌半径 6 格，使用长刃进行从上而下的劈砍，攻击时显示金色椭圆范围闪光，对前方约 25 格的椭圆形区域造成 5 点伤害。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，攻击时显示金色椭圆范围闪光并造成 65 点伤害。",
         "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
         "每次切换普攻形态时解锁技能；自身停滞 1 秒，在最近敌人脚下生成半径 6 格光圈，恢复移动。",
         "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 0.7 秒，随后技能重新锁定。",
         "技能命中会使大招半径永久增加 1 格，增程效果仅在当前整场战斗中保留。",
         "大招释放时自身停滞 2 秒，随后腾空 3 秒；腾空期间不可被索敌且免疫全部伤害。",
         "腾空期间在敌人脚下生成半径 10 格以上的光圈，光圈以 2 格/秒追踪敌人。",
-        "光圈锁定结束后巨大光柱坠落，自身落在光圈中心，对范围内敌人造成 600 点特殊伤害。",
+        "光圈锁定结束后金龙俯冲砸地，自身落在光圈中心，对范围内敌人造成 600 点特殊伤害。",
         "释放大招后重新进入锁定状态，并将强化普攻恢复为初始普攻，需要再次完成两轮四段攻击。"
       ]
     }
@@ -4037,6 +4037,15 @@
             width: 10
           });
           spawnBurst(owner.x, owner.y, "#fff1a5", 42, 320);
+          effects.push({
+            type: "jinhsiDragonAscent",
+            x: owner.x,
+            y: owner.y,
+            radius: owner.r * 7.5,
+            life: 1.35,
+            maxLife: 1.35,
+            color: "#ffe48d"
+          });
           playSound("timeStop");
         }
         continue;
@@ -4066,7 +4075,7 @@
       owner.energy = 0;
       const radius = (owner.template.jinhsiUltimateRadius + owner.jinhsiRangeBonus) * CELL_SIZE;
       effects.push({
-        type: "jinhsiPillarImpact",
+        type: "jinhsiDragonImpact",
         x: owner.x,
         y: owner.y,
         radius,
@@ -4087,8 +4096,8 @@
           spawnBurst(unit.x, unit.y, "#fff4b2", 32, 300);
         });
       screenShake = Math.max(screenShake, 15);
-      announce(`${owner.template.name} · 天光落柱`, "#ffeaa0", 1.35);
-      addLog(`${owner.template.name} 的巨大光柱覆盖光圈，造成 ${owner.template.jinhsiUltimateDamage} 点范围伤害；大招重新锁定并恢复初始普攻。`, "ability");
+      announce(`${owner.template.name} · 光龙坠落`, "#ffeaa0", 1.35);
+      addLog(`${owner.template.name} 的光龙坠入光圈，造成 ${owner.template.jinhsiUltimateDamage} 点范围伤害；大招重新锁定并恢复初始普攻。`, "ability");
       playSound("abyss");
       jinhsiUltimates.splice(i, 1);
     }
@@ -6847,7 +6856,7 @@
       drawCantarellaWeapon(fighter, radius, t);
     } else if (fighter.template.id === "07") {
       if (jinhsiWeaponInFront) drawJinhsiWeapon(fighter, radius, t);
-      if (fighter.jinhsiEmpowered) drawJinhsiDragonOrbit(radius, t);
+      if (fighter.jinhsiEmpowered) drawJinhsiDragonOrbit(fighter, radius, t);
     }
 
     if (fighter.overclock > 0) {
@@ -7238,35 +7247,78 @@
     ctx.restore();
   }
 
-  function drawJinhsiDragonOrbit(radius, t) {
-    ctx.save();
-    ctx.globalCompositeOperation = "lighter";
-    ctx.shadowColor = "#ffd75e";
-    ctx.shadowBlur = 12;
-    const orbit = radius + 16;
-    const headAngle = t * 1.65;
-    for (let i = 5; i >= 1; i -= 1) {
-      const angle = headAngle - i * 0.13;
-      const x = Math.cos(angle) * (orbit + Math.sin(t * 2.3 + i) * 2);
-      const y = Math.sin(angle) * (orbit + Math.cos(t * 2.1 + i) * 2);
-      ctx.fillStyle = `rgba(255, ${205 + i * 5}, ${92 + i * 8}, ${0.2 + (6 - i) * 0.11})`;
+  function drawJinhsiDragonOrbit(fighter, radius, t) {
+    const dragonCount = 3;
+    for (let dragonIndex = 0; dragonIndex < dragonCount; dragonIndex += 1) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.shadowColor = "#ffd75e";
+      ctx.shadowBlur = 13 + dragonIndex * 2;
+      const orbit = radius + 15 + dragonIndex * 7;
+      const direction = dragonIndex % 2 === 0 ? 1 : -1;
+      const headAngle = direction * t * (1.42 + dragonIndex * 0.19)
+        + dragonIndex * Math.PI * 2 / dragonCount
+        + fighter.side * 0.8;
+      const segmentCount = 8;
+      const nodes = [];
+      for (let i = segmentCount; i >= 0; i -= 1) {
+        const segmentAngle = headAngle - direction * i * (0.14 + dragonIndex * 0.012);
+        const segmentOrbit = orbit + Math.sin(t * 2.1 + i * 0.72 + dragonIndex) * (1.4 + dragonIndex * 0.45);
+        nodes.push({
+          angle: segmentAngle,
+          x: Math.cos(segmentAngle) * segmentOrbit,
+          y: Math.sin(segmentAngle) * segmentOrbit,
+          index: i
+        });
+      }
+      ctx.strokeStyle = `rgba(255, 221, 105, ${0.32 - dragonIndex * 0.055})`;
+      ctx.lineWidth = 2.2 - dragonIndex * 0.35;
       ctx.beginPath();
-      ctx.ellipse(x, y, 4.8 - i * 0.35, 2.8 - i * 0.2, angle + Math.PI / 2, 0, Math.PI * 2);
+      nodes.forEach((node, index) => {
+        if (index === 0) ctx.moveTo(node.x, node.y);
+        else ctx.lineTo(node.x, node.y);
+      });
+      ctx.stroke();
+      nodes.slice(1).forEach((node) => {
+        const bodySize = 4.8 - node.index * 0.42;
+        ctx.fillStyle = `rgba(255, ${214 + node.index * 4}, ${102 + node.index * 7}, ${0.28 + (segmentCount - node.index) * 0.055})`;
+        ctx.beginPath();
+        ctx.ellipse(
+          node.x,
+          node.y,
+          Math.max(1.5, bodySize),
+          Math.max(1.1, bodySize * 0.58),
+          node.angle + Math.PI / 2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      });
+      const head = nodes[0];
+      const tangentX = -Math.sin(head.angle) * direction;
+      const tangentY = Math.cos(head.angle) * direction;
+      const normalX = Math.cos(head.angle);
+      const normalY = Math.sin(head.angle);
+      ctx.fillStyle = "#fff3b0";
+      ctx.beginPath();
+      ctx.ellipse(head.x, head.y, 5.1 - dragonIndex * 0.35, 3.5 - dragonIndex * 0.2, head.angle + Math.PI / 2, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = "rgba(255, 226, 111, 0.9)";
+      ctx.lineWidth = 1.3;
+      [-1, 1].forEach((side) => {
+        ctx.beginPath();
+        ctx.moveTo(head.x + normalX * side * 2.6, head.y + normalY * side * 2.6);
+        ctx.lineTo(head.x - tangentX * 8 + normalX * side * 4.6, head.y - tangentY * 8 + normalY * side * 4.6);
+        ctx.stroke();
+      });
+      ctx.beginPath();
+      ctx.moveTo(head.x + normalX * 3.1, head.y + normalY * 3.1);
+      ctx.lineTo(head.x + tangentX * 9 + normalX * 5.2, head.y + tangentY * 9 + normalY * 5.2);
+      ctx.moveTo(head.x - normalX * 3.1, head.y - normalY * 3.1);
+      ctx.lineTo(head.x + tangentX * 9 - normalX * 5.2, head.y + tangentY * 9 - normalY * 5.2);
+      ctx.stroke();
+      ctx.restore();
     }
-    const hx = Math.cos(headAngle) * orbit;
-    const hy = Math.sin(headAngle) * orbit;
-    ctx.fillStyle = "#fff2ad";
-    ctx.beginPath();
-    ctx.ellipse(hx, hy, 5.2, 3.7, headAngle + Math.PI / 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255, 225, 111, 0.88)";
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.moveTo(hx - Math.cos(headAngle - 0.5) * 5, hy - Math.sin(headAngle - 0.5) * 5);
-    ctx.lineTo(hx - Math.cos(headAngle) * 9, hy - Math.sin(headAngle) * 9);
-    ctx.stroke();
-    ctx.restore();
   }
 
   function drawAbyssAura(radius, t) {
@@ -7745,6 +7797,67 @@
           }
           ctx.restore();
         }
+      } else if (effect.type === "jinhsiDragonAscent") {
+        const progress = 1 - alpha;
+        const eased = progress * progress * (3 - 2 * progress);
+        const headY = -effect.radius * 0.18 - eased * effect.radius * 1.25;
+        const bodyLength = effect.radius * 0.92;
+        ctx.translate(effect.x, effect.y);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.shadowColor = "#ffd75e";
+        ctx.shadowBlur = 24;
+        const liftGlow = ctx.createLinearGradient(0, 18, 0, headY - bodyLength * 0.4);
+        liftGlow.addColorStop(0, "rgba(255, 211, 76, 0)");
+        liftGlow.addColorStop(0.45, `rgba(255, 223, 104, ${alpha * 0.22})`);
+        liftGlow.addColorStop(1, `rgba(255, 250, 210, ${alpha * 0.7})`);
+        ctx.fillStyle = liftGlow;
+        ctx.beginPath();
+        ctx.moveTo(-effect.radius * 0.14, 24);
+        ctx.lineTo(-effect.radius * 0.055, headY);
+        ctx.lineTo(effect.radius * 0.055, headY);
+        ctx.lineTo(effect.radius * 0.14, 24);
+        ctx.closePath();
+        ctx.fill();
+
+        const nodes = [];
+        for (let i = 12; i >= 0; i -= 1) {
+          const nodeProgress = i / 12;
+          const y = headY + bodyLength * nodeProgress;
+          const sway = Math.sin(visualTime * 7 + i * 0.66 + eased * 2) * effect.radius * (0.06 + nodeProgress * 0.025);
+          nodes.push({ x: sway, y, index: i });
+        }
+        ctx.strokeStyle = `rgba(255, 221, 105, ${alpha * 0.42})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        nodes.forEach((node, index) => {
+          if (index === 0) ctx.moveTo(node.x, node.y);
+          else ctx.lineTo(node.x, node.y);
+        });
+        ctx.stroke();
+        nodes.slice(1).forEach((node) => {
+          const size = 9.5 - node.index * 0.55;
+          ctx.fillStyle = `rgba(255, ${219 + node.index * 3}, ${112 + node.index * 5}, ${alpha * (0.34 + (12 - node.index) * 0.035)})`;
+          ctx.beginPath();
+          ctx.ellipse(node.x, node.y, Math.max(2.2, size), Math.max(1.8, size * 0.57), Math.PI / 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        const head = nodes[0];
+        ctx.fillStyle = `rgba(255, 248, 195, ${alpha})`;
+        ctx.beginPath();
+        ctx.ellipse(head.x, head.y, 9.5, 6.2, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 235, 139, ${alpha * 0.95})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(head.x - 5, head.y - 3);
+        ctx.lineTo(head.x - 15, head.y - 13);
+        ctx.moveTo(head.x + 5, head.y - 3);
+        ctx.lineTo(head.x + 15, head.y - 13);
+        ctx.moveTo(head.x - 7, head.y + 2);
+        ctx.lineTo(head.x - 21, head.y + 12);
+        ctx.moveTo(head.x + 7, head.y + 2);
+        ctx.lineTo(head.x + 21, head.y + 12);
+        ctx.stroke();
       } else if (effect.type === "jinhsiPillarImpact") {
         const progress = 1 - alpha;
         const radius = effect.radius * (0.55 + progress * 0.45);
@@ -7792,37 +7905,27 @@
         const centerX = effect.offset;
         const radiusX = effect.radius * (0.8 + progress * 0.2);
         const radiusY = effect.width * 0.5;
-        const slashGradient = ctx.createRadialGradient(centerX, 0, 2, centerX, 0, radiusX);
-        slashGradient.addColorStop(0, `rgba(255, 253, 224, ${alpha * 0.82})`);
-        slashGradient.addColorStop(0.46, colorWithAlpha(effect.color, alpha * 0.38));
-        slashGradient.addColorStop(1, "rgba(255, 202, 71, 0)");
-        ctx.fillStyle = slashGradient;
+        const rangeGlow = ctx.createRadialGradient(centerX, 0, 3, centerX, 0, radiusX);
+        rangeGlow.addColorStop(0, `rgba(255, 254, 226, ${alpha * 0.52})`);
+        rangeGlow.addColorStop(0.34, colorWithAlpha(effect.color, alpha * 0.28));
+        rangeGlow.addColorStop(0.76, colorWithAlpha("#ffc940", alpha * 0.12));
+        rangeGlow.addColorStop(1, "rgba(255, 191, 42, 0)");
+        ctx.fillStyle = rangeGlow;
         ctx.shadowColor = effect.color;
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 20;
         ctx.beginPath();
         ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = `rgba(255, 247, 190, ${alpha * 0.56})`;
-        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.88);
+        ctx.lineWidth = 3 * alpha + 1;
         ctx.beginPath();
         ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
         ctx.stroke();
-        const descendingY = -radiusY * (1.18 - progress * 2.36);
-        ctx.strokeStyle = `rgba(255, 239, 146, ${alpha * 0.62})`;
-        ctx.lineWidth = 13 * alpha + 2;
+        const flash = Math.max(0, 1 - progress * 2.4);
+        ctx.globalAlpha = alpha * (0.24 + flash * 0.76);
+        ctx.fillStyle = "rgba(255, 251, 214, 0.62)";
         ctx.beginPath();
-        ctx.moveTo(centerX - radiusX * 0.7, descendingY + radiusY * 0.36);
-        ctx.quadraticCurveTo(centerX, descendingY - radiusY * 0.7, centerX + radiusX * 0.72, descendingY - radiusY * 0.12);
-        ctx.stroke();
-        ctx.strokeStyle = `rgba(255, 254, 232, ${alpha})`;
-        ctx.lineWidth = 3.5 * alpha + 1;
-        ctx.beginPath();
-        ctx.moveTo(centerX - radiusX * 0.7, descendingY + radiusY * 0.36);
-        ctx.quadraticCurveTo(centerX, descendingY - radiusY * 0.7, centerX + radiusX * 0.72, descendingY - radiusY * 0.12);
-        ctx.stroke();
-        ctx.fillStyle = `rgba(255, 249, 204, ${alpha * 0.88})`;
-        ctx.beginPath();
-        ctx.arc(centerX + radiusX * 0.72, descendingY - radiusY * 0.12, 3 + alpha * 3, 0, Math.PI * 2);
+        ctx.ellipse(centerX, 0, radiusX * (0.68 + flash * 0.32), radiusY * (0.58 + flash * 0.42), 0, 0, Math.PI * 2);
         ctx.fill();
       } else if (effect.type === "jinhsiArcSlash") {
         if (!effect.fighter) return;
@@ -7831,19 +7934,44 @@
         ctx.translate(fighter.x, fighter.y);
         ctx.rotate(effect.angle);
         ctx.globalCompositeOperation = "lighter";
-        const radius = effect.radius * (0.82 + progress * 0.18);
-        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.82);
-        ctx.lineWidth = 14 * alpha + 2;
+        const centerX = effect.radius * 0.3;
+        const radiusX = effect.radius * (0.68 + progress * 0.04);
+        const radiusY = effect.radius * (0.53 + progress * 0.03);
+        const rangeGlow = ctx.createRadialGradient(centerX, 0, 3, centerX, 0, radiusX);
+        rangeGlow.addColorStop(0, `rgba(255, 254, 222, ${alpha * 0.68})`);
+        rangeGlow.addColorStop(0.32, colorWithAlpha(effect.color, alpha * 0.34));
+        rangeGlow.addColorStop(0.72, colorWithAlpha("#ffc940", alpha * 0.16));
+        rangeGlow.addColorStop(1, "rgba(255, 191, 42, 0)");
+        ctx.fillStyle = rangeGlow;
         ctx.shadowColor = effect.color;
-        ctx.shadowBlur = 26;
+        ctx.shadowBlur = 24;
         ctx.beginPath();
-        ctx.arc(0, 0, radius, -effect.arcHalfAngle, effect.arcHalfAngle);
-        ctx.stroke();
-        ctx.strokeStyle = `rgba(255, 255, 232, ${alpha * 0.9})`;
-        ctx.lineWidth = 2.4;
+        ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.92);
+        ctx.lineWidth = 3.5 * alpha + 1;
         ctx.beginPath();
-        ctx.arc(0, 0, radius * 0.96, -effect.arcHalfAngle, effect.arcHalfAngle);
+        ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
         ctx.stroke();
+        const flash = Math.max(0, 1 - progress * 2.6);
+        ctx.globalAlpha = alpha * (0.28 + flash * 0.72);
+        ctx.fillStyle = "rgba(255, 251, 211, 0.72)";
+        ctx.beginPath();
+        ctx.ellipse(centerX, 0, radiusX * (0.64 + flash * 0.36), radiusY * (0.54 + flash * 0.46), 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 255, 235, ${alpha * (0.28 + flash * 0.68)})`;
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 10; i += 1) {
+          const angle = i / 10 * Math.PI * 2;
+          const innerX = centerX + Math.cos(angle) * radiusX * 0.84;
+          const innerY = Math.sin(angle) * radiusY * 0.84;
+          const outerX = centerX + Math.cos(angle) * radiusX * (0.94 + flash * 0.11);
+          const outerY = Math.sin(angle) * radiusY * (0.94 + flash * 0.11);
+          ctx.beginPath();
+          ctx.moveTo(innerX, innerY);
+          ctx.lineTo(outerX, outerY);
+          ctx.stroke();
+        }
       } else if (effect.type === "jinhsiBeamSpark") {
         const nx = -Math.sin(effect.angle);
         const ny = Math.cos(effect.angle);
