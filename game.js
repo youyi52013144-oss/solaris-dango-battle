@@ -15,6 +15,13 @@
     RANGED: "ranged",
     SPECIAL: "special"
   });
+  const LOW_POWER_DEVICE = (navigator.hardwareConcurrency || 8) <= 4
+    || (navigator.deviceMemory || 8) <= 4
+    || window.matchMedia("(max-width: 760px)").matches;
+  const PARTICLE_LIMIT = LOW_POWER_DEVICE ? 300 : 620;
+  const EFFECT_LIMIT = LOW_POWER_DEVICE ? 90 : 160;
+  const FLOATING_TEXT_LIMIT = LOW_POWER_DEVICE ? 36 : 72;
+  const HUD_REFRESH_INTERVAL = 33;
 
   const FIGHTERS = [
     {
@@ -192,14 +199,14 @@
       ultimateType: "windCharge",
       ultimateCooldown: 30,
       chargeDuration: 3,
-      ultimateShieldCost: 300,
+      ultimateShieldCost: 150,
       ultimateShieldGain: 300,
       windWaveRadius: 8,
-      windWaveSpeed: 10,
+      windWaveSpeed: 15,
       windWaveStun: 1,
       ability: "涤罪心渊",
       abilityIcon: "风",
-      abilityDesc: "蓄力 3 秒后释放半径 8 格的穿透风波；生命高于 300 且拥有护盾时，消耗 300 生命并增加 300 护盾，随后清空全部护盾并把其一半转化为伤害，否则获得 300 点护盾。冷却 30 秒。",
+      abilityDesc: "蓄力 3 秒后释放以 15 格/秒移动、半径 8 格的穿透风波；生命高于 300 且拥有护盾时，消耗 150 生命并增加 300 护盾，随后清空全部护盾并把其一半转化为伤害，否则获得 300 点护盾。冷却 30 秒。",
       cooldown: 30
     },
     {
@@ -269,7 +276,7 @@
       ultimateDuration: 6,
       ultimateCooldown: 15,
       brantChestInterval: 10,
-      brantChestDuration: 24,
+      brantChestDuration: 30,
       brantChestLimit: 3,
       brantTreasureSpeedMultiplier: 4,
       brantPickupShield: 55,
@@ -278,7 +285,7 @@
       brantPickupEnergy: 25,
       brantAnchorEnergy: 50,
       brantAirborneDuration: 8,
-      brantAirborneDodgeChance: 0.2,
+      brantAirborneDodgeChance: 0.25,
       brantAnchorDamage: 180,
       brantAnchorWindup: 0.4,
       brantSmallRadiusX: 5.5,
@@ -400,8 +407,8 @@
         "风场结束时爆炸，对仍处于范围内的敌人造成 50 点特殊伤害。",
         "爆炸时若鉴心仍站在自己的风场内，获得 50 点护盾。",
         "共鸣解放需要原地蓄力 3 秒，期间不能移动，但仍会正常受到伤害。",
-        "生命高于 300 且拥有护盾时：消耗 300 生命并增加 300 护盾，随后清空全部护盾。",
-        "清空护盾后向最近敌人发出可穿透、半径 8 格、速度 10 格/秒的弧形风波。",
+        "生命高于 300 且拥有护盾时：消耗 150 生命并增加 300 护盾，随后清空全部护盾。",
+        "清空护盾后向最近敌人发出可穿透、半径 8 格、速度 15 格/秒的弧形风波。",
         "风波造成实际清空护盾值一半的特殊伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
         "不满足护盾与生命条件时：不消耗生命，蓄力结束后获得 300 点护盾。",
         "共鸣解放冷却固定为 30 秒。"
@@ -431,10 +438,10 @@
         "生命 880、移动速度 10 格/秒；敌人进入半径 3 格内使用剑前刺，否则使用全图锁定手枪。",
         "近战伤害 50、冷却 1.5 秒；远程伤害 25、冷却 2 秒，弹速 12 格/秒。",
         "近战时隐藏手枪，远程时隐藏剑。",
-        "每 10 秒在场地随机位置生成宝箱，存在 24 秒，场上最多同时存在 3 个；宝箱拾取范围为半径 1 格。",
+        "每 10 秒在场地随机位置生成宝箱，存在 30 秒，场上最多同时存在 3 个；宝箱拾取范围为半径 1 格。",
         "拾取宝箱获得 55 护盾和 25 点船锚能量，并在宝箱位置召唤船锚，前摇 0.4 秒后造成 180 点椭圆范围特殊伤害，覆盖面积约 60 格。",
         "普通攻击命中获得 5 点船锚能量；小宝箱船锚命中获得 50 点，大船锚不会增加能量。",
-        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间受到任何伤害时有 20% 概率完全闪避，仍可攻击。",
+        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间受到任何伤害时有 25% 概率完全闪避，仍可攻击。",
         "空中状态结束时瞬移到地图中心并保持定身，大船锚落地后恢复移动。",
         "大船锚造成 180 点椭圆范围特殊伤害，不增加船锚能量，覆盖面积约 100 格。",
         "共鸣解放持续 6 秒，移速翻倍，宝箱生成速度提升至 400%；冷却 15 秒。"
@@ -444,6 +451,8 @@
 
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
+  const arenaLayer = document.createElement("canvas");
+  const arenaLayerCtx = arenaLayer.getContext("2d");
   const dom = {
     rosterGrid: document.getElementById("rosterGrid"),
     rosterCount: document.getElementById("rosterCount"),
@@ -622,6 +631,7 @@
   let roundResultVoicePending = false;
   let multiResultVoicePending = false;
   let lastRoundFinishReason = "KO";
+  let lastHudRefreshAt = -Infinity;
   const GAME_SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
   const keys = Object.create(null);
   const touchDirection = { up: false, down: false, left: false, right: false };
@@ -2407,7 +2417,7 @@
       fighter.hp = Math.max(1, fighter.hp - fighter.template.ultimateShieldCost);
       fighter.shield += fighter.template.ultimateShieldGain;
       fighter.maxShield = Math.max(fighter.maxShield, fighter.shield);
-      spawnDamageText(fighter.x, fighter.y - fighter.r, "−300 生命", "#ff9b9b");
+      spawnDamageText(fighter.x, fighter.y - fighter.r, `−${fighter.template.ultimateShieldCost} 生命`, "#ff9b9b");
       effects.push({
         type: "shield",
         fighter,
@@ -2416,7 +2426,7 @@
         color: "#d8ffca"
       });
       announce(`${fighter.template.name} · 生命化为风障`, "#e5ffd9", 1);
-      addLog(`${fighter.template.name} 消耗 300 生命，将护盾提升至 ${Math.round(fighter.shield)}。`, "ability");
+      addLog(`${fighter.template.name} 消耗 ${fighter.template.ultimateShieldCost} 生命，将护盾提升至 ${Math.round(fighter.shield)}。`, "ability");
     } else {
       announce(`${fighter.template.name} · 风障蓄势`, "#d8ffca", 1);
       addLog(`${fighter.template.name} 开始蓄力，3 秒后获得 ${fighter.template.alternateShield} 点护盾。`, "ability");
@@ -2980,7 +2990,10 @@
     effects.push({ type: "brantAirborne", fighter, life: 0.7, maxLife: 0.7, color: "#d3658f" });
     spawnBurst(fighter.x, fighter.y, "#e58ab0", 34, 250);
     announce(`${fighter.template.name} · 绳索巡航`, "#efa0c1", 1.2);
-    addLog(`${fighter.template.name} 登上绳索，8 秒内获得 20% 闪避率。`, "ability");
+    addLog(
+      `${fighter.template.name} 登上绳索，8 秒内获得 ${Math.round(fighter.template.brantAirborneDodgeChance * 100)}% 闪避率。`,
+      "ability"
+    );
     playSound("blade");
   }
 
@@ -4239,6 +4252,11 @@
       text.y -= 34 * dt;
       if (text.life <= 0) floatingTexts.splice(i, 1);
     }
+    if (particles.length > PARTICLE_LIMIT) particles.splice(0, particles.length - PARTICLE_LIMIT);
+    if (effects.length > EFFECT_LIMIT) effects.splice(0, effects.length - EFFECT_LIMIT);
+    if (floatingTexts.length > FLOATING_TEXT_LIMIT) {
+      floatingTexts.splice(0, floatingTexts.length - FLOATING_TEXT_LIMIT);
+    }
   }
 
   function updateIdlePreview(dt) {
@@ -4316,7 +4334,15 @@
     });
   }
 
-  function updateHud() {
+  function updateHud(force = false) {
+    const now = performance.now();
+    if (
+      !force
+      && state === "playing"
+      && !voicePauseActive
+      && now - lastHudRefreshAt < HUD_REFRESH_INTERVAL
+    ) return;
+    lastHudRefreshAt = now;
     if (mode === "multi") {
       const activeEntries = (state === "idle" ? [] : multiFighters).map((fighter) => {
         let status = "";
@@ -4473,7 +4499,7 @@
       } else if (player.template.id === "04" && player.brantBigAnchorLock) {
         dom.battleStatus.textContent = "中场落锚 · 定身";
       } else if (player.template.id === "04" && player.brantAirborneTimer > 0) {
-        dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s · 20% 闪避`;
+        dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s · ${Math.round(player.template.brantAirborneDodgeChance * 100)}% 闪避`;
       } else if (player.template.id === "04" && player.brantUltimateTimer > 0) {
         dom.battleStatus.textContent = `船长狂想 ${player.brantUltimateTimer.toFixed(1)}s`;
       } else if (player.timeForceTimer > 0) {
@@ -4503,7 +4529,9 @@
   }
 
   function spawnBurst(x, y, color, count, speed) {
-    for (let i = 0; i < count; i += 1) {
+    const availableSlots = Math.max(0, PARTICLE_LIMIT - particles.length);
+    const spawnCount = Math.min(count, availableSlots);
+    for (let i = 0; i < spawnCount; i += 1) {
       const angle = random(0, Math.PI * 2);
       const velocity = random(speed * 0.25, speed);
       particles.push({
@@ -4582,7 +4610,7 @@
       ctx.translate(-voiceFocusFighter.x, -voiceFocusFighter.y);
     }
     ctx.translate(shakeX, shakeY);
-    drawArena();
+    ctx.drawImage(arenaLayer, 0, 0, ARENA_SIZE, ARENA_SIZE);
     drawBrantTreasures();
     drawVerinaPlants();
     drawWindFields();
@@ -4669,81 +4697,85 @@
     ctx.restore();
   }
 
-  function drawArena() {
-    const background = ctx.createLinearGradient(0, 0, ARENA_SIZE, ARENA_SIZE);
+  function createArenaGradients(paint = ctx) {
+    const background = paint.createLinearGradient(0, 0, ARENA_SIZE, ARENA_SIZE);
     background.addColorStop(0, "#101724");
     background.addColorStop(0.52, "#0b1019");
     background.addColorStop(1, "#12121c");
-    ctx.fillStyle = background;
-    ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
-
-    const glow = ctx.createRadialGradient(360, 345, 20, 360, 345, 390);
+    const glow = paint.createRadialGradient(360, 345, 20, 360, 345, 390);
     glow.addColorStop(0, "rgba(87, 105, 160, 0.15)");
     glow.addColorStop(0.55, "rgba(44, 54, 86, 0.035)");
     glow.addColorStop(1, "rgba(0, 0, 0, 0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+    const border = paint.createLinearGradient(BOUNDARY, BOUNDARY, ARENA_SIZE - BOUNDARY, ARENA_SIZE - BOUNDARY);
+    border.addColorStop(0, "rgba(255, 216, 77, 0.24)");
+    border.addColorStop(0.35, "rgba(255, 255, 255, 0.08)");
+    border.addColorStop(0.7, "rgba(92, 232, 229, 0.14)");
+    border.addColorStop(1, "rgba(255, 255, 255, 0.055)");
+    return { background, glow, border };
+  }
 
-    ctx.save();
-    ctx.lineWidth = 1;
+  function drawArena(paint = ctx) {
+    const { background, glow, border: borderGradient } = createArenaGradients(paint);
+    paint.fillStyle = background;
+    paint.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+    paint.fillStyle = glow;
+    paint.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+
+    paint.save();
+    paint.lineWidth = 1;
     for (let cell = 0; cell <= MAP_SIZE; cell += 1) {
       const p = BOUNDARY + cell * CELL_SIZE;
       const major = cell % 5 === 0;
-      ctx.strokeStyle = major ? "rgba(143, 164, 218, 0.12)" : "rgba(132, 151, 198, 0.045)";
-      ctx.beginPath();
-      ctx.moveTo(p, BOUNDARY);
-      ctx.lineTo(p, ARENA_SIZE - BOUNDARY);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(BOUNDARY, p);
-      ctx.lineTo(ARENA_SIZE - BOUNDARY, p);
-      ctx.stroke();
+      paint.strokeStyle = major ? "rgba(143, 164, 218, 0.12)" : "rgba(132, 151, 198, 0.045)";
+      paint.beginPath();
+      paint.moveTo(p, BOUNDARY);
+      paint.lineTo(p, ARENA_SIZE - BOUNDARY);
+      paint.stroke();
+      paint.beginPath();
+      paint.moveTo(BOUNDARY, p);
+      paint.lineTo(ARENA_SIZE - BOUNDARY, p);
+      paint.stroke();
     }
 
-    ctx.fillStyle = "rgba(178, 193, 231, 0.2)";
-    ctx.font = "700 7px 'Trebuchet MS'";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "bottom";
+    paint.fillStyle = "rgba(178, 193, 231, 0.2)";
+    paint.font = "700 7px 'Trebuchet MS'";
+    paint.textAlign = "left";
+    paint.textBaseline = "bottom";
     for (let cell = 5; cell < MAP_SIZE; cell += 5) {
-      ctx.fillText(String(cell), BOUNDARY + cell * CELL_SIZE + 3, BOUNDARY - 4);
+      paint.fillText(String(cell), BOUNDARY + cell * CELL_SIZE + 3, BOUNDARY - 4);
     }
 
-    ctx.fillStyle = "rgba(160, 177, 221, 0.05)";
-    ctx.font = "800 11px 'Trebuchet MS'";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(`${MAP_SIZE} × ${MAP_SIZE} TACTICAL GRID`, ARENA_SIZE / 2, ARENA_SIZE / 2);
-    ctx.restore();
+    paint.fillStyle = "rgba(160, 177, 221, 0.05)";
+    paint.font = "800 11px 'Trebuchet MS'";
+    paint.textAlign = "center";
+    paint.textBaseline = "middle";
+    paint.fillText(`${MAP_SIZE} × ${MAP_SIZE} TACTICAL GRID`, ARENA_SIZE / 2, ARENA_SIZE / 2);
+    paint.restore();
 
-    const borderGradient = ctx.createLinearGradient(BOUNDARY, BOUNDARY, ARENA_SIZE - BOUNDARY, ARENA_SIZE - BOUNDARY);
-    borderGradient.addColorStop(0, "rgba(255, 216, 77, 0.24)");
-    borderGradient.addColorStop(0.35, "rgba(255, 255, 255, 0.08)");
-    borderGradient.addColorStop(0.7, "rgba(92, 232, 229, 0.14)");
-    borderGradient.addColorStop(1, "rgba(255, 255, 255, 0.055)");
-    ctx.strokeStyle = borderGradient;
-    ctx.lineWidth = 2;
-    ctx.strokeRect(BOUNDARY, BOUNDARY, ARENA_SIZE - BOUNDARY * 2, ARENA_SIZE - BOUNDARY * 2);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.035)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(BOUNDARY + 7, BOUNDARY + 7, ARENA_SIZE - BOUNDARY * 2 - 14, ARENA_SIZE - BOUNDARY * 2 - 14);
+    paint.strokeStyle = borderGradient;
+    paint.lineWidth = 2;
+    paint.strokeRect(BOUNDARY, BOUNDARY, ARENA_SIZE - BOUNDARY * 2, ARENA_SIZE - BOUNDARY * 2);
+    paint.strokeStyle = "rgba(255, 255, 255, 0.035)";
+    paint.lineWidth = 1;
+    paint.strokeRect(BOUNDARY + 7, BOUNDARY + 7, ARENA_SIZE - BOUNDARY * 2 - 14, ARENA_SIZE - BOUNDARY * 2 - 14);
 
-    drawCornerMark(BOUNDARY + 16, BOUNDARY + 16, 1, 1, "#ffd84d");
-    drawCornerMark(ARENA_SIZE - BOUNDARY - 16, BOUNDARY + 16, -1, 1, "#5ce8e5");
-    drawCornerMark(BOUNDARY + 16, ARENA_SIZE - BOUNDARY - 16, 1, -1, "#5ce8e5");
-    drawCornerMark(ARENA_SIZE - BOUNDARY - 16, ARENA_SIZE - BOUNDARY - 16, -1, -1, "#ffd84d");
+    drawCornerMark(BOUNDARY + 16, BOUNDARY + 16, 1, 1, "#ffd84d", paint);
+    drawCornerMark(ARENA_SIZE - BOUNDARY - 16, BOUNDARY + 16, -1, 1, "#5ce8e5", paint);
+    drawCornerMark(BOUNDARY + 16, ARENA_SIZE - BOUNDARY - 16, 1, -1, "#5ce8e5", paint);
+    drawCornerMark(ARENA_SIZE - BOUNDARY - 16, ARENA_SIZE - BOUNDARY - 16, -1, -1, "#ffd84d", paint);
   }
 
-  function drawCornerMark(x, y, sx, sy, color) {
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.globalAlpha = 0.32;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x, y + sy * 17);
-    ctx.lineTo(x, y);
-    ctx.lineTo(x + sx * 17, y);
-    ctx.stroke();
-    ctx.restore();
+  function drawCornerMark(x, y, sx, sy, color, paint = ctx) {
+    paint.save();
+    paint.strokeStyle = color;
+    paint.globalAlpha = 0.32;
+    paint.lineWidth = 2;
+    paint.beginPath();
+    paint.moveTo(x, y + sy * 17);
+    paint.lineTo(x, y);
+    paint.lineTo(x + sx * 17, y);
+    paint.stroke();
+    paint.restore();
   }
 
   function drawTrails() {
@@ -6332,6 +6364,7 @@
     MAP_SIZE = nextSize;
     CELL_SIZE = (ARENA_SIZE - MAP_PADDING * 2) / MAP_SIZE;
     dom.mapSelect.value = String(MAP_SIZE);
+    resizeCanvas();
     if (needsRestart && player && enemy) {
       startMatch();
       addLog(`地图切换为 ${MAP_SIZE}×${MAP_SIZE} 格。`, "system");
@@ -6413,10 +6446,15 @@
   }
 
   function resizeCanvas() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dprCap = LOW_POWER_DEVICE ? 1.25 : 1.5;
+    const dpr = Math.min(dprCap, window.devicePixelRatio || 1);
     canvas.width = Math.round(ARENA_SIZE * dpr);
     canvas.height = Math.round(ARENA_SIZE * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    arenaLayer.width = canvas.width;
+    arenaLayer.height = canvas.height;
+    arenaLayerCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawArena(arenaLayerCtx);
   }
 
   function frame(now) {
