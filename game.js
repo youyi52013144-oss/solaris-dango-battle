@@ -79,17 +79,17 @@
       attackDamage: 0,
       attackCooldown: 5,
       summonType: "whiteSheep",
-      summonInterval: 5,
+      summonInterval: 3,
       fireballBlastRadius: 5,
       fireCraterRadius: 5,
       ability: "羊角觉醒",
       abilityIcon: "♈",
-      abilityDesc: "生命低于 400 时自动长出羊角；敌人进入半径 2 格后召唤黑咩，前摇 0.3 秒，命中半径 4 格，造成 230 点伤害。",
+      abilityDesc: "生命低于 400 时自动长出羊角；敌人进入半径 2 格后召唤黑咩，前摇 0.3 秒，对半径 4 格内所有敌人造成 230 点伤害，冷却 1 秒。",
       transformThreshold: 400,
       hornedDamage: 230,
       hornedSeekRange: 2,
       hornedHitRange: 4,
-      hornedCooldown: 2,
+      hornedCooldown: 1,
       blackSlamWindup: 0.3,
       cooldown: 0
     },
@@ -206,7 +206,7 @@
       windWaveStun: 1,
       ability: "涤罪心渊",
       abilityIcon: "风",
-      abilityDesc: "蓄力 3 秒后释放以 15 格/秒移动、半径 8 格的穿透风波；生命高于 300 且拥有护盾时，消耗 150 生命并增加 300 护盾，随后清空全部护盾并把其一半转化为伤害，否则获得 300 点护盾。冷却 30 秒。",
+      abilityDesc: "蓄力 3 秒后释放以 15 格/秒移动、半径 8 格的穿透风波；生命高于 300 且拥有护盾时，消耗 150 生命并增加 300 护盾，随后清空全部护盾并按其当前盾量转化为伤害，否则获得 300 点护盾。冷却 30 秒。",
       cooldown: 30
     },
     {
@@ -322,13 +322,13 @@
       umbrellaSpeed: 2,
       umbrellaDistance: 15,
       jellyHp: 30,
-      jellySpeed: 2,
+      jellySpeed: 5,
       jellyRadius: 11,
       jellyAttackDamage: 20,
       jellyAttackRange: 2,
       jellyAttackCooldown: 2,
       jellyHealOnDeath: 10,
-      jellySpawnInterval: 5,
+      jellySpawnInterval: 2,
       jellyStartingCount: 3,
       jellyDeathsToUnlock: 3,
       ultimateType: "cantarellaMirage",
@@ -396,11 +396,11 @@
       mechanics: [
         "安可自身不进行普通攻击，但仍会受到和造成碰撞伤害。",
         "白咩是独立单位，不可被索敌，拥有自己的位置、移动和攻击计时。",
-        "白咩每 5 秒发射火球，命中或触边后造成 30 点伤害，并在半径 5 格的圆形范围爆炸。",
+        "白咩每 3 秒发射火球，命中或触边后造成 30 点伤害，并在半径 5 格的圆形范围爆炸。",
         "爆炸留下半径 5 格的圆形爆炎弹坑，持续 4 秒，每 0.5 秒造成 10 点伤害。",
         "安可生命低于 400 时永久切换为羊角形态。",
         "羊角形态下，敌人进入半径 2 格索敌范围后召唤黑咩；前摇 0.3 秒，可移动躲避。",
-        "黑咩砸地命中半径为 4 格，造成 230 点伤害，冷却 2 秒。",
+        "黑咩砸地会对半径 4 格内的所有敌人造成 230 点伤害，冷却 1 秒。",
         "白咩火球、爆炎弹坑与黑咩砸击均属于特殊伤害。"
       ]
     },
@@ -453,7 +453,7 @@
         "共鸣解放需要原地蓄力 3 秒，期间不能移动，但仍会正常受到伤害。",
         "生命高于 300 且拥有护盾时：消耗 150 生命并增加 300 护盾，随后清空全部护盾。",
         "清空护盾后向最近敌人发出可穿透、半径 8 格、速度 15 格/秒的弧形风波。",
-        "风波造成实际清空护盾值一半的特殊伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
+        "风波造成等同于实际清空护盾值的特殊伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
         "不满足护盾与生命条件时：不消耗生命，蓄力结束后获得 300 点护盾。",
         "共鸣解放冷却固定为 30 秒。"
       ]
@@ -500,8 +500,8 @@
         "敌人或可索敌召唤物进入半径 4 格后，坎特蕾拉沿攻击方向丢出雨伞。",
         "雨伞以 2 格/秒直线飞行约 15 格，对每个接触目标最多造成 6 段、每段 10 点伤害并沿飞行方向击退。",
         "雨伞可以拦截敌方远程子弹，雨伞攻击冷却 4 秒。",
-        "登场时在身边召唤 3 只水母，此后每 5 秒召唤 1 只。",
-        "水母生命 30、移速 2 格/秒，具有碰撞体积且可被索敌，会自动追踪最近敌人。",
+        "登场时在身边召唤 3 只水母，此后每 2 秒召唤 1 只。",
+        "水母生命 30、移速 5 格/秒，具有碰撞体积且可被索敌，会自动追踪最近敌人。",
         "水母以半径 2 格进行半圆近战攻击，每次造成 20 点伤害，冷却 2 秒。",
         "每只水母死亡时为坎特蕾拉恢复 10 点生命，并累计蜃境解锁进度。",
         "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
@@ -2591,7 +2591,7 @@
       angle,
       radius: fighter.template.windWaveRadius * CELL_SIZE,
       speed: fighter.template.windWaveSpeed * CELL_SIZE,
-      damage: clearedShield * 0.5,
+      damage: clearedShield,
       clearedShield,
       life: waveLife,
       maxLife: waveLife,
@@ -2610,7 +2610,7 @@
       width: 11
     });
     announce(`${fighter.template.name} · 涤罪心渊`, "#eaffdf", 1.35);
-    addLog(`${fighter.template.name} 清空 ${Math.round(clearedShield)} 点护盾，打出伤害为 ${Math.round(clearedShield / 2)} 的弧形风波。`, "ability");
+    addLog(`${fighter.template.name} 清空 ${Math.round(clearedShield)} 点护盾，打出等量 ${Math.round(clearedShield)} 点伤害的弧形风波。`, "ability");
     playSound("wind");
   }
 
@@ -3929,27 +3929,36 @@
       const slam = blackSlams[i];
       slam.timer -= dt;
       if (slam.timer > 0) continue;
-      const { attacker, target } = slam;
-      const hit = target.hp > 0 && distance(attacker, target) <= attacker.template.hornedHitRange * CELL_SIZE;
+      const { attacker } = slam;
+      const range = attacker.template.hornedHitRange * CELL_SIZE;
+      const targets = getDamageableUnits().filter((target) => (
+        target.hp > 0
+        && target.side !== attacker.side
+        && distance(attacker, target) <= range + target.r * 0.15
+      ));
       effects.push({
         type: "ring",
         x: attacker.x,
         y: attacker.y,
         radius: 8,
-        growth: hit ? 650 : 430,
+        growth: targets.length ? 650 : 430,
         life: 0.55,
         maxLife: 0.55,
         color: "#adb6c5",
         width: 8
       });
-      if (hit) {
-        applySpecialDamage(target, attacker.template.hornedDamage, attacker, "黑咩砸击", { color: "#c8ced8" });
-        spawnBurst(target.x, target.y, "#d8dee8", 32, 280);
+      if (targets.length) {
+        targets.forEach((target) => {
+          applySpecialDamage(target, attacker.template.hornedDamage, attacker, "黑咩砸击", {
+            color: "#c8ced8"
+          });
+          spawnBurst(target.x, target.y, "#d8dee8", 24, 250);
+        });
         screenShake = Math.max(screenShake, 8);
         announce(`${attacker.template.name} · 黑咩砸击`, "#d8dee8", 0.9);
-        addLog(`${attacker.template.name} 的黑咩命中，造成 ${attacker.template.hornedDamage} 点伤害。`, "ability");
+        addLog(`${attacker.template.name} 的黑咩命中 ${targets.length} 个敌方单位，各造成 ${attacker.template.hornedDamage} 点范围伤害。`, "ability");
       } else {
-        addLog(`${target.template.name} 在前摇结束前离开了黑咩范围，成功躲开。`, "system");
+        addLog("所有目标都在前摇结束前离开了黑咩预警范围。", "system");
         announce("黑咩落空", "#adb6c5", 0.8);
       }
       playSound("sword");
@@ -5734,27 +5743,51 @@
 
   function drawPendingBlackSlams() {
     const portrait = summonPortraits.get("black-sheep");
-    if (!portrait?.complete) return;
     blackSlams.forEach((slam) => {
       const progress = 1 - Math.max(0, slam.timer) / slam.maxTimer;
-      const height = CELL_SIZE * 4.8;
-      const width = height * (portrait.naturalWidth / portrait.naturalHeight);
       const attacker = slam.attacker;
-      const targetY = attacker.y - attacker.r * 0.3;
-      const drawY = targetY - height - 150 * Math.pow(1 - progress, 1.8);
       const range = attacker.template.hornedHitRange * CELL_SIZE;
       ctx.save();
-      ctx.strokeStyle = colorWithAlpha("#d7deea", 0.42 + Math.sin(visualTime * 28) * 0.15);
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 6]);
+      const warning = ctx.createRadialGradient(attacker.x, attacker.y, 4, attacker.x, attacker.y, range);
+      warning.addColorStop(0, `rgba(215, 222, 234, ${0.08 + progress * 0.1})`);
+      warning.addColorStop(0.82, `rgba(161, 173, 196, ${0.05 + progress * 0.07})`);
+      warning.addColorStop(1, "rgba(116, 128, 153, 0.015)");
+      ctx.fillStyle = warning;
+      ctx.beginPath();
+      ctx.arc(attacker.x, attacker.y, range, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = colorWithAlpha("#eef2f8", 0.58 + Math.sin(visualTime * 28) * 0.16);
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([7, 5]);
+      ctx.lineDashOffset = -visualTime * 22;
       ctx.beginPath();
       ctx.arc(attacker.x, attacker.y, range, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.globalAlpha = 0.72 + progress * 0.28;
-      ctx.shadowColor = "#d5dbe4";
-      ctx.shadowBlur = 22;
-      ctx.drawImage(portrait, attacker.x - width / 2, drawY, width, height);
+      ctx.strokeStyle = "rgba(238, 242, 248, 0.34)";
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 12; i += 1) {
+        const angle = i / 12 * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(attacker.x + Math.cos(angle) * (range - 8), attacker.y + Math.sin(angle) * (range - 8));
+        ctx.lineTo(attacker.x + Math.cos(angle) * (range + 5), attacker.y + Math.sin(angle) * (range + 5));
+        ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(238, 242, 248, 0.78)";
+      ctx.font = "800 8px 'Trebuchet MS'";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`黑咩落点 ${slam.timer.toFixed(2)}s`, attacker.x, attacker.y - range - 10);
+      if (portrait?.complete && portrait.naturalWidth > 0) {
+        const height = CELL_SIZE * 4.8;
+        const width = height * (portrait.naturalWidth / portrait.naturalHeight);
+        const targetY = attacker.y - attacker.r * 0.3;
+        const drawY = targetY - height - 150 * Math.pow(1 - progress, 1.8);
+        ctx.globalAlpha = 0.72 + progress * 0.28;
+        ctx.shadowColor = "#d5dbe4";
+        ctx.shadowBlur = 22;
+        ctx.drawImage(portrait, attacker.x - width / 2, drawY, width, height);
+      }
       ctx.restore();
     });
   }
