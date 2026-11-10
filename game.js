@@ -345,6 +345,51 @@
       abilityIcon: "梦",
       abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
       cooldown: 18
+    },
+    {
+      id: "07",
+      voiceOrder: 9,
+      name: "今汐团子",
+      element: "衍射 · 光龙型",
+      tagline: "龙吟破晓，天光垂落。",
+      color: "#f4c95d",
+      dark: "#72511f",
+      symbol: "汐",
+      image: "assets/jinhsi.png",
+      weaponImage: "assets/jinhsi-weapon.png",
+      hp: 900,
+      power: 1,
+      speed: 8,
+      radius: 27,
+      stats: { power: 90, speed: 100, hp: 90 },
+      display: { attack: "20 / 强化60", speed: "8.0格/s", hp: "900" },
+      attackType: "jinhsiSlash",
+      attackDamage: 20,
+      attackCooldown: 1.2,
+      attackRange: 4,
+      jinhsiEmpoweredRange: 6,
+      jinhsiEmpoweredDamage: 60,
+      jinhsiHitsToEmpower: 4,
+      jinhsiHitsToUltimate: 4,
+      jinhsiBaseSlashLength: 10,
+      jinhsiBaseSlashWidth: 2.6,
+      jinhsiArcAngle: Math.PI * 1.3,
+      jinhsiSkillCooldown: 12,
+      jinhsiBeamSpeed: 20,
+      jinhsiBeamDamage: 10,
+      jinhsiBeamStun: 2,
+      jinhsiBeamRadius: 2.2,
+      jinhsiUltimateCharge: 2,
+      jinhsiUltimateAirTime: 3,
+      jinhsiUltimateRadius: 10,
+      jinhsiUltimateFollowSpeed: 2,
+      jinhsiUltimateDamage: 600,
+      ultimateType: "jinhsiDragon",
+      ultimateCooldown: 0,
+      ability: "天光龙吟",
+      abilityIcon: "龙",
+      abilityDesc: "强化普攻命中 4 次后解锁，无需共鸣能量。停滞 2 秒后腾空 3 秒；追踪敌人的半径 10 格光圈以 2 格/秒跟随，随后光龙坠落并造成 600 点范围伤害。释放后大招重新锁定，强化普攻恢复为初始形态。",
+      cooldown: 0
     }
   ];
 
@@ -516,6 +561,23 @@
         "感知汲取会替换普通攻击：敌人进入半径 8 格后，立即在其位置引爆半径 4 格的暗紫水母爆炸，造成 120 点范围特殊伤害。",
         "感知汲取触发后失效，坎特蕾拉恢复雨伞普通攻击，直到下一次蜃境再次赋予该状态；冷却 18 秒。"
       ]
+    },
+    "07": {
+      role: "近战强化 / 腾空爆发",
+      range: "初始索敌半径 4 格；强化索敌半径 6 格；大招光圈半径 10 格",
+      interval: "普攻 1.2 秒 / 技能 12 秒 / 大招解锁后可用",
+      mechanics: [
+        "生命 900、移动速度 8 格/秒。",
+        "初始普攻索敌半径 4 格，使用长刃进行约 10 格距离的横向劈砍，每次造成 20 点伤害。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，进行大范围弧形劈砍，每次造成 60 点伤害。",
+        "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
+        "技能每 12 秒释放一次光柱，以 20 格/秒向前推进，命中造成 10 点伤害并眩晕 2 秒。",
+        "光柱每次成功命中，会永久增加 1 格普攻索敌、劈砍范围和大招光圈半径。",
+        "大招释放时自身停滞 2 秒，随后腾空 3 秒；腾空期间不可被索敌且免疫全部伤害。",
+        "腾空期间在敌人脚下生成半径 10 格的光圈，光圈以 2 格/秒追踪敌人。",
+        "光圈锁定结束后光龙坠落，自身落在光圈中心，对范围内敌人造成 600 点特殊伤害。",
+        "释放大招后重新进入锁定状态，并将强化普攻恢复为初始普攻，需要再次完成两轮四段攻击。"
+      ]
     }
   };
 
@@ -649,7 +711,7 @@
   let player = null;
   let enemy = null;
   let multiFighters = [];
-  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "06", "04", "05"];
+  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "06", "04", "05", "07"];
   let score = [0, 0];
   let round = 1;
   let roundSeconds = DEFAULT_ROUND_SECONDS;
@@ -692,6 +754,9 @@
   let cantarellaJellies = [];
   let cantarellaUmbrellas = [];
   let cantarellaSequence = 0;
+  let jinhsiBeams = [];
+  let jinhsiUltimates = [];
+  let jinhsiSequence = 0;
   let pickups = [];
   let floatingTexts = [];
   const voiceJobs = [];
@@ -738,7 +803,7 @@
   const getConfigId = () => mode === "multi" || configSide === "left" ? selectedId : enemyId;
   const getActiveFighters = () => mode === "multi" ? multiFighters : [player, enemy].filter(Boolean);
   const getDamageableUnits = () => [
-    ...getActiveFighters(),
+    ...getActiveFighters().filter((fighter) => fighter && !fighter.jinhsiAirborne),
     ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0)
   ];
 
@@ -804,6 +869,16 @@
       cantarellaPerceptionReady: false,
       cantarellaSlowTimer: 0,
       cantarellaDreamed: false,
+      jinhsiAttackCount: 0,
+      jinhsiEmpowered: false,
+      jinhsiUltimateUnlocked: false,
+      jinhsiRangeBonus: 0,
+      jinhsiSkillClock: 1.5,
+      jinhsiUltimatePhase: "idle",
+      jinhsiAirborne: false,
+      jinhsiAttackAngle: 0,
+      jinhsiSwingTime: 0,
+      jinhsiSwingEmpowered: false,
       voiceUltimatePending: false,
       voiceDeathSentencePending: false,
       deathVoicePlayed: false,
@@ -1063,6 +1138,12 @@
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "蜃境迷梦";
       dom.abilityButton.title = "累计死亡 3 只水母后，共鸣能量满时开启蜃境";
+      return;
+    }
+    if (fighter.id === "07") {
+      dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
+      dom.abilityLabel.textContent = "天光龙吟";
+      dom.abilityButton.title = "强化普攻命中 4 次后解锁，释放后重新锁定";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -1410,6 +1491,9 @@
     cantarellaJellies = [];
     cantarellaUmbrellas = [];
     cantarellaSequence = 0;
+    jinhsiBeams = [];
+    jinhsiUltimates = [];
+    jinhsiSequence = 0;
     pickups = [];
     floatingTexts = [];
     timeStopOwner = null;
@@ -1599,6 +1683,7 @@
     }
     updateSummons(dt);
     updateCantarellaSystem(dt);
+    updateJinhsiSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
     updateBlackSlams(dt);
@@ -1649,7 +1734,7 @@
     }
 
     getActiveFighters().forEach((fighter) => {
-      if (fighter.hp <= 0) return;
+      if (fighter.hp <= 0 || fighter.jinhsiAirborne) return;
       const opponent = nearestOpponent(fighter);
       if (opponent) updateFighter(fighter, opponent, dt, false);
     });
@@ -1671,6 +1756,7 @@
     }
     updateSummons(dt);
     updateCantarellaSystem(dt);
+    updateJinhsiSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
     updateBlackSlams(dt);
@@ -1766,6 +1852,12 @@
   }
 
   function updateFighter(fighter, opponent, dt, isPlayer) {
+    if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") {
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
     if (fighter.template.id === "04" && fighter.brantBigAnchorLock) {
       fighter.x = ARENA_SIZE / 2;
       fighter.y = ARENA_SIZE / 2;
@@ -1817,9 +1909,12 @@
       fighter.vx = Math.cos(angle) * speed;
       fighter.vy = Math.sin(angle) * speed;
     }
-    if (fighter.template.id === "04" && opponent) {
-      fighter.brantMeleeMode = distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE;
-      fighter.brantAimAngle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    if (fighter.template.id === "04") {
+      const facingTarget = nearestOpponent(fighter) || opponent;
+      if (facingTarget) {
+        fighter.brantMeleeMode = distance(fighter, facingTarget) <= fighter.template.attackRange * CELL_SIZE;
+        fighter.brantAimAngle = Math.atan2(facingTarget.y - fighter.y, facingTarget.x - fighter.x);
+      }
     }
 
     if (isPlayer && mode === "play") {
@@ -1911,6 +2006,20 @@
     if (fighter.cantarellaSlowTimer > 0) {
       fighter.cantarellaSlowTimer = Math.max(0, fighter.cantarellaSlowTimer - dt);
       if (fighter.cantarellaSlowTimer === 0) fighter.cantarellaDreamed = false;
+    }
+    fighter.jinhsiSwingTime = Math.max(0, fighter.jinhsiSwingTime - dt);
+    if (
+      fighter.template.id === "07"
+      && fighter.hp > 0
+      && fighter.jinhsiUltimatePhase === "idle"
+      && fighter.stunned <= 0
+      && fighter.freeze <= 0
+      && fighter.vortexLockTimer <= 0
+    ) {
+      fighter.jinhsiSkillClock = Math.max(0, fighter.jinhsiSkillClock - dt);
+      if (fighter.jinhsiSkillClock === 0 && fireJinhsiBeam(fighter)) {
+        fighter.jinhsiSkillClock = fighter.template.jinhsiSkillCooldown;
+      }
     }
     fighter.ultimateCooldown = Math.max(0, fighter.ultimateCooldown - dt);
     if (fighter.template.id === "03" && fighter.hp > 0) {
@@ -2069,6 +2178,11 @@
 
   function resolveCollision() {
     if (!player || !enemy || state !== "playing") return;
+    if (player.jinhsiAirborne || enemy.jinhsiAirborne) {
+      player.inContact = false;
+      enemy.inContact = false;
+      return;
+    }
     if (player.knockback || enemy.knockback) {
       player.inContact = false;
       enemy.inContact = false;
@@ -2172,7 +2286,7 @@
   }
 
   function resolveMultiCollisions() {
-    const fighters = getActiveFighters().filter((fighter) => fighter.hp > 0);
+    const fighters = getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne);
     fighters.forEach((fighter) => {
       fighter.inContact = false;
     });
@@ -2350,7 +2464,7 @@
 
   function updateTimeVortices(dt) {
     getActiveFighters().forEach((fighter) => {
-      if (fighter.hp <= 0) return;
+      if (fighter.hp <= 0 || fighter.jinhsiAirborne) return;
       for (const [vortexId, remaining] of fighter.vortexImmunity.entries()) {
         const next = remaining - dt;
         if (next <= 0) fighter.vortexImmunity.delete(vortexId);
@@ -3659,6 +3773,304 @@
     playSound("abyss");
   }
 
+  function performJinhsiSlash(fighter, opponent) {
+    const empowered = fighter.jinhsiEmpowered;
+    const rangeBonus = fighter.jinhsiRangeBonus * CELL_SIZE;
+    const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    fighter.jinhsiAttackAngle = angle;
+    fighter.jinhsiSwingTime = empowered ? 0.52 : 0.38;
+    fighter.jinhsiSwingEmpowered = empowered;
+    fighter.weaponSwingMax = fighter.jinhsiSwingTime;
+    fighter.weaponSwing = fighter.jinhsiSwingTime;
+
+    const slashLength = (fighter.template.jinhsiBaseSlashLength * CELL_SIZE) + rangeBonus;
+    const slashWidth = fighter.template.jinhsiBaseSlashWidth * CELL_SIZE;
+    const arcRadius = (fighter.template.jinhsiEmpoweredRange * CELL_SIZE) + rangeBonus;
+    const arcHalfAngle = fighter.template.jinhsiArcAngle / 2;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    let dealtAny = false;
+
+    effects.push({
+      type: empowered ? "jinhsiArcSlash" : "jinhsiLongSlash",
+      fighter,
+      angle,
+      radius: empowered ? arcRadius : slashLength,
+      width: slashWidth,
+      arcHalfAngle,
+      life: empowered ? 0.55 : 0.4,
+      maxLife: empowered ? 0.55 : 0.4,
+      color: "#ffe39a"
+    });
+
+    getDamageableUnits()
+      .filter((target) => target !== fighter && target.side !== fighter.side && target.hp > 0)
+      .forEach((target) => {
+        const dx = target.x - fighter.x;
+        const dy = target.y - fighter.y;
+        const forward = dx * cos + dy * sin;
+        const lateral = Math.abs(-dx * sin + dy * cos);
+        const targetDistance = Math.hypot(dx, dy);
+        const inArea = empowered
+          ? targetDistance <= arcRadius + target.r * 0.2
+            && Math.abs(Math.atan2(Math.sin(Math.atan2(dy, dx) - angle), Math.cos(Math.atan2(dy, dx) - angle))) <= arcHalfAngle
+          : forward >= -target.r * 0.2
+            && forward <= slashLength + target.r * 0.2
+            && lateral <= slashWidth * 0.5 + target.r * 0.2;
+        if (!inArea) return;
+        const dealt = applyDamage(
+          target,
+          empowered ? fighter.template.jinhsiEmpoweredDamage : fighter.template.attackDamage,
+          fighter,
+          empowered ? "龙刃回旋" : "横断",
+          { color: "#ffe39a", melee: true }
+        ) || 0;
+        if (dealt > 0) dealtAny = true;
+        spawnBurst(target.x, target.y, "#ffe39a", empowered ? 24 : 13, empowered ? 240 : 160);
+      });
+
+    if (dealtAny && state === "playing") {
+      fighter.jinhsiAttackCount += 1;
+      if (!empowered && fighter.jinhsiAttackCount >= fighter.template.jinhsiHitsToEmpower) {
+        fighter.jinhsiEmpowered = true;
+        fighter.jinhsiAttackCount = 0;
+        fighter.attackClock = 0.45;
+        announce(`${fighter.template.name} · 龙刃强化`, "#ffe8a6", 1.2);
+        addLog(`${fighter.template.name} 完成四段初始普攻，切换为强化普攻。`, "ability");
+        playSound("lightning");
+      } else if (empowered && fighter.jinhsiAttackCount >= fighter.template.jinhsiHitsToUltimate) {
+        fighter.jinhsiUltimateUnlocked = true;
+        fighter.jinhsiAttackCount = 0;
+        fighter.energy = 100;
+        announce(`${fighter.template.name} · 天光龙吟解锁`, "#fff0b0", 1.35);
+        addLog(`${fighter.template.name} 完成四段强化普攻，共鸣解放「天光龙吟」解锁。`, "ability");
+        playSound("timeStop");
+      }
+    }
+    addLog(
+      `${fighter.template.name} ${empowered ? "挥出强化弧形龙刃" : "挥出长刃横斩"}，造成 ${empowered ? fighter.template.jinhsiEmpoweredDamage : fighter.template.attackDamage} 点伤害。`,
+      "ability"
+    );
+    playSound("sword");
+  }
+
+  function fireJinhsiBeam(fighter) {
+    const opponent = nearestOpponent(fighter);
+    if (!opponent) return false;
+    const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    const speed = fighter.template.jinhsiBeamSpeed * CELL_SIZE;
+    jinhsiBeams.push({
+      id: ++jinhsiSequence,
+      owner: fighter,
+      x: fighter.x + Math.cos(angle) * (fighter.r + 8),
+      y: fighter.y + Math.sin(angle) * (fighter.r + 8),
+      angle,
+      speed,
+      traveled: 0,
+      maxDistance: ARENA_SIZE * 1.35,
+      radius: fighter.template.jinhsiBeamRadius * CELL_SIZE,
+      hitIds: new Set(),
+      rangeGained: false,
+      sparkClock: 0,
+      phase: random(0, Math.PI * 2)
+    });
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: 8,
+      growth: 340,
+      life: 0.32,
+      maxLife: 0.32,
+      color: "#ffe589",
+      width: 4
+    });
+    addLog(`${fighter.template.name} 释放逐光柱。`, "ability");
+    playSound("lightning");
+    return true;
+  }
+
+  function beginJinhsiUltimate(fighter, opponent) {
+    if (!fighter || fighter.jinhsiUltimatePhase !== "idle") return;
+    const target = nearestOpponent(fighter) || opponent;
+    const angle = target
+      ? Math.atan2(target.y - fighter.y, target.x - fighter.x)
+      : fighter.jinhsiAttackAngle;
+    const markerX = target?.x ?? clamp(fighter.x + Math.cos(angle) * CELL_SIZE * 8, BOUNDARY, ARENA_SIZE - BOUNDARY);
+    const markerY = target?.y ?? clamp(fighter.y + Math.sin(angle) * CELL_SIZE * 8, BOUNDARY, ARENA_SIZE - BOUNDARY);
+    fighter.jinhsiUltimatePhase = "charge";
+    fighter.vx = 0;
+    fighter.vy = 0;
+    jinhsiUltimates.push({
+      id: ++jinhsiSequence,
+      owner: fighter,
+      phase: "charge",
+      timer: fighter.template.jinhsiUltimateCharge,
+      maxTimer: fighter.template.jinhsiUltimateCharge,
+      markerX,
+      markerY,
+      castX: fighter.x,
+      castY: fighter.y,
+      target
+    });
+    announce(`${fighter.template.name} · 天光蓄势`, "#fff1ad", 1.3);
+    addLog(`${fighter.template.name} 停滞蓄力，准备召唤光龙。`, "ability");
+    playSound("windup");
+  }
+
+  function updateJinhsiSystem(dt) {
+    for (let i = jinhsiBeams.length - 1; i >= 0; i -= 1) {
+      const beam = jinhsiBeams[i];
+      if (!beam.owner || beam.owner.hp <= 0) {
+        jinhsiBeams.splice(i, 1);
+        continue;
+      }
+      const move = beam.speed * dt;
+      beam.x += Math.cos(beam.angle) * move;
+      beam.y += Math.sin(beam.angle) * move;
+      beam.traveled += move;
+      beam.sparkClock -= dt;
+      if (beam.sparkClock <= 0) {
+        beam.sparkClock = 0.035;
+        effects.push({
+          type: "jinhsiBeamSpark",
+          x: beam.x + random(-beam.radius, beam.radius),
+          y: beam.y + random(-beam.radius, beam.radius),
+          angle: beam.angle,
+          life: 0.24,
+          maxLife: 0.24,
+          color: "#fff0a3"
+        });
+      }
+      getDamageableUnits().forEach((target) => {
+        if (
+          target.hp <= 0
+          || target.side === beam.owner.side
+          || beam.hitIds.has(target)
+          || Math.hypot(target.x - beam.x, target.y - beam.y) > beam.radius + target.r
+        ) return;
+        beam.hitIds.add(target);
+        applySpecialDamage(target, beam.owner.template.jinhsiBeamDamage, beam.owner, "逐光柱", {
+          color: "#ffe589"
+        });
+        if (target.hp > 0) target.stunned = Math.max(target.stunned || 0, beam.owner.template.jinhsiBeamStun);
+        if (!beam.rangeGained) {
+          beam.rangeGained = true;
+          beam.owner.jinhsiRangeBonus += 1;
+          announce(`${beam.owner.template.name} · 范围提升`, "#ffe894", 1);
+          addLog(`${beam.owner.template.name} 的光柱命中，普攻与大招半径永久提升 1 格。`, "ability");
+        }
+        spawnBurst(target.x, target.y, "#fff2a8", 18, 220);
+      });
+      if (
+        beam.traveled >= beam.maxDistance
+        || beam.x < BOUNDARY
+        || beam.x > ARENA_SIZE - BOUNDARY
+        || beam.y < BOUNDARY
+        || beam.y > ARENA_SIZE - BOUNDARY
+      ) {
+        jinhsiBeams.splice(i, 1);
+      }
+    }
+
+    for (let i = jinhsiUltimates.length - 1; i >= 0; i -= 1) {
+      const ultimate = jinhsiUltimates[i];
+      const owner = ultimate.owner;
+      if (!owner || owner.hp <= 0) {
+        if (owner) {
+          owner.jinhsiUltimatePhase = "idle";
+          owner.jinhsiAirborne = false;
+        }
+        jinhsiUltimates.splice(i, 1);
+        continue;
+      }
+      ultimate.timer = Math.max(0, ultimate.timer - dt);
+      if (ultimate.phase === "charge") {
+        owner.x = ultimate.castX;
+        owner.y = ultimate.castY;
+        owner.vx = 0;
+        owner.vy = 0;
+        if (ultimate.timer === 0) {
+          ultimate.phase = "airborne";
+          ultimate.timer = owner.template.jinhsiUltimateAirTime;
+          ultimate.maxTimer = owner.template.jinhsiUltimateAirTime;
+          owner.jinhsiUltimatePhase = "airborne";
+          owner.jinhsiAirborne = true;
+          const target = nearestOpponent(owner);
+          if (target) {
+            ultimate.target = target;
+            ultimate.markerX = target.x;
+            ultimate.markerY = target.y;
+          }
+          announce(`${owner.template.name} · 腾空御龙`, "#fff2a8", 1.2);
+          effects.push({
+            type: "ring",
+            x: owner.x,
+            y: owner.y,
+            radius: 18,
+            growth: 900,
+            life: 0.8,
+            maxLife: 0.8,
+            color: "#ffe58c",
+            width: 10
+          });
+          spawnBurst(owner.x, owner.y, "#fff1a5", 42, 320);
+          playSound("timeStop");
+        }
+        continue;
+      }
+
+      const target = nearestOpponent(owner) || ultimate.target;
+      if (target && target.hp > 0) {
+        const dx = target.x - ultimate.markerX;
+        const dy = target.y - ultimate.markerY;
+        const dist = Math.hypot(dx, dy);
+        const follow = owner.template.jinhsiUltimateFollowSpeed * CELL_SIZE * dt;
+        if (dist > 0.001) {
+          ultimate.markerX = clamp(ultimate.markerX + (dx / dist) * Math.min(dist, follow), BOUNDARY, ARENA_SIZE - BOUNDARY);
+          ultimate.markerY = clamp(ultimate.markerY + (dy / dist) * Math.min(dist, follow), BOUNDARY, ARENA_SIZE - BOUNDARY);
+        }
+      }
+      if (ultimate.timer > 0) continue;
+
+      owner.x = ultimate.markerX;
+      owner.y = ultimate.markerY;
+      owner.jinhsiAirborne = false;
+      owner.jinhsiUltimatePhase = "idle";
+      owner.jinhsiUltimateUnlocked = false;
+      owner.jinhsiEmpowered = false;
+      owner.jinhsiAttackCount = 0;
+      owner.energy = 0;
+      const radius = (owner.template.jinhsiUltimateRadius + owner.jinhsiRangeBonus) * CELL_SIZE;
+      effects.push({
+        type: "jinhsiDragonImpact",
+        x: owner.x,
+        y: owner.y,
+        radius,
+        life: 1.35,
+        maxLife: 1.35,
+        color: "#ffe48d"
+      });
+      getDamageableUnits()
+        .filter((unit) => (
+          unit.hp > 0
+          && unit.side !== owner.side
+          && Math.hypot(unit.x - owner.x, unit.y - owner.y) <= radius + unit.r * 0.2
+        ))
+        .forEach((unit) => {
+          applySpecialDamage(unit, owner.template.jinhsiUltimateDamage, owner, "天光龙吟", {
+            color: "#ffe48d"
+          });
+          spawnBurst(unit.x, unit.y, "#fff4b2", 32, 300);
+        });
+      screenShake = Math.max(screenShake, 15);
+      announce(`${owner.template.name} · 光龙坠落`, "#ffeaa0", 1.35);
+      addLog(`${owner.template.name} 的光龙坠入光圈，造成 ${owner.template.jinhsiUltimateDamage} 点范围伤害，大招重新锁定。`, "ability");
+      playSound("abyss");
+      jinhsiUltimates.splice(i, 1);
+    }
+  }
+
   function spawnWhiteSheep(owner) {
     if (!owner || owner.template.summonType !== "whiteSheep") return;
     const angle = random(0, Math.PI * 2);
@@ -3789,6 +4201,10 @@
   }
 
   function getAttackRangeCells(fighter) {
+    if (fighter.template.id === "07") {
+      return (fighter.jinhsiEmpowered ? fighter.template.jinhsiEmpoweredRange : fighter.template.attackRange)
+        + fighter.jinhsiRangeBonus;
+    }
     if (fighter.template.id === "02" && fighter.abyssForm) {
       return fighter.template.abyssScytheRange;
     }
@@ -3803,6 +4219,7 @@
 
   function tryBasicAttack(fighter, opponent) {
     if (fighter.freeze > 0 || fighter.stunned > 0 || fighter.vortexLockTimer > 0 || fighter.charge || fighter.knockback) return;
+    if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") return;
     if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) {
       const target = nearestOpponent(fighter) || opponent;
       if (
@@ -3832,6 +4249,12 @@
     } else if (fighter.template.id === "05") {
       if (distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE + opponent.r * 0.15) {
         launchCantarellaUmbrella(fighter, opponent);
+      }
+    } else if (fighter.template.id === "07") {
+      const searchRange = getAttackRangeCells(fighter) * CELL_SIZE;
+      if (distance(fighter, opponent) <= searchRange + opponent.r * 0.15) {
+        performJinhsiSlash(fighter, opponent);
+        fighter.attackClock = fighter.jinhsiEmpowered ? 1.45 : 1.2;
       }
     } else if (fighter.template.attackType === "thrust") {
       if (inMeleeRange(fighter, opponent)) {
@@ -4187,6 +4610,16 @@
     if (fighter.template.transformThreshold) return;
     if (fighter.template.ultimateType === "autoThreshold") return;
     if (fighter.stunned > 0 || fighter.freeze > 0 || fighter.vortexLockTimer > 0) return;
+    if (fighter.template.ultimateType === "jinhsiDragon") {
+      if (
+        fighter.jinhsiUltimateUnlocked
+        && fighter.jinhsiUltimatePhase === "idle"
+        && (mode !== "play" || fighter.side !== 0)
+      ) {
+        useAbility(fighter, opponent);
+      }
+      return;
+    }
     if (fighter.energy >= 100) {
       fighter.fullEnergyTime += dt;
     } else {
@@ -4204,7 +4637,13 @@
     if (fighter.charge || fighter.knockback) return;
     if (fighter.template.transformThreshold) return;
     if (fighter.template.ultimateType === "autoThreshold") return;
-    if (fighter.energy < 100 || fighter.abilityCooldown > 0) return;
+    const isJinhsiUltimate = fighter.template.ultimateType === "jinhsiDragon";
+    if (isJinhsiUltimate) {
+      if (!fighter.jinhsiUltimateUnlocked || fighter.jinhsiUltimatePhase !== "idle") return;
+    } else if (fighter.energy < 100) {
+      return;
+    }
+    if (fighter.abilityCooldown > 0) return;
     if (fighter.template.ultimateType === "abyssBurst" && !fighter.abyssForm) return;
     if (
       fighter.template.ultimateType === "abyssBurst"
@@ -4238,8 +4677,15 @@
     fighter.flash = 1;
     screenShake = 9;
     announce(`${fighter.template.name} · ${fighter.template.ability}`, fighter.template.color, 1.25);
-    addLog(`${fighter.template.name} 共鸣能量已满，触发「${fighter.template.ability}」！`, "ability");
-    dom.screenReaderStatus.textContent = `${fighter.template.name}共鸣能量已满，触发${fighter.template.ability}`;
+    addLog(
+      isJinhsiUltimate
+        ? `${fighter.template.name} 释放已解锁的「${fighter.template.ability}」！`
+        : `${fighter.template.name} 共鸣能量已满，触发「${fighter.template.ability}」！`,
+      "ability"
+    );
+    dom.screenReaderStatus.textContent = isJinhsiUltimate
+      ? `${fighter.template.name}释放${fighter.template.ability}`
+      : `${fighter.template.name}共鸣能量已满，触发${fighter.template.ability}`;
 
     if (fighter.template.ultimateType === "windCharge") {
       startJianxinCharge(fighter);
@@ -4296,6 +4742,8 @@
       playSound("timeStop");
     } else if (fighter.template.ultimateType === "cantarellaMirage") {
       startCantarellaMirage(fighter);
+    } else if (isJinhsiUltimate) {
+      beginJinhsiUltimate(fighter, opponent);
     } else if (fighter.template.ultimateType === "timeStop") {
       timeStopOwner = fighter;
       timeStopTimer = fighter.template.ultimateDuration;
@@ -4318,6 +4766,7 @@
 
   function applyDamage(target, amount, source, label, options = {}) {
     if (!target || target.hp <= 0 || state !== "playing") return;
+    if (target.jinhsiAirborne) return 0;
     let finalAmount = Math.max(1, amount);
     const specialDamage = options.category === DAMAGE_CATEGORIES.SPECIAL;
     const meleeDamage = !specialDamage && (options.melee === true
@@ -4473,6 +4922,7 @@
 
   function dealRawDamage(target, amount, source, label, color) {
     if (!target || target.hp <= 0 || state !== "playing") return;
+    if (target.jinhsiAirborne) return 0;
     target.hp = Math.max(0, target.hp - Math.max(1, amount));
     spawnDamageText(target.x, target.y - target.r, Math.round(amount), color);
     if (target.hp <= 0 && state === "playing") {
@@ -4728,7 +5178,7 @@
       pickup.life -= 1 / 60;
       let consumed = false;
       getActiveFighters().forEach((fighter) => {
-        if (consumed || state !== "playing" || fighter.hp <= 0) return;
+        if (consumed || state !== "playing" || fighter.hp <= 0 || fighter.jinhsiAirborne) return;
         if (Math.hypot(fighter.x - pickup.x, fighter.y - pickup.y) < fighter.r + pickup.r + 4) {
           consumed = true;
           if (pickup.type === "heal") {
@@ -4813,7 +5263,7 @@
 
   function updateTrails(dt) {
     getActiveFighters().forEach((fighter) => {
-      if (!fighter) return;
+      if (!fighter || fighter.jinhsiAirborne) return;
       fighter.trailClock -= dt;
       fighter.trail = fighter.trail.filter((point) => {
         point.life -= dt;
@@ -4974,6 +5424,9 @@
         else if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) status = "加速";
         else if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) status = "感知汲取";
         else if (fighter.template.id === "05" && fighter.cantarellaMirageTimer > 0) status = "蜃境";
+        else if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") status = "腾空";
+        else if (fighter.template.id === "07" && fighter.jinhsiUltimateUnlocked) status = "龙吟";
+        else if (fighter.template.id === "07" && fighter.jinhsiEmpowered) status = "强化";
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
         return {
@@ -5083,6 +5536,8 @@
     const verinaUnlocked = player.template.ultimateType !== "verinaBloom" || hasVerinaVine(player);
     const cantarellaUnlocked = player.template.ultimateType !== "cantarellaMirage"
       || player.cantarellaJellyDeaths >= player.template.jellyDeathsToUnlock;
+    const jinhsiUnlocked = player.template.ultimateType !== "jinhsiDragon"
+      || (player.jinhsiUltimateUnlocked && player.jinhsiUltimatePhase === "idle");
     const ultimateAvailable = !player.template.transformThreshold
       && player.template.ultimateType !== "autoThreshold"
       && !player.charge
@@ -5090,8 +5545,10 @@
       && abyssInRange
       && verinaUnlocked
       && cantarellaUnlocked
+      && jinhsiUnlocked
       && !(player.template.ultimateType === "overclock" && player.overclock > 0);
-    const ready = mode === "play" && energy >= 100 && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
+    const energyReady = player.template.ultimateType === "jinhsiDragon" ? jinhsiUnlocked : energy >= 100;
+    const ready = mode === "play" && energyReady && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
     dom.abilityButton.classList.toggle("is-ready", ready);
     if (state === "playing" && !voicePauseActive) {
@@ -5129,6 +5586,16 @@
         dom.battleStatus.textContent = `蜃境迷梦 ${player.cantarellaMirageTimer.toFixed(1)}s`;
       } else if (player.template.id === "05" && player.cantarellaJellyDeaths < player.template.jellyDeathsToUnlock) {
         dom.battleStatus.textContent = `水母献祭 ${player.cantarellaJellyDeaths}/${player.template.jellyDeathsToUnlock}`;
+      } else if (player.template.id === "07" && player.jinhsiUltimatePhase === "charge") {
+        dom.battleStatus.textContent = "天光蓄势 · 停滞";
+      } else if (player.template.id === "07" && player.jinhsiUltimatePhase === "airborne") {
+        dom.battleStatus.textContent = "腾空御龙 · 无法被索敌";
+      } else if (player.template.id === "07" && player.jinhsiUltimateUnlocked) {
+        dom.battleStatus.textContent = "天光龙吟 · 已解锁";
+      } else if (player.template.id === "07" && player.jinhsiEmpowered) {
+        dom.battleStatus.textContent = `强化普攻 · ${player.jinhsiAttackCount}/4`;
+      } else if (player.template.id === "07") {
+        dom.battleStatus.textContent = `初始普攻 · ${player.jinhsiAttackCount}/4`;
       } else if (player.timeForceTimer > 0) {
         dom.battleStatus.textContent = `时序加速 ${player.timeForceTimer.toFixed(1)}s`;
       } else if (player.horned) {
@@ -5238,6 +5705,7 @@
     }
     ctx.translate(shakeX, shakeY);
     ctx.drawImage(arenaLayer, 0, 0, ARENA_SIZE, ARENA_SIZE);
+    drawJinhsiSystem();
     drawCantarellaMirage();
     drawBrantTreasures();
     drawVerinaPlants();
@@ -5253,7 +5721,7 @@
     drawCantarellaUmbrellas();
     drawEffects(true);
     getActiveFighters().forEach((fighter, index) => {
-      if (fighter.hp > 0 || (voicePauseActive && voiceFocusFighter === fighter)) {
+      if (!fighter.jinhsiAirborne && (fighter.hp > 0 || (voicePauseActive && voiceFocusFighter === fighter))) {
         drawFighter(fighter, visualTime + index * 0.7);
       }
     });
@@ -5648,6 +6116,113 @@
         ctx.arc(x, ARENA_SIZE - BOUNDARY - 25 - drift, i % 2 ? 1.6 : 2.4, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.restore();
+    });
+  }
+
+  function drawJinhsiSystem() {
+    jinhsiBeams.forEach((beam) => {
+      const trailLength = CELL_SIZE * 4.2;
+      const tailX = beam.x - Math.cos(beam.angle) * trailLength;
+      const tailY = beam.y - Math.sin(beam.angle) * trailLength;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineCap = "round";
+      const beamGradient = ctx.createLinearGradient(tailX, tailY, beam.x, beam.y);
+      beamGradient.addColorStop(0, "rgba(255, 205, 75, 0)");
+      beamGradient.addColorStop(0.55, "rgba(255, 224, 125, 0.35)");
+      beamGradient.addColorStop(1, "rgba(255, 250, 218, 0.96)");
+      ctx.strokeStyle = beamGradient;
+      ctx.lineWidth = beam.radius * 1.25;
+      ctx.shadowColor = "#ffd45f";
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(beam.x, beam.y);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255,255,230,0.94)";
+      ctx.lineWidth = Math.max(2, beam.radius * 0.24);
+      ctx.stroke();
+      for (let i = 0; i < 4; i += 1) {
+        const t = (i + 1) / 5;
+        const px = tailX + (beam.x - tailX) * t;
+        const py = tailY + (beam.y - tailY) * t;
+        const nx = -Math.sin(beam.angle);
+        const ny = Math.cos(beam.angle);
+        const jitter = Math.sin(visualTime * 38 + i * 2.1) * beam.radius * 0.58;
+        ctx.strokeStyle = "rgba(255, 244, 179, 0.8)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(px - nx * beam.radius * 0.55, py - ny * beam.radius * 0.55);
+        ctx.lineTo(px + nx * jitter, py + ny * jitter);
+        ctx.lineTo(px + nx * beam.radius * 0.65, py + ny * beam.radius * 0.65);
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    jinhsiUltimates.forEach((ultimate) => {
+      const owner = ultimate.owner;
+      if (!owner || ultimate.phase !== "airborne") {
+        if (owner?.jinhsiUltimatePhase === "charge") {
+          ctx.save();
+          ctx.globalCompositeOperation = "lighter";
+          const charge = ctx.createRadialGradient(owner.x, owner.y, 2, owner.x, owner.y, owner.r * 2.4);
+          charge.addColorStop(0, "rgba(255, 248, 205, 0.8)");
+          charge.addColorStop(0.4, "rgba(255, 214, 92, 0.32)");
+          charge.addColorStop(1, "rgba(255, 190, 54, 0)");
+          ctx.fillStyle = charge;
+          ctx.beginPath();
+          ctx.arc(owner.x, owner.y, owner.r * 2.4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "rgba(255, 231, 142, 0.82)";
+          ctx.lineWidth = 2.4;
+          ctx.setLineDash([6, 7]);
+          ctx.lineDashOffset = -visualTime * 26;
+          ctx.beginPath();
+          ctx.arc(owner.x, owner.y, owner.r + 23 + Math.sin(visualTime * 5) * 4, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
+        return;
+      }
+      const radius = (owner.template.jinhsiUltimateRadius + owner.jinhsiRangeBonus) * CELL_SIZE;
+      const pulse = 1 + Math.sin(visualTime * 5.4) * 0.025;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const targetGlow = ctx.createRadialGradient(ultimate.markerX, ultimate.markerY, 4, ultimate.markerX, ultimate.markerY, radius);
+      targetGlow.addColorStop(0, "rgba(255, 244, 176, 0.2)");
+      targetGlow.addColorStop(0.65, "rgba(255, 210, 77, 0.1)");
+      targetGlow.addColorStop(1, "rgba(255, 190, 45, 0.015)");
+      ctx.fillStyle = targetGlow;
+      ctx.beginPath();
+      ctx.arc(ultimate.markerX, ultimate.markerY, radius * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 235, 150, 0.9)";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "#ffd75f";
+      ctx.shadowBlur = 18;
+      ctx.setLineDash([12, 8]);
+      ctx.lineDashOffset = -visualTime * 32;
+      ctx.beginPath();
+      ctx.arc(ultimate.markerX, ultimate.markerY, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      for (let i = 0; i < 12; i += 1) {
+        const angle = i / 12 * Math.PI * 2 + visualTime * 0.18;
+        ctx.strokeStyle = "rgba(255, 230, 133, 0.55)";
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.moveTo(ultimate.markerX + Math.cos(angle) * (radius - 9), ultimate.markerY + Math.sin(angle) * (radius - 9));
+        ctx.lineTo(ultimate.markerX + Math.cos(angle) * (radius + 8), ultimate.markerY + Math.sin(angle) * (radius + 8));
+        ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(255, 246, 202, 0.88)";
+      ctx.font = "800 10px 'Trebuchet MS'";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(`天光落点 ${ultimate.timer.toFixed(1)}s`, ultimate.markerX, ultimate.markerY - radius - 8);
       ctx.restore();
     });
   }
@@ -6101,6 +6676,7 @@
 
   function drawFighter(fighter, t) {
     if (!fighter) return;
+    if (fighter.jinhsiAirborne) return;
     const speed = Math.hypot(fighter.vx, fighter.vy);
     const wobble = state === "idle" ? Math.sin(t * 1.3) * 0.012 : Math.min(0.06, speed / 5000);
     const radius = fighter.r;
@@ -6243,6 +6819,8 @@
       drawBrantWeapons(fighter, radius, t);
     } else if (fighter.template.id === "05") {
       drawCantarellaWeapon(fighter, radius, t);
+    } else if (fighter.template.id === "07") {
+      drawJinhsiWeapon(fighter, radius, t);
     }
 
     if (fighter.overclock > 0) {
@@ -6590,6 +7168,29 @@
     ctx.shadowColor = "#b88cff";
     ctx.shadowBlur = 5;
     ctx.drawImage(umbrella, -size / 2, -size / 2, size, size);
+    ctx.restore();
+  }
+
+  function drawJinhsiWeapon(fighter, radius, t) {
+    const weapon = weaponPortraits.get("07");
+    if (!weapon?.complete || !weapon.naturalWidth) return;
+    const height = radius * (fighter.jinhsiEmpowered ? 4.85 : 4.35);
+    const width = height * (weapon.naturalWidth / weapon.naturalHeight);
+    const swingTotal = fighter.jinhsiSwingEmpowered ? 0.52 : 0.38;
+    const progress = fighter.jinhsiSwingTime > 0
+      ? 1 - fighter.jinhsiSwingTime / swingTotal
+      : 0;
+    const swingOffset = fighter.jinhsiSwingTime > 0 ? (progress - 0.5) * 1.9 : 0;
+    ctx.save();
+    ctx.translate(
+      radius * 1.08,
+      -radius * 0.06 + Math.sin(t * 1.6) * 1.2
+    );
+    ctx.rotate(fighter.jinhsiAttackAngle - Math.PI / 2 - 0.12 + swingOffset);
+    ctx.shadowColor = fighter.jinhsiEmpowered ? "#fff0a6" : "#e8c264";
+    ctx.shadowBlur = fighter.jinhsiSwingTime > 0 ? 22 : 10;
+    ctx.globalAlpha = 0.98;
+    ctx.drawImage(weapon, -width / 2, -height * 0.68, width, height);
     ctx.restore();
   }
 
@@ -7068,6 +7669,210 @@
             ctx.stroke();
           }
           ctx.restore();
+        }
+      } else if (effect.type === "jinhsiLongSlash") {
+        if (!effect.fighter) return;
+        const fighter = effect.fighter;
+        const progress = 1 - alpha;
+        const length = effect.radius * (0.72 + progress * 0.28);
+        ctx.translate(fighter.x, fighter.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        const slashGradient = ctx.createLinearGradient(0, 0, length, 0);
+        slashGradient.addColorStop(0, "rgba(255, 233, 149, 0)");
+        slashGradient.addColorStop(0.42, colorWithAlpha(effect.color, alpha * 0.48));
+        slashGradient.addColorStop(1, "rgba(255, 251, 218, 0.95)");
+        ctx.fillStyle = slashGradient;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.moveTo(0, -effect.width * 0.08);
+        ctx.quadraticCurveTo(length * 0.62, -effect.width * 0.58, length, 0);
+        ctx.quadraticCurveTo(length * 0.62, effect.width * 0.58, 0, effect.width * 0.08);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 252, 226, ${alpha * 0.9})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(fighter.r * 0.5, 0);
+        ctx.lineTo(length, 0);
+        ctx.stroke();
+      } else if (effect.type === "jinhsiArcSlash") {
+        if (!effect.fighter) return;
+        const fighter = effect.fighter;
+        const progress = 1 - alpha;
+        ctx.translate(fighter.x, fighter.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        const radius = effect.radius * (0.82 + progress * 0.18);
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.82);
+        ctx.lineWidth = 14 * alpha + 2;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 26;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, -effect.arcHalfAngle, effect.arcHalfAngle);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255, 255, 232, ${alpha * 0.9})`;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.96, -effect.arcHalfAngle, effect.arcHalfAngle);
+        ctx.stroke();
+      } else if (effect.type === "jinhsiBeamSpark") {
+        const nx = -Math.sin(effect.angle);
+        const ny = Math.cos(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.9);
+        ctx.lineWidth = 2;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(effect.x - nx * 13, effect.y - ny * 13);
+        ctx.lineTo(effect.x + nx * 5, effect.y + ny * 5);
+        ctx.lineTo(effect.x - nx * 3 + Math.cos(effect.angle) * 7, effect.y - ny * 3 + Math.sin(effect.angle) * 7);
+        ctx.lineTo(effect.x + nx * 15, effect.y + ny * 15);
+        ctx.stroke();
+      } else if (effect.type === "jinhsiDragonImpact") {
+        const progress = 1 - alpha;
+        ctx.translate(effect.x, effect.y);
+        ctx.globalCompositeOperation = "lighter";
+        const blastRadius = effect.radius * (0.42 + progress * 0.58);
+        const blast = ctx.createRadialGradient(0, 0, 4, 0, 0, blastRadius);
+        blast.addColorStop(0, `rgba(255, 253, 224, ${alpha * 0.9})`);
+        blast.addColorStop(0.26, `rgba(255, 221, 103, ${alpha * 0.58})`);
+        blast.addColorStop(0.72, `rgba(218, 158, 37, ${alpha * 0.2})`);
+        blast.addColorStop(1, "rgba(175, 111, 20, 0)");
+        ctx.fillStyle = blast;
+        ctx.beginPath();
+        ctx.arc(0, 0, blastRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255, 235, 151, ${alpha * 0.92})`;
+        ctx.lineWidth = 6 * alpha + 1;
+        ctx.shadowColor = "#ffd75a";
+        ctx.shadowBlur = 28;
+        for (let i = 0; i < 4; i += 1) {
+          ctx.beginPath();
+          ctx.arc(0, 0, blastRadius * (0.45 + i * 0.16), 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        const dragonTop = -ARENA_SIZE * (0.78 - progress * 0.36);
+        ctx.strokeStyle = `rgba(255, 244, 183, ${alpha})`;
+        ctx.lineWidth = 9 * alpha + 2;
+        ctx.beginPath();
+        ctx.moveTo(-30, dragonTop);
+        ctx.bezierCurveTo(90, dragonTop + 105, -82, dragonTop + 205, 24, dragonTop + 310);
+        ctx.bezierCurveTo(96, dragonTop + 385, -38, dragonTop + 455, 0, 0);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255, 255, 235, ${alpha * 0.86})`;
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+        ctx.fillStyle = `rgba(255, 243, 175, ${alpha * 0.85})`;
+        for (let i = 0; i < 9; i += 1) {
+          const angle = i / 9 * Math.PI * 2 + progress * 1.4;
+          ctx.beginPath();
+          ctx.arc(Math.cos(angle) * blastRadius * 0.72, Math.sin(angle) * blastRadius * 0.72, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (effect.type === "jinhsiLongSlash") {
+        if (!effect.fighter) return;
+        const fighter = effect.fighter;
+        const progress = 1 - alpha;
+        const length = effect.radius * (0.72 + progress * 0.28);
+        ctx.translate(fighter.x, fighter.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        const slashGradient = ctx.createLinearGradient(0, 0, length, 0);
+        slashGradient.addColorStop(0, "rgba(255, 233, 149, 0)");
+        slashGradient.addColorStop(0.42, colorWithAlpha(effect.color, alpha * 0.48));
+        slashGradient.addColorStop(1, "rgba(255, 251, 218, 0.95)");
+        ctx.fillStyle = slashGradient;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 20;
+        ctx.beginPath();
+        ctx.moveTo(0, -effect.width * 0.08);
+        ctx.quadraticCurveTo(length * 0.62, -effect.width * 0.58, length, 0);
+        ctx.quadraticCurveTo(length * 0.62, effect.width * 0.58, 0, effect.width * 0.08);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255,252,226,${alpha * 0.9})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(fighter.r * 0.5, 0);
+        ctx.lineTo(length, 0);
+        ctx.stroke();
+      } else if (effect.type === "jinhsiArcSlash") {
+        if (!effect.fighter) return;
+        const fighter = effect.fighter;
+        const progress = 1 - alpha;
+        ctx.translate(fighter.x, fighter.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        const radius = effect.radius * (0.82 + progress * 0.18);
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.82);
+        ctx.lineWidth = 14 * alpha + 2;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 26;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, -effect.arcHalfAngle, effect.arcHalfAngle);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,232,${alpha * 0.9})`;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.96, -effect.arcHalfAngle, effect.arcHalfAngle);
+        ctx.stroke();
+      } else if (effect.type === "jinhsiBeamSpark") {
+        const nx = -Math.sin(effect.angle);
+        const ny = Math.cos(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.9);
+        ctx.lineWidth = 2;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(effect.x - nx * 13, effect.y - ny * 13);
+        ctx.lineTo(effect.x + nx * 5, effect.y + ny * 5);
+        ctx.lineTo(effect.x - nx * 3 + Math.cos(effect.angle) * 7, effect.y - ny * 3 + Math.sin(effect.angle) * 7);
+        ctx.lineTo(effect.x + nx * 15, effect.y + ny * 15);
+        ctx.stroke();
+      } else if (effect.type === "jinhsiDragonImpact") {
+        const progress = 1 - alpha;
+        ctx.translate(effect.x, effect.y);
+        ctx.globalCompositeOperation = "lighter";
+        const blastRadius = effect.radius * (0.42 + progress * 0.58);
+        const blast = ctx.createRadialGradient(0, 0, 4, 0, 0, blastRadius);
+        blast.addColorStop(0, `rgba(255,253,224,${alpha * 0.9})`);
+        blast.addColorStop(0.26, `rgba(255,221,103,${alpha * 0.58})`);
+        blast.addColorStop(0.72, `rgba(218,158,37,${alpha * 0.2})`);
+        blast.addColorStop(1, "rgba(175,111,20,0)");
+        ctx.fillStyle = blast;
+        ctx.beginPath();
+        ctx.arc(0, 0, blastRadius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = `rgba(255,235,151,${alpha * 0.92})`;
+        ctx.lineWidth = 6 * alpha + 1;
+        ctx.shadowColor = "#ffd75a";
+        ctx.shadowBlur = 28;
+        for (let i = 0; i < 4; i += 1) {
+          ctx.beginPath();
+          ctx.arc(0, 0, blastRadius * (0.45 + i * 0.16), 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        const dragonTop = -ARENA_SIZE * (0.78 - progress * 0.36);
+        ctx.strokeStyle = `rgba(255,244,183,${alpha})`;
+        ctx.lineWidth = 9 * alpha + 2;
+        ctx.beginPath();
+        ctx.moveTo(-30, dragonTop);
+        ctx.bezierCurveTo(90, dragonTop + 105, -82, dragonTop + 205, 24, dragonTop + 310);
+        ctx.bezierCurveTo(96, dragonTop + 385, -38, dragonTop + 455, 0, 0);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,235,${alpha * 0.86})`;
+        ctx.lineWidth = 2.2;
+        ctx.stroke();
+        ctx.fillStyle = `rgba(255,243,175,${alpha * 0.85})`;
+        for (let i = 0; i < 9; i += 1) {
+          const angle = i / 9 * Math.PI * 2 + progress * 1.4;
+          ctx.beginPath();
+          ctx.arc(Math.cos(angle) * blastRadius * 0.72, Math.sin(angle) * blastRadius * 0.72, 2.4, 0, Math.PI * 2);
+          ctx.fill();
         }
       } else if (effect.type === "shield") {
         if (!effect.fighter) return;
