@@ -7,6 +7,12 @@
   <title>索拉里斯团子大对决</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    if (location.protocol === "file:") {
+      document.write('<script src="assets/canvas-image-data.js"><\/script>');
+      document.write('<script src="assets/canvas-audio-data.js"><\/script>');
+    }
+  </script>
   <script defer src="game.js"></script>
 </head>
 <body>
@@ -45,6 +51,10 @@
           <input id="durationInput" type="number" min="10" max="300" step="5" value="50" inputmode="numeric" aria-label="对局时长，单位秒">
           <span>秒</span>
         </label>
+        <button id="replayButton" class="icon-button replay-button" type="button" aria-label="对局回放" title="对局回放">
+          <span aria-hidden="true">▷</span>
+          <b id="replayCount" class="replay-count">0</b>
+        </button>
         <button id="soundButton" class="icon-button" type="button" aria-pressed="true" aria-label="关闭音效" title="开关音效">
           <span class="sound-on" aria-hidden="true">♪</span>
           <span class="sound-off" aria-hidden="true">×</span>
@@ -362,6 +372,33 @@
     <div class="archive-body">
       <nav id="archiveList" class="archive-list" aria-label="角色列表"></nav>
       <article id="archiveDetail" class="archive-detail" aria-live="polite"></article>
+    </div>
+  </dialog>
+
+  <dialog id="replayDialog" class="replay-dialog" aria-labelledby="replayTitle">
+    <div class="archive-header">
+      <div>
+        <span class="eyebrow">MATCH REPLAY</span>
+        <h2 id="replayTitle">对局回放</h2>
+      </div>
+      <button id="replayClose" class="archive-close" type="button" aria-label="关闭对局回放">×</button>
+    </div>
+    <div class="replay-body">
+      <nav id="replayList" class="replay-list" aria-label="最近三局回放"></nav>
+      <section class="replay-player" aria-live="polite">
+        <div id="replayEmpty" class="replay-empty">
+          <b>暂无回放</b>
+          <p>开始对战后会自动录制，最近三局可在这里播放和保存。</p>
+        </div>
+        <video id="replayVideo" controls playsinline preload="metadata" hidden></video>
+        <div id="replayInfo" class="replay-info" hidden>
+          <div>
+            <strong id="replayInfoTitle">第 1 局</strong>
+            <span id="replayInfoDetail">左侧团子 vs 右侧团子</span>
+          </div>
+          <a id="replayDownload" class="replay-download" href="#" download>保存对局视频</a>
+        </div>
+      </section>
     </div>
   </dialog>
 

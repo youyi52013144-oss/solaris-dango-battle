@@ -343,7 +343,7 @@
       perceptionDamage: 120,
       ability: "蜃境迷梦",
       abilityIcon: "梦",
-      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
+      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害，并立即结束整个蜃境、解除全场减速。若蜃境自然结束且期间未造成伤害，获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
       cooldown: 18
     },
     {
@@ -365,15 +365,15 @@
       display: { attack: "5 / 强化65", speed: "6.0格/s", hp: "900" },
       attackType: "jinhsiSlash",
       attackDamage: 5,
-      attackCooldown: 1.2,
-      attackRange: 6,
+      attackCooldown: 2,
+      attackRange: 3,
       jinhsiEmpoweredRange: 6,
       jinhsiEmpoweredDamage: 65,
+      jinhsiEmpoweredWindup: 0.2,
       jinhsiHitsToEmpower: 4,
       jinhsiHitsToUltimate: 4,
-      jinhsiBaseEllipseRadiusX: 4,
-      jinhsiBaseEllipseRadiusY: 2.1,
-      jinhsiBaseEllipseOffset: 4.2,
+      jinhsiBaseRectLength: 5,
+      jinhsiBaseRectWidth: 1,
       jinhsiArcAngle: Math.PI * 0.9,
       jinhsiSkillCooldown: 0,
       jinhsiSkillStopTime: 1,
@@ -424,6 +424,128 @@
       ],
       death: ["assets/voices/anko/death.mp3"],
       victory: ["assets/voices/anko/victory.mp3"]
+    },
+    "07": {
+      intro: ["assets/voices/jinhsi/intro-1.mp3"],
+      attack: [
+        "assets/voices/jinhsi/attack-1.mp3",
+        "assets/voices/jinhsi/attack-2.mp3",
+        "assets/voices/jinhsi/attack-3.mp3"
+      ],
+      jinhsiSkill: [
+        "assets/voices/jinhsi/skill-1.mp3",
+        "assets/voices/jinhsi/skill-2.mp3",
+        "assets/voices/jinhsi/skill-3.mp3"
+      ],
+      ultimate: [
+        "assets/voices/jinhsi/ultimate-1.mp3",
+        "assets/voices/jinhsi/ultimate-2.mp3"
+      ],
+      death: [
+        "assets/voices/jinhsi/death-1.mp3",
+        "assets/voices/jinhsi/death-2.mp3"
+      ],
+      victory: ["assets/voices/jinhsi/victory-1.mp3"]
+    },
+    "05": {
+      intro: [
+        "assets/voices/cantarella/intro-1.mp3",
+        "assets/voices/cantarella/intro-2.mp3",
+        "assets/voices/cantarella/intro-3.mp3"
+      ],
+      attack: [
+        "assets/voices/cantarella/attack-1.mp3",
+        "assets/voices/cantarella/attack-2.mp3",
+        "assets/voices/cantarella/attack-3.mp3"
+      ],
+      cantarellaPerception: ["assets/voices/cantarella/perception-1.mp3"],
+      cantarellaSummon: ["assets/voices/cantarella/summon-1.mp3"],
+      ultimate: [
+        "assets/voices/cantarella/ultimate-1.mp3",
+        "assets/voices/cantarella/ultimate-2.mp3",
+        "assets/voices/cantarella/ultimate-3.mp3",
+        "assets/voices/cantarella/ultimate-4.mp3"
+      ],
+      death: [
+        "assets/voices/cantarella/death-1.mp3",
+        "assets/voices/cantarella/death-2.mp3"
+      ],
+      victory: ["assets/voices/cantarella/victory-1.mp3"]
+    },
+    "04": {
+      intro: [
+        "assets/voices/brant/intro-1.mp3",
+        "assets/voices/brant/intro-2.mp3",
+        "assets/voices/brant/intro-3.mp3",
+        "assets/voices/brant/intro-4.mp3",
+        "assets/voices/brant/intro-5.mp3"
+      ],
+      brantMelee: [
+        "assets/voices/brant/melee-1.mp3",
+        "assets/voices/brant/melee-2.mp3"
+      ],
+      brantChest: [
+        "assets/voices/brant/chest-1.mp3",
+        "assets/voices/brant/chest-2.mp3"
+      ],
+      brantAirborne: ["assets/voices/brant/airborne-1.mp3"],
+      brantAnchor: ["assets/voices/brant/anchor-1.mp3"],
+      ultimate: [
+        "assets/voices/brant/ultimate-1.mp3",
+        "assets/voices/brant/ultimate-2.mp3",
+        "assets/voices/brant/ultimate-3.mp3"
+      ],
+      death: [
+        "assets/voices/brant/death-1.mp3",
+        "assets/voices/brant/death-2.mp3",
+        "assets/voices/brant/death-3.mp3"
+      ],
+      victory: ["assets/voices/brant/victory-1.mp3"]
+    },
+    "06": {
+      intro: [
+        "assets/voices/verina/intro-1.mp3",
+        "assets/voices/verina/intro-2.mp3",
+        "assets/voices/verina/intro-3.mp3"
+      ],
+      verinaPlant: [
+        "assets/voices/verina/plant-1.mp3",
+        "assets/voices/verina/plant-2.mp3",
+        "assets/voices/verina/plant-3.mp3",
+        "assets/voices/verina/plant-4.mp3"
+      ],
+      verinaVine: [
+        "assets/voices/verina/vine-1.mp3",
+        "assets/voices/verina/vine-2.mp3"
+      ],
+      ultimate: [
+        "assets/voices/verina/ultimate-1.mp3",
+        "assets/voices/verina/ultimate-2.mp3"
+      ],
+      death: [
+        "assets/voices/verina/death-1.mp3",
+        "assets/voices/verina/death-2.mp3"
+      ],
+      victory: ["assets/voices/verina/victory-1.mp3"]
+    },
+    "03": {
+      intro: [
+        "assets/voices/jianxin/intro-1.mp3",
+        "assets/voices/jianxin/intro-2.mp3",
+        "assets/voices/jianxin/intro-3.mp3"
+      ],
+      jianxinWindBurst: ["assets/voices/jianxin/shield-1.mp3"],
+      jianxinWind: ["assets/voices/jianxin/wind-1.mp3"],
+      ultimate: [
+        "assets/voices/jianxin/ultimate-1.mp3",
+        "assets/voices/jianxin/ultimate-2.mp3",
+        "assets/voices/jianxin/ultimate-3.mp3"
+      ],
+      death: [
+        "assets/voices/jianxin/death-1.mp3",
+        "assets/voices/jianxin/death-2.mp3"
+      ],
+      victory: ["assets/voices/jianxin/victory-1.mp3"]
     }
   };
 
@@ -557,8 +679,8 @@
         "水母以半径 2 格进行半圆近战攻击，每次造成 20 点伤害，冷却 2 秒。",
         "每只水母死亡时为坎特蕾拉恢复 10 点生命，并累计蜃境解锁进度。",
         "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
-        "蜃境持续 8 秒，使场上所有单位移速降至 20%，敌方单位获得迷梦。",
-        "迷梦单位首次受击追加 170 点伤害，并立即解除迷梦与蜃境减速。",
+        "蜃境持续 8 秒，使场上所有单位与期间后续召唤的水母移速降至 20%，敌方单位获得迷梦。",
+        "迷梦单位首次受击追加 170 点伤害，并立即解除所有单位的蜃境减速、关闭蜃境特效并结束本次大招。",
         "若蜃境持续期间没有对敌方造成伤害，结束时获得一次「感知汲取」。",
         "感知汲取会替换普通攻击：敌人进入半径 8 格后，立即在其位置引爆半径 4 格的暗紫水母爆炸，造成 120 点范围特殊伤害。",
         "感知汲取触发后失效，坎特蕾拉恢复雨伞普通攻击，直到下一次蜃境再次赋予该状态；冷却 18 秒。"
@@ -566,12 +688,12 @@
     },
     "07": {
       role: "近战强化 / 腾空爆发",
-      range: "普攻索敌半径 6 格；技能光圈半径 6 格；大招光圈半径 10 格",
-      interval: "普攻 1.2 秒 / 技能切换形态时解锁 / 大招解锁后可用",
+      range: "初始普攻索敌半径 3 格，矩形攻击 5×1 格；技能光圈半径 6 格；大招光圈半径 10 格",
+      interval: "初始普攻 2 秒 / 强化普攻 1.45 秒 / 技能切换形态时解锁 / 大招解锁后可用",
       mechanics: [
         "生命 900、移动速度 6 格/秒。",
-        "初始普攻索敌半径 6 格，使用长刃进行从上而下的劈砍，攻击时显示金色椭圆范围闪光，对前方约 25 格的椭圆形区域造成 5 点伤害。",
-        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，使用弧形斩击造成 65 点伤害。",
+        "初始普攻索敌半径 3 格、冷却 2 秒，使用长刃对前方长 5 格、宽 1 格的矩形区域造成 5 点伤害，不绘制矩形判定特效。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.2 秒前摇并造成 65 点伤害。",
         "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
         "每次切换普攻形态时解锁技能；自身停滞 1 秒，在最近敌人脚下生成半径 6 格光圈，恢复移动。",
         "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 0.7 秒，随后技能重新锁定。",
@@ -588,6 +710,8 @@
   const ctx = canvas.getContext("2d");
   const arenaLayer = document.createElement("canvas");
   const arenaLayerCtx = arenaLayer.getContext("2d");
+  const replayCompositionCanvas = document.createElement("canvas");
+  const replayCompositionCtx = replayCompositionCanvas.getContext("2d");
   const dom = {
     rosterGrid: document.getElementById("rosterGrid"),
     rosterCount: document.getElementById("rosterCount"),
@@ -663,6 +787,17 @@
     abilityLabel: document.getElementById("abilityLabel"),
     durationInput: document.getElementById("durationInput"),
     footerSettings: document.getElementById("footerSettings"),
+    replayButton: document.getElementById("replayButton"),
+    replayCount: document.getElementById("replayCount"),
+    replayDialog: document.getElementById("replayDialog"),
+    replayClose: document.getElementById("replayClose"),
+    replayList: document.getElementById("replayList"),
+    replayVideo: document.getElementById("replayVideo"),
+    replayEmpty: document.getElementById("replayEmpty"),
+    replayInfo: document.getElementById("replayInfo"),
+    replayInfoTitle: document.getElementById("replayInfoTitle"),
+    replayInfoDetail: document.getElementById("replayInfoDetail"),
+    replayDownload: document.getElementById("replayDownload"),
     soundButton: document.getElementById("soundButton"),
     shuffleButton: document.getElementById("shuffleButton"),
     archiveButton: document.getElementById("archiveButton"),
@@ -721,6 +856,8 @@
   let battleTimer = DEFAULT_ROUND_SECONDS;
   let countdownClock = 0;
   let countdownBeat = 4;
+  let replayCountdownText = "";
+  let replayCountdownUntil = 0;
   let roundEndTimer = 0;
   let pickupTimer = 3;
   let ambientTimer = 0;
@@ -732,6 +869,8 @@
   let gameSpeed = 1;
   let manualPaused = false;
   let audioContext = null;
+  let audioMixNode = null;
+  let replayAudioDestination = null;
   let screenShake = 0;
   let collisionLock = 0;
   let timeStopOwner = null;
@@ -767,7 +906,19 @@
   let activeVoiceJob = null;
   let activeVoiceEntry = null;
   let activeVoiceAudio = null;
-  let activeAttackVoice = null;
+  const activeAttackVoices = new Map();
+  const voiceTriggerTimes = new Map();
+  const VOICE_REPEAT_COOLDOWN_MS = 3000;
+  const REPLAY_LIMIT = 3;
+  const REPLAY_DB_NAME = "solaris-dango-replays";
+  const REPLAY_DB_STORE = "replays";
+  const REPLAY_RENDER_FPS = 45;
+  const replayRecords = [];
+  let activeReplaySession = null;
+  let selectedReplayId = null;
+  let replaySequence = 0;
+  let replayStatusMessage = "";
+  let lastReplayCompositeAt = 0;
   let voicePauseActive = false;
   let voiceFocusFighter = null;
   let voiceCameraMix = 0;
@@ -787,6 +938,10 @@
   const random = (min, max) => min + Math.random() * (max - min);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  function canvasImageSource(path) {
+    if (location.protocol !== "file:") return path;
+    return window.SOLARIS_CANVAS_IMAGE_DATA?.[path] || path;
+  }
   function templateById(id) {
     const fighter = FIGHTERS.find((item) => item.id === id) || FIGHTERS[0];
     if (fighter.id !== "01" && fighter.id !== "02") return fighter;
@@ -870,6 +1025,7 @@
       cantarellaJellyDeaths: 0,
       cantarellaMirageTimer: 0,
       cantarellaMirageDamageDealt: false,
+      cantarellaMirageOwner: null,
       cantarellaPerceptionReady: false,
       cantarellaSlowTimer: 0,
       cantarellaDreamed: false,
@@ -881,6 +1037,8 @@
       jinhsiUltimatePhase: "idle",
       jinhsiAirborne: false,
       jinhsiAttackAngle: 0,
+      jinhsiAttackWindup: 0,
+      jinhsiWindupTarget: null,
       jinhsiSwingTime: 0,
       jinhsiSwingEmpowered: false,
       jinhsiSwingMode: "idle",
@@ -1285,25 +1443,56 @@
       .map((fighter) => ({ fighter, type }));
   }
 
-  function stopAttackVoice() {
-    if (!activeAttackVoice) return;
-    activeAttackVoice.pause();
-    activeAttackVoice = null;
+  function stopAttackVoice(fighter = null) {
+    if (fighter) {
+      const voice = activeAttackVoices.get(fighter);
+      if (!voice) return;
+      voice.pause();
+      activeAttackVoices.delete(fighter);
+      return;
+    }
+    activeAttackVoices.forEach((voice) => voice.pause());
+    activeAttackVoices.clear();
+  }
+
+  function voiceAudioSource(path) {
+    if (location.protocol !== "file:") return path;
+    return window.SOLARIS_VOICE_AUDIO_DATA?.[path] || path;
+  }
+
+  function createVoiceAudio(path, volume) {
+    const audio = new Audio(voiceAudioSource(path));
+    audio.volume = volume;
+    const context = ensureAudio();
+    if (!context || !audioMixNode) return audio;
+    try {
+      const source = context.createMediaElementSource(audio);
+      source.connect(audioMixNode);
+      audio.replaySourceNode = source;
+    } catch {
+      // The element can still play directly if Web Audio routing is unavailable.
+    }
+    return audio;
   }
 
   function playAttackVoice(fighter, type = "attack") {
     if (!soundEnabled || voicePauseActive) return;
     const clips = voiceClipsFor(fighter, type);
     if (!clips.length) return;
-    stopAttackVoice();
-    const audio = new Audio(clips[Math.floor(Math.random() * clips.length)]);
-    audio.volume = 0.72;
-    activeAttackVoice = audio;
+    const now = performance.now();
+    const fighterVoiceTimes = voiceTriggerTimes.get(fighter) || new Map();
+    const lastTriggeredAt = fighterVoiceTimes.get(type);
+    if (lastTriggeredAt !== undefined && now - lastTriggeredAt < VOICE_REPEAT_COOLDOWN_MS) return;
+    fighterVoiceTimes.set(type, now);
+    voiceTriggerTimes.set(fighter, fighterVoiceTimes);
+    stopAttackVoice(fighter);
+    const audio = createVoiceAudio(clips[Math.floor(Math.random() * clips.length)], 0.72);
+    activeAttackVoices.set(fighter, audio);
     audio.addEventListener("ended", () => {
-      if (activeAttackVoice === audio) activeAttackVoice = null;
+      if (activeAttackVoices.get(fighter) === audio) activeAttackVoices.delete(fighter);
     }, { once: true });
     audio.play().catch(() => {
-      if (activeAttackVoice === audio) activeAttackVoice = null;
+      if (activeAttackVoices.get(fighter) === audio) activeAttackVoices.delete(fighter);
     });
   }
 
@@ -1361,7 +1550,7 @@
       return;
     }
 
-    stopAttackVoice();
+    stopAttackVoice(entry.fighter);
     activeVoiceEntry = entry;
     voiceEntryStartedAt = visualTime;
     voiceFocusFighter = entry.focus === false ? null : entry.fighter;
@@ -1369,14 +1558,15 @@
       intro: "出场",
       ultimate: "共鸣解放",
       deathSentence: "死告",
+      cantarellaPerception: "感知汲取",
+      brantAnchor: "大船锚",
       death: "战败",
       victory: "胜利"
     };
     dom.battleStatus.textContent = `${labels[entry.type] || "语音"} · ${entry.fighter.template.name}`;
     announce(`${entry.fighter.template.name} · ${labels[entry.type] || "语音"}`, entry.fighter.template.color, 1);
 
-    const audio = new Audio(clips[Math.floor(Math.random() * clips.length)]);
-    audio.volume = 0.9;
+    const audio = createVoiceAudio(clips[Math.floor(Math.random() * clips.length)], 0.9);
     activeVoiceAudio = audio;
     let settled = false;
     let fallbackTimer = null;
@@ -1478,6 +1668,9 @@
 
   function resetBattleTransient() {
     cancelVoicePlayback();
+    voiceTriggerTimes.clear();
+    replayCountdownText = "";
+    replayCountdownUntil = 0;
     particles = [];
     effects = [];
     projectiles = [];
@@ -1536,6 +1729,15 @@
     state = "countdown";
     syncPauseControl();
     syncWandererFormState();
+    startReplayRecording({
+      mode: "multi",
+      round: 1,
+      leftName: player.template.name,
+      rightName: enemy.template.name,
+      fighters: multiFighters.map((fighter) => fighter.template.name),
+      fighterCount: multiFighters.length,
+      mapSize: MAP_SIZE
+    });
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
     dom.abilityButton.classList.remove("is-ready");
@@ -1570,6 +1772,14 @@
     state = "countdown";
     syncPauseControl();
     syncWandererFormState();
+    startReplayRecording({
+      mode,
+      round,
+      leftName: chosen.name,
+      rightName: rival.name,
+      fighterCount: 2,
+      mapSize: MAP_SIZE
+    });
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
     dom.abilityButton.classList.remove("is-ready");
@@ -1586,6 +1796,8 @@
   }
 
   function showCountdown(value) {
+    replayCountdownText = value;
+    replayCountdownUntil = visualTime + 0.85;
     dom.countdown.textContent = value;
     dom.countdown.classList.remove("show");
     void dom.countdown.offsetWidth;
@@ -2014,6 +2226,24 @@
     if (fighter.cantarellaSlowTimer > 0) {
       fighter.cantarellaSlowTimer = Math.max(0, fighter.cantarellaSlowTimer - dt);
       if (fighter.cantarellaSlowTimer === 0) fighter.cantarellaDreamed = false;
+    }
+    if (fighter.template.id === "07" && fighter.jinhsiAttackWindup > 0) {
+      fighter.jinhsiAttackWindup = Math.max(0, fighter.jinhsiAttackWindup - dt);
+      if (fighter.jinhsiAttackWindup === 0) {
+        const pendingTarget = fighter.jinhsiWindupTarget;
+        fighter.jinhsiWindupTarget = null;
+        if (
+          state === "playing"
+          && pendingTarget?.hp > 0
+          && fighter.hp > 0
+          && fighter.stunned <= 0
+          && fighter.freeze <= 0
+          && fighter.vortexLockTimer <= 0
+        ) {
+          const attackTarget = nearestOpponent(fighter) || pendingTarget;
+          performJinhsiSlash(fighter, attackTarget);
+        }
+      }
     }
     fighter.jinhsiSwingTime = Math.max(0, fighter.jinhsiSwingTime - dt);
     if (
@@ -2534,6 +2764,7 @@
 
   function spawnWindField(owner) {
     if (!owner || owner.hp <= 0 || owner.template.id !== "03") return;
+    playAttackVoice(owner, "jianxinWind");
     windFields.push({
       id: ++windSequence,
       owner,
@@ -2617,6 +2848,7 @@
       if (Math.hypot(field.owner.x - field.x, field.owner.y - field.y) <= field.radius) {
         addShield(field.owner, field.owner.template.windFieldShield);
       }
+      playAttackVoice(field.owner, "jianxinWindBurst");
       effects.push({
         type: "windBurst",
         x: field.x,
@@ -3072,6 +3304,8 @@
     const ownerPlants = verinaPlants.filter((item) => item.owner === owner);
     if (ownerPlants.length >= owner.template.verinaSproutsForVine) {
       growVerinaVine(owner);
+    } else if (state === "playing") {
+      playAttackVoice(owner, "verinaPlant");
     }
   }
 
@@ -3090,6 +3324,7 @@
       color: "#d7e76d"
     });
     spawnBurst(centerPlant.x, centerPlant.y, "#f1ff9f", 64, 390);
+    playAttackVoice(owner, "verinaVine");
     announce(`${owner.template.name} · 藤蔓复苏`, "#eaff9d", 1.4);
     addLog(`${owner.template.name} 的第 6 颗芽已出现，中场嫩芽成长为藤。`, "ability");
     screenShake = Math.max(screenShake, 9);
@@ -3222,6 +3457,7 @@
   }
 
   function startBrantAirborne(fighter) {
+    playAttackVoice(fighter, "brantAirborne");
     fighter.brantSpecialEnergy = 0;
     fighter.brantAirborneTimer = fighter.template.brantAirborneDuration;
     fighter.flash = 1;
@@ -3236,6 +3472,20 @@
   }
 
   function finishBrantAirborne(fighter) {
+    const voiceEntries = voiceEntriesFor([fighter], "brantAnchor")
+      .map((entry) => ({ ...entry, focus: false }));
+    if (voiceEntries.length) {
+      enqueueVoiceSequence(voiceEntries, {
+        pauseGame: true,
+        onComplete: () => executeBrantBigAnchorDrop(fighter)
+      });
+      return;
+    }
+    executeBrantBigAnchorDrop(fighter);
+  }
+
+  function executeBrantBigAnchorDrop(fighter) {
+    if (!fighter || fighter.hp <= 0 || state !== "playing") return;
     const previousSpeed = Math.hypot(fighter.vx, fighter.vy);
     const fallbackAngle = random(0, Math.PI * 2);
     fighter.brantBigAnchorResumeX = previousSpeed > 0 ? fighter.vx / previousSpeed : Math.cos(fallbackAngle);
@@ -3342,6 +3592,7 @@
         && owner.hp > 0
         && distance(owner, chest) <= chest.r + owner.r * 0.25;
       if (picked && state === "playing") {
+        playAttackVoice(owner, "brantChest");
         addShield(owner, owner.template.brantPickupShield, "#d7749b");
         gainBrantSpecialEnergy(owner, owner.template.brantPickupEnergy);
         spawnBrantAnchor(owner, chest.x, chest.y, "small", owner.template.brantAnchorWindup);
@@ -3374,12 +3625,18 @@
 
   function spawnCantarellaJelly(owner, initialIndex = null) {
     if (!owner || owner.hp <= 0 || owner.template.id !== "05") return;
+    if (initialIndex === null && state === "playing") {
+      playAttackVoice(owner, "cantarellaSummon");
+    }
     const angle = initialIndex === null
       ? random(0, Math.PI * 2)
       : -Math.PI / 2 + initialIndex * Math.PI * 2 / owner.template.jellyStartingCount;
     const orbit = CELL_SIZE * (initialIndex === null ? random(1.8, 3.2) : 2.2);
     const x = clamp(owner.x + Math.cos(angle) * orbit, BOUNDARY + 12, ARENA_SIZE - BOUNDARY - 12);
     const y = clamp(owner.y + Math.sin(angle) * orbit, BOUNDARY + 12, ARENA_SIZE - BOUNDARY - 12);
+    const activeMirage = getActiveFighters().find((fighter) => (
+      fighter.template.id === "05" && fighter.cantarellaMirageTimer > 0
+    ));
     const id = ++cantarellaSequence;
     cantarellaJellies.push({
       id,
@@ -3404,8 +3661,9 @@
       paralyzed: 0,
       vortexLockTimer: 0,
       knockback: null,
-      cantarellaSlowTimer: 0,
-      cantarellaDreamed: false,
+      cantarellaSlowTimer: activeMirage?.cantarellaMirageTimer || 0,
+      cantarellaDreamed: Boolean(activeMirage && activeMirage.side !== owner.side),
+      cantarellaMirageOwner: activeMirage || null,
       defeated: false,
       phase: random(0, Math.PI * 2),
       template: {
@@ -3571,6 +3829,7 @@
   }
 
   function launchCantarellaUmbrella(fighter, opponent) {
+    playAttackVoice(fighter);
     const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
     const speed = fighter.template.umbrellaSpeed * CELL_SIZE;
     cantarellaUmbrellas.push({
@@ -3702,6 +3961,7 @@
     getDamageableUnits().forEach((unit) => {
       if (!unit || unit.hp <= 0) return;
       unit.cantarellaSlowTimer = Math.max(unit.cantarellaSlowTimer || 0, duration);
+      unit.cantarellaMirageOwner = fighter;
       if (unit.side !== fighter.side) unit.cantarellaDreamed = true;
     });
     effects.push({
@@ -3741,13 +4001,61 @@
       addLog(`${fighter.template.name} 的蜃境期间未造成伤害，获得「感知汲取」。`, "ability");
       playSound("timeStop");
     }
+    clearCantarellaMirageStatuses(fighter);
     fighter.cantarellaMirageDamageDealt = false;
+  }
+
+  function clearCantarellaMirageStatuses(fighter) {
+    if (!fighter) return;
+    getDamageableUnits().forEach((unit) => {
+      if (unit.cantarellaMirageOwner !== fighter) return;
+      unit.cantarellaMirageOwner = null;
+      unit.cantarellaDreamed = false;
+      unit.cantarellaSlowTimer = 0;
+    });
+  }
+
+  function breakCantarellaMirage(fighter) {
+    if (!fighter || fighter.cantarellaMirageTimer <= 0) return;
+    fighter.cantarellaMirageTimer = 0;
+    fighter.cantarellaMirageDamageDealt = true;
+    fighter.cantarellaPerceptionReady = false;
+    clearCantarellaMirageStatuses(fighter);
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: 18,
+      growth: 720,
+      life: 0.75,
+      maxLife: 0.75,
+      color: "#d8a8ff",
+      width: 9
+    });
+    spawnBurst(fighter.x, fighter.y, "#e7c8ff", 38, 280);
+    announce(`${fighter.template.name} · 迷梦破碎`, "#e7c8ff", 1.1);
+    addLog(`${fighter.template.name} 的迷梦被击破，蜃境提前结束，全场减速解除。`, "ability");
+    playSound("timeEnd");
   }
 
   function triggerCantarellaPerception(fighter, target) {
     if (!fighter?.cantarellaPerceptionReady || !target || target.hp <= 0 || state !== "playing") return;
     fighter.cantarellaPerceptionReady = false;
     fighter.attackClock = fighter.template.attackCooldown;
+    const voiceEntries = voiceEntriesFor([fighter], "cantarellaPerception")
+      .map((entry) => ({ ...entry, focus: false }));
+    if (voiceEntries.length) {
+      enqueueVoiceSequence(voiceEntries, {
+        pauseGame: true,
+        onComplete: () => executeCantarellaPerception(fighter, target)
+      });
+      return;
+    }
+    executeCantarellaPerception(fighter, target);
+  }
+
+  function executeCantarellaPerception(fighter, target) {
+    if (!fighter || !target || target.hp <= 0 || state !== "playing") return;
     const x = target.x;
     const y = target.y;
     const radius = fighter.template.perceptionBlastRadius * CELL_SIZE;
@@ -3780,6 +4088,7 @@
   }
 
   function performJinhsiSlash(fighter, opponent) {
+    playAttackVoice(fighter);
     const empowered = fighter.jinhsiEmpowered;
     const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
     fighter.jinhsiAttackAngle = angle;
@@ -3789,9 +4098,9 @@
     fighter.weaponSwingMax = fighter.jinhsiSwingTime;
     fighter.weaponSwing = fighter.jinhsiSwingTime;
 
-    const ellipseRadiusX = fighter.template.jinhsiBaseEllipseRadiusX * CELL_SIZE;
-    const ellipseRadiusY = fighter.template.jinhsiBaseEllipseRadiusY * CELL_SIZE;
-    const ellipseOffset = fighter.template.jinhsiBaseEllipseOffset * CELL_SIZE;
+    const rectLength = fighter.template.jinhsiBaseRectLength * CELL_SIZE;
+    const rectWidth = fighter.template.jinhsiBaseRectWidth * CELL_SIZE;
+    const rectOffset = rectLength / 2;
     const arcRadius = fighter.template.jinhsiEmpoweredRange * CELL_SIZE;
     const arcHalfAngle = fighter.template.jinhsiArcAngle / 2;
     const cos = Math.cos(angle);
@@ -3802,9 +4111,9 @@
       type: empowered ? "jinhsiArcSlash" : "jinhsiLongSlash",
       fighter,
       angle,
-      radius: empowered ? arcRadius : ellipseRadiusX,
-      width: ellipseRadiusY * 2,
-      offset: ellipseOffset,
+      radius: empowered ? arcRadius : rectLength / 2,
+      width: rectWidth,
+      offset: rectOffset,
       arcHalfAngle,
       life: empowered ? 0.55 : 0.62,
       maxLife: empowered ? 0.55 : 0.62,
@@ -3822,8 +4131,9 @@
         const inArea = empowered
           ? targetDistance <= arcRadius + target.r * 0.2
             && Math.abs(Math.atan2(Math.sin(Math.atan2(dy, dx) - angle), Math.cos(Math.atan2(dy, dx) - angle))) <= arcHalfAngle
-          : ((forward - ellipseOffset) ** 2) / (ellipseRadiusX ** 2)
-            + (lateral ** 2) / (ellipseRadiusY ** 2) <= 1;
+          : forward >= -target.r * 0.15
+            && forward <= rectLength + target.r * 0.15
+            && Math.abs(lateral) <= rectWidth / 2 + target.r * 0.15;
         if (!inArea) return;
         const dealt = applyDamage(
           target,
@@ -3867,6 +4177,7 @@
     if (!fighter || !fighter.jinhsiSkillUnlocked || fighter.jinhsiUltimatePhase !== "idle") return false;
     const opponent = nearestOpponent(fighter);
     if (!opponent) return false;
+    playAttackVoice(fighter, "jinhsiSkill");
     const previousVx = fighter.vx;
     const previousVy = fighter.vy;
     const previousSpeed = Math.hypot(previousVx, previousVy);
@@ -4284,8 +4595,15 @@
     } else if (fighter.template.id === "07") {
       const searchRange = getAttackRangeCells(fighter) * CELL_SIZE;
       if (distance(fighter, opponent) <= searchRange + opponent.r * 0.15) {
-        performJinhsiSlash(fighter, opponent);
-        fighter.attackClock = fighter.jinhsiEmpowered ? 1.45 : 1.2;
+        if (fighter.jinhsiEmpowered) {
+          fighter.jinhsiAttackWindup = fighter.template.jinhsiEmpoweredWindup;
+          fighter.jinhsiWindupTarget = opponent;
+          fighter.jinhsiAttackAngle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+          fighter.attackClock = 1.45;
+        } else {
+          performJinhsiSlash(fighter, opponent);
+          fighter.attackClock = fighter.template.attackCooldown;
+        }
       }
     } else if (fighter.template.attackType === "thrust") {
       if (inMeleeRange(fighter, opponent)) {
@@ -4304,7 +4622,7 @@
   }
 
   function performBrantMelee(fighter, opponent) {
-    playAttackVoice(fighter);
+    playAttackVoice(fighter, "brantMelee");
     const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
     fighter.thrustAngle = angle;
     fighter.thrustTime = 0.28;
@@ -4337,7 +4655,6 @@
   }
 
   function fireBrantShot(fighter, opponent) {
-    playAttackVoice(fighter);
     const speed = fighter.template.projectileSpeed * CELL_SIZE;
     const interceptTime = calculateInterceptTime(fighter, opponent, speed);
     const aimX = opponent.x + opponent.vx * interceptTime;
@@ -4826,6 +5143,8 @@
     }
     if (target.cantarellaDreamed && !options.ignoreDream) {
       const dreamBonus = source?.template.mirageBonusDamage || 170;
+      const mirageOwner = target.cantarellaMirageOwner
+        || (source?.template.id === "05" ? source : null);
       finalAmount += dreamBonus;
       target.cantarellaDreamed = false;
       target.cantarellaSlowTimer = 0;
@@ -4839,6 +5158,7 @@
         maxLife: 0.5,
         color: "#d8a8ff"
       });
+      if (mirageOwner) breakCantarellaMirage(mirageOwner);
     }
     if (target.paralyzed > 0 && !options.ignoreVulnerability) finalAmount *= 1.1;
     let absorbed = 0;
@@ -5045,6 +5365,12 @@
     score[winnerSide] += 1;
     const winner = winnerSide === 0 ? player : enemy;
     const loser = winnerSide === 0 ? enemy : player;
+    finishReplayRecording({
+      winner: winner.template.name,
+      loser: loser.template.name,
+      reason,
+      score: [...score]
+    });
     dom.playerScore.textContent = String(score[0]);
     dom.enemyScore.textContent = String(score[1]);
     dom.battleStatus.textContent = "本局结束";
@@ -5111,13 +5437,18 @@
       pauseGame: true,
       onComplete: () => {
         multiResultVoicePending = false;
-        commitMultiMatch(winner);
+        commitMultiMatch(winner, reason);
       }
     });
   }
 
-  function commitMultiMatch(winner) {
+  function commitMultiMatch(winner, reason = "KO") {
     if (state !== "playing") return;
+    finishReplayRecording({
+      winner: winner?.template.name || null,
+      reason,
+      fighterCount: multiFighters.length
+    });
     state = "matchEnd";
     manualPaused = false;
     syncPauseControl();
@@ -5767,6 +6098,324 @@
     drawFloatingTexts();
     drawVoicePauseEffect();
     ctx.restore();
+    if (activeReplaySession) updateReplayCompositionFrame();
+  }
+
+  function replayRoundedRect(paint, x, y, width, height, radius) {
+    const r = Math.min(radius, width / 2, height / 2);
+    paint.beginPath();
+    paint.moveTo(x + r, y);
+    paint.lineTo(x + width - r, y);
+    paint.quadraticCurveTo(x + width, y, x + width, y + r);
+    paint.lineTo(x + width, y + height - r);
+    paint.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    paint.lineTo(x + r, y + height);
+    paint.quadraticCurveTo(x, y + height, x, y + height - r);
+    paint.lineTo(x, y + r);
+    paint.quadraticCurveTo(x, y, x + r, y);
+    paint.closePath();
+  }
+
+  function replayBar(paint, x, y, width, height, ratio, color, background = "rgba(255,255,255,0.12)") {
+    replayRoundedRect(paint, x, y, width, height, height / 2);
+    paint.fillStyle = background;
+    paint.fill();
+    const fillWidth = Math.max(0, Math.min(1, ratio)) * width;
+    if (fillWidth <= 0) return;
+    replayRoundedRect(paint, x, y, fillWidth, height, height / 2);
+    paint.fillStyle = color;
+    paint.fill();
+  }
+
+  function replaySpecialReadout(fighter) {
+    const id = fighter.template.id;
+    if (id === "kakarot-test") {
+      return `死告 ${Math.round(fighter.specialEnergy)}/3${fighter.overclock > 0 ? ` · 超频 ${fighter.overclock.toFixed(1)}s` : ""}`;
+    }
+    if (id === "anko-test") return `形态 ${fighter.horned ? "羊角" : "常态"} · 黑咩${fighter.horned ? "就绪" : "待命"}`;
+    if (id === "01") return `时序 ${Math.round(fighter.specialEnergy)}/3 · 飞刃 ×${fighter.knifeCount}`;
+    if (id === "02") return `暗涌 ${Math.round(fighter.abyssEnergy)}/100${fighter.abyssForm ? " · 镰刀人" : ""}`;
+    if (id === "03") {
+      const field = windFields.find((item) => item.owner === fighter);
+      const windText = fighter.charge ? `蓄力 ${fighter.charge.timer.toFixed(1)}s` : field ? `风场 ${field.life.toFixed(1)}s` : "风场待机";
+      return `${windText} · 护盾 ${Math.round(fighter.shield)}`;
+    }
+    if (id === "04") {
+      const state = fighter.brantAirborneTimer > 0 ? "空中" : fighter.brantBigAnchorLock ? "落锚" : "巡航";
+      return `船锚 ${Math.round(fighter.brantSpecialEnergy)}/100 · ${state}`;
+    }
+    if (id === "05") {
+      const mirage = fighter.cantarellaMirageTimer > 0 ? ` · 蜃境 ${fighter.cantarellaMirageTimer.toFixed(1)}s` : "";
+      return `水母献祭 ${fighter.cantarellaJellyDeaths}/3${mirage}`;
+    }
+    if (id === "06") {
+      const plants = verinaPlants.filter((item) => item.owner === fighter && !item.isVine).length;
+      return `芽 ${plants}/6${hasVerinaVine(fighter) ? " · 藤蔓复苏" : ""}`;
+    }
+    if (id === "07") {
+      const modeText = fighter.jinhsiEmpowered ? "强化" : "初始";
+      const ultimate = fighter.jinhsiUltimateUnlocked ? " · 解放就绪" : "";
+      return `龙刃 ${modeText} ${fighter.jinhsiAttackCount}/4${ultimate}`;
+    }
+    return `特殊能量 ${Math.round(fighter.specialEnergy || 0)}`;
+  }
+
+  function replayFighterStatus(fighter) {
+    const states = [];
+    if (fighter.shield > 0) states.push("护盾");
+    if (fighter.overclock > 0) states.push("超频");
+    if (fighter.horned) states.push("羊角");
+    if (fighter.abyssForm) states.push("镰刀人");
+    if (fighter.brantAirborneTimer > 0) states.push("空中");
+    if (fighter.brantBigAnchorLock) states.push("落锚定身");
+    if (fighter.cantarellaMirageTimer > 0) states.push("蜃境");
+    if (fighter.jinhsiUltimatePhase === "airborne") states.push("腾空");
+    if (fighter.vortexLockTimer > 0) states.push("时停");
+    if (fighter.stunned > 0) states.push("眩晕");
+    if (fighter.freeze > 0) states.push("冻结");
+    if (fighter.cantarellaSlowTimer > 0) states.push("减速");
+    return states.join(" · ") || "战斗中";
+  }
+
+  function drawReplayPortrait(paint, fighter, x, y, radius) {
+    const usesAlternate = (fighter.horned || fighter.abyssForm) && fighter.template.altImage;
+    const portraitKey = usesAlternate
+      ? (fighter.template.altPortraitKey || `${fighter.template.id}:alt`)
+      : (fighter.template.portraitKey || fighter.template.id);
+    const portrait = fighterPortraits.get(portraitKey);
+    paint.save();
+    paint.beginPath();
+    paint.arc(x, y, radius, 0, Math.PI * 2);
+    paint.clip();
+    paint.fillStyle = "#dce6ee";
+    paint.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+    if (portrait?.complete && portrait.naturalWidth > 0) {
+      const size = radius * 2;
+      const scale = Math.max(size / portrait.naturalWidth, size / portrait.naturalHeight);
+      const sourceWidth = size / scale;
+      const sourceHeight = size / scale;
+      const sourceX = (portrait.naturalWidth - sourceWidth) / 2;
+      const sourceY = Math.max(0, (portrait.naturalHeight - sourceHeight) / 2 - 1);
+      paint.drawImage(portrait, sourceX, sourceY, sourceWidth, sourceHeight, x - radius, y - radius, size, size);
+    }
+    paint.restore();
+    paint.strokeStyle = colorWithAlpha(fighter.template.color, 0.9);
+    paint.lineWidth = 2;
+    paint.beginPath();
+    paint.arc(x, y, radius, 0, Math.PI * 2);
+    paint.stroke();
+  }
+
+  function drawReplaySideHud(paint, fighter, side) {
+    const left = side === 0;
+    const portraitX = left ? 32 : ARENA_SIZE - 32;
+    const contentX = left ? 64 : 426;
+    const contentRight = left ? 298 : 656;
+    const hpRatio = fighter.hp / Math.max(1, fighter.maxHp);
+    const hpColor = left ? "#ff9d38" : "#57aaca";
+    paint.textBaseline = "middle";
+    drawReplayPortrait(paint, fighter, portraitX, 57, 25);
+
+    paint.font = "700 8px 'Microsoft YaHei'";
+    paint.fillStyle = "#717b8e";
+    paint.textAlign = "left";
+    paint.fillText(left ? "左侧团子" : "右侧团子", contentX, 12);
+    paint.font = "800 13px 'Microsoft YaHei'";
+    paint.fillStyle = "#f3f1eb";
+    paint.fillText(fighter.template.name, contentX, 29);
+    paint.font = "800 11px 'Trebuchet MS'";
+    paint.textAlign = "right";
+    paint.fillStyle = "#d8dbe2";
+    paint.fillText(`HP ${Math.ceil(fighter.hp)} / ${Math.ceil(fighter.maxHp)}`, contentRight, 29);
+
+    replayBar(paint, contentX, 39, contentRight - contentX, 9, hpRatio, hpColor, "rgba(255,255,255,0.1)");
+    replayBar(paint, contentX, 52, contentRight - contentX, 4, fighter.energy / 100, "#ffd84d", "rgba(255,255,255,0.1)");
+    paint.textAlign = "left";
+    paint.font = "700 8px 'Microsoft YaHei'";
+    paint.fillStyle = "#aeb6c6";
+    paint.fillText(`共鸣 ${Math.round(fighter.energy)}% · ${replaySpecialReadout(fighter)}`, contentX, 65);
+    paint.fillStyle = colorWithAlpha(fighter.template.color, 0.94);
+    paint.fillText(replayFighterStatus(fighter), contentX, 80);
+  }
+
+  function drawReplayFighterCard(paint, fighter, x, y, width, height, compact = false) {
+    const padding = compact ? 9 : 12;
+    const nameY = y + (compact ? 15 : 19);
+    const hpRatio = fighter.hp / Math.max(1, fighter.maxHp);
+    const energyRatio = fighter.energy / 100;
+    paint.save();
+    replayRoundedRect(paint, x, y, width, height, compact ? 9 : 11);
+    paint.fillStyle = "rgba(5, 8, 15, 0.82)";
+    paint.fill();
+    paint.strokeStyle = colorWithAlpha(fighter.template.color, 0.74);
+    paint.lineWidth = 1.3;
+    paint.stroke();
+
+    paint.fillStyle = "#f5f2e9";
+    paint.font = `800 ${compact ? 10 : 14}px 'Microsoft YaHei'`;
+    paint.textAlign = "left";
+    paint.textBaseline = "middle";
+    paint.fillText(fighter.template.name, x + padding, nameY);
+    paint.textAlign = "right";
+    paint.fillStyle = hpRatio <= 0.3 ? "#ff7b86" : "#ffffff";
+    paint.fillText(`HP ${Math.ceil(fighter.hp)}/${Math.ceil(fighter.maxHp)}`, x + width - padding, nameY);
+
+    const hpY = y + (compact ? 24 : 32);
+    const barWidth = width - padding * 2;
+    replayBar(paint, x + padding, hpY, barWidth, compact ? 5 : 8, hpRatio, hpRatio <= 0.3 ? "#ff6478" : "#78df94");
+    const energyY = hpY + (compact ? 9 : 13);
+    replayBar(paint, x + padding, energyY, barWidth, compact ? 3 : 5, energyRatio, "#ffd84d");
+
+    paint.font = `700 ${compact ? 8 : 10}px 'Microsoft YaHei'`;
+    paint.fillStyle = "#b9bfd0";
+    paint.textAlign = "left";
+    paint.fillText(`共鸣 ${Math.round(fighter.energy)}% · ${replaySpecialReadout(fighter)}`, x + padding, energyY + (compact ? 11 : 16));
+    if (!compact) {
+      paint.fillStyle = colorWithAlpha(fighter.template.color, 0.92);
+      paint.font = "700 9px 'Microsoft YaHei'";
+      paint.fillText(replayFighterStatus(fighter), x + padding, y + height - 13);
+    }
+    paint.restore();
+  }
+
+  function drawReplayComposition() {
+    const paint = replayCompositionCtx;
+    const scale = canvas.height / ARENA_SIZE;
+    const fighters = getActiveFighters();
+    const multiColumns = Math.min(3, Math.max(1, fighters.length));
+    const multiRows = Math.ceil(fighters.length / multiColumns);
+    const cardGap = 7;
+    const multiCardWidth = (ARENA_SIZE - 24 - cardGap * (multiColumns - 1)) / multiColumns;
+    const multiCardHeight = 70;
+    const statusHeight = mode === "multi"
+      ? 48 + multiRows * multiCardHeight + Math.max(0, multiRows - 1) * cardGap + 10
+      : 118;
+    const outputWidth = canvas.width;
+    const outputHeight = Math.round((ARENA_SIZE + statusHeight) * scale);
+    if (replayCompositionCanvas.width !== outputWidth || replayCompositionCanvas.height !== outputHeight) {
+      replayCompositionCanvas.width = outputWidth;
+      replayCompositionCanvas.height = outputHeight;
+    }
+    paint.setTransform(scale, 0, 0, scale, 0, 0);
+    paint.clearRect(0, 0, ARENA_SIZE, ARENA_SIZE + statusHeight);
+    const backdrop = paint.createLinearGradient(0, 0, 0, statusHeight);
+    backdrop.addColorStop(0, "#141a28");
+    backdrop.addColorStop(1, "#080b12");
+    paint.fillStyle = backdrop;
+    paint.fillRect(0, 0, ARENA_SIZE, statusHeight);
+    paint.save();
+
+    if (mode === "multi") {
+      paint.fillStyle = "#ffd84d";
+      paint.font = "900 16px 'Microsoft YaHei'";
+      paint.textAlign = "left";
+      paint.textBaseline = "middle";
+      paint.fillText("对局实时状态", 12, 20);
+      paint.fillStyle = "#aeb5c5";
+      paint.font = "700 9px 'Microsoft YaHei'";
+      paint.fillText(`${fighters.length} 团混战`, 12, 36);
+      paint.textAlign = "right";
+      paint.fillStyle = "#f7f1dc";
+      paint.font = "900 18px 'Trebuchet MS'";
+      paint.fillText(`TIME ${Math.ceil(battleTimer)}`, ARENA_SIZE - 12, 22);
+      fighters.forEach((fighter, index) => {
+        const column = index % multiColumns;
+        const row = Math.floor(index / multiColumns);
+        const x = 12 + column * (multiCardWidth + cardGap);
+        const y = 48 + row * (multiCardHeight + cardGap);
+        drawReplayFighterCard(paint, fighter, x, y, multiCardWidth, multiCardHeight, true);
+      });
+    } else if (player && enemy) {
+      drawReplaySideHud(paint, player, 0);
+      drawReplaySideHud(paint, enemy, 1);
+      paint.fillStyle = "#ffd84d";
+      paint.font = "800 10px 'Microsoft YaHei'";
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.fillText(`第 ${round} 局`, 360, 13);
+      paint.fillStyle = "#fff4c7";
+      paint.font = "900 20px 'Trebuchet MS'";
+      paint.fillText(`${score[0]} : ${score[1]}`, 360, 34);
+      paint.fillStyle = "#9fa7b8";
+      paint.font = "700 8px 'Microsoft YaHei'";
+      paint.fillText(score[0] === WINNING_SCORE || score[1] === WINNING_SCORE ? "胜负已定" : "三局两胜", 360, 51);
+    }
+    paint.restore();
+    paint.drawImage(canvas, 0, statusHeight, ARENA_SIZE, ARENA_SIZE);
+    paint.strokeStyle = "rgba(255, 216, 77, 0.34)";
+    paint.lineWidth = 1.5;
+    paint.beginPath();
+    paint.moveTo(0, statusHeight);
+    paint.lineTo(ARENA_SIZE, statusHeight);
+    paint.stroke();
+    if (mode !== "multi" && player && enemy) {
+      paint.save();
+      replayRoundedRect(paint, 335, 66, 50, 43, 22);
+      paint.fillStyle = "rgba(5, 7, 12, 0.94)";
+      paint.fill();
+      paint.strokeStyle = "rgba(255, 255, 255, 0.15)";
+      paint.lineWidth = 1.2;
+      paint.stroke();
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.fillStyle = "#ffd84d";
+      paint.font = "700 7px 'Trebuchet MS'";
+      paint.fillText("TIME", 360, 75);
+      paint.fillStyle = "#ece8de";
+      paint.font = "900 16px 'Trebuchet MS'";
+      paint.fillText(String(Math.ceil(battleTimer)), 360, 94);
+      paint.restore();
+    }
+    const announcement = dom.announcement.textContent?.trim();
+    if (announcement && (announcementTimer > 0 || voicePauseActive)) {
+      paint.save();
+      paint.font = "800 9px 'Microsoft YaHei'";
+      const textWidth = paint.measureText(announcement).width;
+      const width = Math.min(300, textWidth + 34);
+      const x = (ARENA_SIZE - width) / 2;
+      const y = statusHeight + 38;
+      replayRoundedRect(paint, x, y, width, 28, 14);
+      paint.fillStyle = "rgba(5, 7, 12, 0.9)";
+      paint.fill();
+      paint.strokeStyle = "rgba(255, 255, 255, 0.14)";
+      paint.stroke();
+      paint.fillStyle = "#ece8de";
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.fillText(announcement, ARENA_SIZE / 2, y + 14);
+      paint.restore();
+    }
+    if (visualTime < replayCountdownUntil && replayCountdownText) {
+      const remaining = (replayCountdownUntil - visualTime) / 0.85;
+      const scaleIn = 0.82 + Math.min(0.18, (1 - remaining) * 0.9);
+      paint.save();
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.globalAlpha = Math.min(1, remaining * 2.4);
+      paint.translate(ARENA_SIZE / 2, statusHeight + ARENA_SIZE / 2);
+      paint.scale(scaleIn, scaleIn);
+      paint.fillStyle = "rgba(7, 10, 17, 0.56)";
+      paint.beginPath();
+      paint.arc(0, 0, 78, 0, Math.PI * 2);
+      paint.fill();
+      paint.strokeStyle = "rgba(255, 216, 77, 0.72)";
+      paint.lineWidth = 3;
+      paint.shadowColor = "#ffd84d";
+      paint.shadowBlur = 22;
+      paint.stroke();
+      paint.shadowBlur = 18;
+      paint.fillStyle = "#fff8df";
+      paint.font = replayCountdownText.length > 1 ? "900 38px 'Microsoft YaHei'" : "900 72px 'Trebuchet MS'";
+      paint.fillText(replayCountdownText, 0, 2);
+      paint.restore();
+    }
+  }
+
+  function updateReplayCompositionFrame(force = false) {
+    const now = performance.now();
+    if (!force && now - lastReplayCompositeAt < 1000 / REPLAY_RENDER_FPS - 1) return;
+    lastReplayCompositeAt = now;
+    drawReplayComposition();
   }
 
   function drawVoicePauseEffect() {
@@ -7217,6 +7866,9 @@
     const progress = fighter.jinhsiSwingTime > 0
       ? 1 - fighter.jinhsiSwingTime / swingTotal
       : 0;
+    const windupProgress = fighter.jinhsiAttackWindup > 0
+      ? 1 - fighter.jinhsiAttackWindup / fighter.template.jinhsiEmpoweredWindup
+      : 0;
     const swingOffset = fighter.jinhsiSwingTime > 0 ? (progress - 0.5) * 1.9 : 0;
     ctx.save();
     if (verticalSwing) {
@@ -7233,6 +7885,9 @@
     } else if (fighter.jinhsiSwingTime > 0) {
       ctx.translate(radius * 1.08, -radius * 0.06);
       ctx.rotate(fighter.jinhsiAttackAngle - Math.PI / 2 - 0.12 + swingOffset);
+    } else if (windupProgress > 0) {
+      ctx.translate(radius * 1.42, -radius * 0.2);
+      ctx.rotate(fighter.jinhsiAttackAngle - Math.PI / 2 - 0.52 + windupProgress * 0.3);
     } else {
       ctx.translate(
         radius * 1.68,
@@ -8253,8 +8908,41 @@
       if (!AudioCtor) return null;
       audioContext = new AudioCtor();
     }
+    if (!audioMixNode) {
+      audioMixNode = audioContext.createGain();
+      audioMixNode.gain.value = 1;
+      audioMixNode.connect(audioContext.destination);
+    }
     if (audioContext.state === "suspended") audioContext.resume();
     return audioContext;
+  }
+
+  function createReplayAudioTimeline() {
+    if (!soundEnabled) return null;
+    const context = ensureAudio();
+    if (!context || !audioMixNode) return null;
+    if (replayAudioDestination) {
+      try {
+        audioMixNode.disconnect(replayAudioDestination);
+      } catch {
+        // A previous recording may already have released its destination.
+      }
+    }
+    replayAudioDestination = context.createMediaStreamDestination();
+    audioMixNode.connect(replayAudioDestination);
+    return replayAudioDestination;
+  }
+
+  function releaseReplayAudioTimeline(destination) {
+    if (!destination) return;
+    if (audioMixNode) {
+      try {
+        audioMixNode.disconnect(destination);
+      } catch {
+        // The destination may already be disconnected during recorder shutdown.
+      }
+    }
+    if (replayAudioDestination === destination) replayAudioDestination = null;
   }
 
   function playSound(name) {
@@ -8272,7 +8960,7 @@
       gain.gain.exponentialRampToValueAtTime(volume, now + 0.008);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
       oscillator.connect(gain);
-      gain.connect(audio.destination);
+      gain.connect(audioMixNode || audio.destination);
       oscillator.start(now);
       oscillator.stop(now + duration + 0.02);
     };
@@ -8465,9 +9153,404 @@
     if (!dom.fighterArchive.open) dom.fighterArchive.showModal();
   }
 
+  const REPLAY_MIME_TYPES = [
+    "video/webm;codecs=vp8,opus",
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp9",
+    "video/webm;codecs=vp8",
+    "video/webm",
+    "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+    "video/mp4;codecs=avc1.42E01E",
+    "video/mp4"
+  ];
+
+  function replayRecordingSupported() {
+    return typeof MediaRecorder !== "undefined" && typeof canvas.captureStream === "function";
+  }
+
+  function preferredReplayMimeType() {
+    if (typeof MediaRecorder === "undefined" || typeof MediaRecorder.isTypeSupported !== "function") return "";
+    return REPLAY_MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type)) || "";
+  }
+
+  function openReplayDatabase() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) {
+        reject(new Error("IndexedDB unavailable"));
+        return;
+      }
+      const request = indexedDB.open(REPLAY_DB_NAME, 1);
+      request.addEventListener("upgradeneeded", () => {
+        const database = request.result;
+        if (!database.objectStoreNames.contains(REPLAY_DB_STORE)) {
+          database.createObjectStore(REPLAY_DB_STORE, { keyPath: "key" });
+        }
+      });
+      request.addEventListener("success", () => resolve(request.result), { once: true });
+      request.addEventListener("error", () => reject(request.error || new Error("Failed to open replay database")), { once: true });
+    });
+  }
+
+  async function persistReplayRecords() {
+    if (!replayRecordingSupported() || !replayRecords.length) return;
+    try {
+      const database = await openReplayDatabase();
+      await new Promise((resolve, reject) => {
+        const transaction = database.transaction(REPLAY_DB_STORE, "readwrite");
+        const store = transaction.objectStore(REPLAY_DB_STORE);
+        store.clear();
+        replayRecords.forEach((record) => {
+          store.put({
+            key: String(record.id),
+            id: record.id,
+            size: record.size,
+            mimeType: record.mimeType,
+            extension: record.extension,
+            createdAt: record.createdAt,
+            meta: record.meta,
+            blob: record.blob
+          });
+        });
+        transaction.addEventListener("complete", resolve, { once: true });
+        transaction.addEventListener("error", () => reject(transaction.error), { once: true });
+      });
+    } catch {
+      replayStatusMessage = "浏览器禁止持久保存，本次页面关闭前仍可正常播放和下载。";
+    }
+  }
+
+  async function restoreReplayRecords() {
+    if (!replayRecordingSupported()) return;
+    try {
+      const database = await openReplayDatabase();
+      const rows = await new Promise((resolve, reject) => {
+        const transaction = database.transaction(REPLAY_DB_STORE, "readonly");
+        const request = transaction.objectStore(REPLAY_DB_STORE).getAll();
+        request.addEventListener("success", () => resolve(request.result || []), { once: true });
+        request.addEventListener("error", () => reject(request.error), { once: true });
+      });
+      const existingIds = new Set(replayRecords.map((record) => record.id));
+      rows
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .slice(0, REPLAY_LIMIT)
+        .forEach((row) => {
+          if (existingIds.has(row.id) || !(row.blob instanceof Blob)) return;
+          replayRecords.push({
+            id: row.id,
+            blob: row.blob,
+            url: URL.createObjectURL(row.blob),
+            size: row.size,
+            mimeType: row.mimeType,
+            extension: row.extension,
+            createdAt: row.createdAt,
+            meta: row.meta
+          });
+        });
+      replayRecords.sort((a, b) => b.createdAt - a.createdAt);
+      replayRecords.splice(REPLAY_LIMIT);
+      replaySequence = Math.max(replaySequence, ...replayRecords.map((record) => record.id), 0);
+      if (!selectedReplayId && replayRecords.length) selectedReplayId = replayRecords[0].id;
+      updateReplayButton();
+      renderReplayList();
+    } catch {
+      replayStatusMessage = "浏览器未开放回放存储，本页对局结束后仍会自动收录。";
+      renderReplayList();
+    }
+  }
+
+  function formatReplaySize(bytes) {
+    if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  }
+
+  function replayRecordTitle(record) {
+    return record.meta.mode === "multi" ? "多团混战" : `第 ${record.meta.round} 局`;
+  }
+
+  function replayRecordMatchup(record) {
+    if (record.meta.mode === "multi") {
+      return record.meta.fighters?.join(" · ") || `${record.meta.fighterCount || 2} 团混战`;
+    }
+    return `${record.meta.leftName} vs ${record.meta.rightName}`;
+  }
+
+  function updateReplayButton() {
+    const supported = replayRecordingSupported();
+    const recording = Boolean(activeReplaySession);
+    dom.replayCount.textContent = supported ? (recording ? "●" : String(replayRecords.length)) : "×";
+    dom.replayButton.classList.toggle("is-unsupported", !supported);
+    dom.replayButton.classList.toggle("is-recording", recording);
+    dom.replayButton.setAttribute(
+      "aria-label",
+      recording
+        ? `正在录制${activeReplaySession.meta.label}，已保存 ${replayRecords.length} 局回放`
+        : `对局回放，已保存 ${replayRecords.length} 局`
+    );
+    dom.replayButton.title = supported
+      ? recording
+        ? `正在录制 · ${activeReplaySession.meta.label}`
+        : `对局回放 · 最近 ${REPLAY_LIMIT} 局`
+      : "当前浏览器不支持对局录制";
+  }
+
+  function selectReplayRecord(recordId) {
+    const record = replayRecords.find((item) => item.id === recordId);
+    if (!record) return;
+    selectedReplayId = record.id;
+    dom.replayEmpty.hidden = true;
+    dom.replayVideo.hidden = false;
+    dom.replayInfo.hidden = false;
+    if (dom.replayVideo.src !== record.url) {
+      dom.replayVideo.pause();
+      dom.replayVideo.src = record.url;
+      dom.replayVideo.load();
+    }
+    const winnerText = record.meta.winner ? ` · 胜者 ${record.meta.winner}` : "";
+    const reasonText = record.meta.reason ? ` · ${record.meta.reason}` : "";
+    const audioText = record.meta.hasAudio ? "含声音" : "无音轨";
+    dom.replayInfoTitle.textContent = `${replayRecordTitle(record)}${winnerText}`;
+    dom.replayInfoDetail.textContent = `${replayRecordMatchup(record)}${reasonText} · ${formatReplaySize(record.size)} · ${audioText}`;
+    dom.replayDownload.href = record.url;
+    dom.replayDownload.download = `solaris-replay-${record.meta.mode}-${record.meta.round}-${record.id}.${record.extension}`;
+    renderReplayList();
+  }
+
+  function renderReplayList() {
+    dom.replayList.innerHTML = "";
+    const status = document.createElement("p");
+    status.className = "replay-list-status";
+    if (!replayRecordingSupported()) {
+      status.textContent = "当前浏览器不支持画布录制，无法生成新回放。";
+    } else if (activeReplaySession) {
+      status.textContent = `正在录制 ${activeReplaySession.meta.label}，本局结束后自动保存。`;
+    } else if (replayStatusMessage) {
+      status.textContent = replayStatusMessage;
+    } else if (!replayRecords.length) {
+      status.textContent = "尚未保存回放。开始对战后，本局结算时会自动生成。";
+    } else {
+      status.textContent = `自动保留最近 ${REPLAY_LIMIT} 局完整战斗画面。`;
+    }
+    dom.replayList.appendChild(status);
+
+    if (replayRecords.length && !replayRecords.some((record) => record.id === selectedReplayId)) {
+      selectedReplayId = replayRecords[0].id;
+    }
+    replayRecords.forEach((record) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "replay-item";
+      button.classList.toggle("is-active", record.id === selectedReplayId);
+      button.setAttribute("aria-pressed", String(record.id === selectedReplayId));
+      const title = document.createElement("strong");
+      title.textContent = replayRecordTitle(record);
+      const matchup = document.createElement("span");
+      matchup.textContent = replayRecordMatchup(record);
+      const detail = document.createElement("small");
+      const outcome = record.meta.winner ? `胜者 ${record.meta.winner}` : "对局结束";
+      detail.textContent = `${outcome} · ${formatReplaySize(record.size)} · ${record.meta.hasAudio ? "含声音" : "无音轨"}`;
+      button.append(title, matchup, detail);
+      button.addEventListener("click", () => selectReplayRecord(record.id));
+      dom.replayList.appendChild(button);
+    });
+
+    if (!replayRecords.length) {
+      dom.replayVideo.pause();
+      dom.replayVideo.hidden = true;
+      dom.replayVideo.removeAttribute("src");
+      dom.replayInfo.hidden = true;
+      dom.replayEmpty.hidden = false;
+    } else if (selectedReplayId) {
+      const selected = replayRecords.find((record) => record.id === selectedReplayId);
+      if (selected && dom.replayVideo.src !== selected.url) selectReplayRecord(selected.id);
+    }
+  }
+
+  function discardReplayRecording() {
+    const session = activeReplaySession;
+    if (!session) return;
+    session.discard = true;
+    session.discardReason = "上一局尚未完成，录制已重置。";
+    activeReplaySession = null;
+    if (session.recorder.state !== "inactive") {
+      try {
+        session.recorder.stop();
+      } catch {
+        session.stream.getVideoTracks().forEach((track) => track.stop());
+        releaseReplayAudioTimeline(session.audioDestination);
+      }
+    }
+    updateReplayButton();
+  }
+
+  function startReplayRecording(meta) {
+    if (!replayRecordingSupported()) {
+      replayStatusMessage = "当前浏览器不支持画布录制。";
+      updateReplayButton();
+      return;
+    }
+    discardReplayRecording();
+    let stream;
+    let recorder;
+    let audioDestination = null;
+    try {
+      const mimeType = preferredReplayMimeType();
+      audioDestination = createReplayAudioTimeline();
+      lastReplayCompositeAt = 0;
+      updateReplayCompositionFrame(true);
+      const videoStream = replayCompositionCanvas.captureStream(REPLAY_RENDER_FPS);
+      const audioTracks = audioDestination?.stream.getAudioTracks() || [];
+      stream = audioTracks.length
+        ? new MediaStream([...videoStream.getVideoTracks(), ...audioTracks])
+        : videoStream;
+      const options = {
+        videoBitsPerSecond: LOW_POWER_DEVICE ? 4000000 : 7000000,
+        audioBitsPerSecond: 192000
+      };
+      if (mimeType) options.mimeType = mimeType;
+      try {
+        recorder = new MediaRecorder(stream, options);
+      } catch {
+        recorder = new MediaRecorder(stream);
+      }
+    } catch {
+      stream?.getVideoTracks().forEach((track) => track.stop());
+      releaseReplayAudioTimeline(audioDestination);
+      replayStatusMessage = "对局录制启动失败，可能是浏览器不支持当前视频编码。";
+      updateReplayButton();
+      renderReplayList();
+      return;
+    }
+
+    const hasAudio = stream.getAudioTracks().length > 0;
+    const session = {
+      recorder,
+      stream,
+      chunks: [],
+      discard: false,
+      hasAudio,
+      audioDestination,
+      startedAt: performance.now(),
+      meta: {
+        ...meta,
+        label: meta.mode === "multi" ? "多团混战" : `第 ${meta.round} 局`,
+        hasAudio
+      }
+    };
+    activeReplaySession = session;
+    recorder.addEventListener("dataavailable", (event) => {
+      if (event.data?.size > 0) session.chunks.push(event.data);
+    });
+    recorder.addEventListener("error", () => {
+      session.discard = true;
+      session.discardReason = "浏览器录制器发生错误，本局回放未保存。";
+      if (recorder.state !== "inactive") {
+        try {
+          recorder.stop();
+        } catch {
+          stream.getVideoTracks().forEach((track) => track.stop());
+          releaseReplayAudioTimeline(audioDestination);
+        }
+      }
+    }, { once: true });
+    recorder.addEventListener("stop", () => {
+      stream.getVideoTracks().forEach((track) => track.stop());
+      releaseReplayAudioTimeline(audioDestination);
+      if (activeReplaySession === session) activeReplaySession = null;
+      if (session.discard) {
+        replayStatusMessage = session.discardReason || "本局录制已取消。";
+      }
+      if (!session.discard && session.chunks.length) {
+        const mimeType = recorder.mimeType || session.chunks[0].type || "video/webm";
+        const blob = new Blob(session.chunks, { type: mimeType });
+        if (blob.size > 0) {
+          const id = ++replaySequence;
+          const extension = mimeType.includes("mp4") ? "mp4" : "webm";
+          const record = {
+            id,
+            blob,
+            url: URL.createObjectURL(blob),
+            size: blob.size,
+            mimeType,
+            extension,
+            createdAt: Date.now(),
+            meta: {
+              ...session.meta,
+              durationMs: Math.round(performance.now() - session.startedAt)
+            }
+          };
+          replayRecords.unshift(record);
+          selectedReplayId = record.id;
+          while (replayRecords.length > REPLAY_LIMIT) {
+            const removed = replayRecords.pop();
+            URL.revokeObjectURL(removed.url);
+          }
+          replayStatusMessage = `${replayRecordTitle(record)}回放已保存${hasAudio ? "（含声音）" : ""}，可播放或下载。`;
+          persistReplayRecords();
+        }
+      } else if (!session.discard) {
+        replayStatusMessage = "本局没有生成有效录像，请确认浏览器允许画布录制。";
+      }
+      updateReplayButton();
+      renderReplayList();
+    });
+    try {
+      recorder.start(1000);
+    } catch {
+      activeReplaySession = null;
+      stream.getVideoTracks().forEach((track) => track.stop());
+      releaseReplayAudioTimeline(audioDestination);
+      replayStatusMessage = "对局录制启动失败，本局不会生成回放。";
+      updateReplayButton();
+      renderReplayList();
+      return;
+    }
+    updateReplayButton();
+    renderReplayList();
+  }
+
+  function finishReplayRecording(result = {}) {
+    const session = activeReplaySession;
+    if (!session) return;
+    session.meta = { ...session.meta, ...result };
+    if (session.recorder.state !== "inactive") {
+      try {
+        session.recorder.stop();
+      } catch {
+        session.discard = true;
+        session.stream.getVideoTracks().forEach((track) => track.stop());
+        releaseReplayAudioTimeline(session.audioDestination);
+      }
+    }
+  }
+
+  function openReplayDialog() {
+    renderReplayList();
+    if (!dom.replayDialog.open) dom.replayDialog.showModal();
+  }
+
+  function normalizeReplayVideoDuration() {
+    const video = dom.replayVideo;
+    if (Number.isFinite(video.duration)) return;
+    const restoreStart = () => {
+      if (!Number.isFinite(video.duration)) return;
+      video.removeEventListener("durationchange", restoreStart);
+      try {
+        video.currentTime = 0;
+      } catch {
+        // Some browsers reject seeking before metadata is fully available.
+      }
+    };
+    video.addEventListener("durationchange", restoreStart);
+    try {
+      video.currentTime = 1e101;
+    } catch {
+      video.removeEventListener("durationchange", restoreStart);
+    }
+  }
+
   function resizeCanvas() {
-    const dprCap = LOW_POWER_DEVICE ? 1.25 : 1.5;
-    const dpr = Math.min(dprCap, window.devicePixelRatio || 1);
+    const dprCap = 1.5;
+    const dpr = Math.min(dprCap, Math.max(1.5, window.devicePixelRatio || 1));
     canvas.width = Math.round(ARENA_SIZE * dpr);
     canvas.height = Math.round(ARENA_SIZE * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -8563,6 +9646,13 @@
   dom.abilityButton.addEventListener("click", () => {
     if (mode === "play" && !manualPaused) useAbility(player, enemy);
   });
+  dom.replayButton.addEventListener("click", openReplayDialog);
+  dom.replayClose.addEventListener("click", () => dom.replayDialog.close());
+  dom.replayDialog.addEventListener("click", (event) => {
+    if (event.target === dom.replayDialog) dom.replayDialog.close();
+  });
+  dom.replayDialog.addEventListener("close", () => dom.replayVideo.pause());
+  dom.replayVideo.addEventListener("loadedmetadata", normalizeReplayVideoDuration);
   dom.soundButton.addEventListener("click", () => {
     setSound(!soundEnabled);
   });
@@ -8611,14 +9701,14 @@
 
   FIGHTERS.filter((fighter) => fighter.image).forEach((fighter) => {
     const portrait = new Image();
-    portrait.src = fighter.image;
+    portrait.src = canvasImageSource(fighter.image);
     fighterPortraits.set(fighter.id, portrait);
     if (fighter.id === "01" || fighter.id === "02") {
       fighterPortraits.set(`${fighter.id}:male`, portrait);
     }
     if (fighter.altImage) {
       const alternate = new Image();
-      alternate.src = fighter.altImage;
+      alternate.src = canvasImageSource(fighter.altImage);
       fighterPortraits.set(`${fighter.id}:alt`, alternate);
       if (fighter.id === "01" || fighter.id === "02") {
         fighterPortraits.set(`${fighter.id}:male:alt`, alternate);
@@ -8626,33 +9716,33 @@
     }
     if (fighter.femaleImage) {
       const female = new Image();
-      female.src = fighter.femaleImage;
+      female.src = canvasImageSource(fighter.femaleImage);
       fighterPortraits.set(`${fighter.id}:female`, female);
       if (fighter.femaleAltImage) {
         const femaleAlternate = new Image();
-        femaleAlternate.src = fighter.femaleAltImage;
+        femaleAlternate.src = canvasImageSource(fighter.femaleAltImage);
         fighterPortraits.set(`${fighter.id}:female:alt`, femaleAlternate);
       }
     }
   });
   ["white-sheep", "black-sheep", "brant-chest"].forEach((name) => {
     const image = new Image();
-    image.src = `assets/${name}.png`;
+    image.src = canvasImageSource(`assets/${name}.png`);
     summonPortraits.set(name, image);
   });
   FIGHTERS.filter((fighter) => fighter.weaponImage).forEach((fighter) => {
     const weapon = new Image();
-    weapon.src = fighter.weaponImage;
+    weapon.src = canvasImageSource(fighter.weaponImage);
     weaponPortraits.set(fighter.id, weapon);
     if (fighter.rangedWeaponImage) {
       const rangedWeapon = new Image();
-      rangedWeapon.src = fighter.rangedWeaponImage;
+      rangedWeapon.src = canvasImageSource(fighter.rangedWeaponImage);
       weaponPortraits.set(`${fighter.id}:ranged`, rangedWeapon);
     }
   });
   FIGHTERS.filter((fighter) => fighter.knifeImage).forEach((fighter) => {
     const knife = new Image();
-    knife.src = fighter.knifeImage;
+    knife.src = canvasImageSource(fighter.knifeImage);
     knifePortraits.set(fighter.id, knife);
   });
 
@@ -8666,6 +9756,9 @@
   syncPauseControl();
   updateChosenPanel();
   preparePreview();
+  updateReplayButton();
+  renderReplayList();
+  restoreReplayRecords();
   setRoundSeconds(dom.durationInput.value);
   setMode("watch");
   resizeCanvas();
