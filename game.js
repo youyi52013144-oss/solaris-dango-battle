@@ -296,6 +296,50 @@
       abilityIcon: "⚓",
       abilityDesc: "共鸣能量满后获得 6 秒双倍移速，宝箱生成速度提升至 400%；冷却 15 秒。",
       cooldown: 15
+    },
+    {
+      id: "05",
+      voiceOrder: 8,
+      name: "坎特蕾拉团子",
+      element: "暗 · 蜃境型",
+      tagline: "伞落成梦，水母织境。",
+      color: "#b18cff",
+      dark: "#3b2868",
+      symbol: "蜃",
+      image: "assets/cantarella.png",
+      weaponImage: "assets/cantarella-umbrella.png",
+      hp: 660,
+      power: 1,
+      speed: 3,
+      radius: 27,
+      stats: { power: 56, speed: 38, hp: 66 },
+      display: { attack: "伞击 6×10", speed: "3.0格/s", hp: "660" },
+      attackType: "cantarellaUmbrella",
+      attackDamage: 10,
+      attackCooldown: 4,
+      attackRange: 4,
+      umbrellaHits: 6,
+      umbrellaSpeed: 2,
+      umbrellaDistance: 15,
+      jellyHp: 30,
+      jellySpeed: 2,
+      jellyRadius: 11,
+      jellyAttackDamage: 20,
+      jellyAttackRange: 2,
+      jellyAttackCooldown: 2,
+      jellyHealOnDeath: 10,
+      jellySpawnInterval: 5,
+      jellyStartingCount: 3,
+      jellyDeathsToUnlock: 3,
+      ultimateType: "cantarellaMirage",
+      ultimateDuration: 8,
+      ultimateCooldown: 18,
+      mirageSlowMultiplier: 0.2,
+      mirageBonusDamage: 150,
+      ability: "蜃境迷梦",
+      abilityIcon: "梦",
+      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 150 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时追加 150 点伤害。冷却 18 秒。",
+      cooldown: 18
     }
   ];
 
@@ -446,6 +490,25 @@
         "大船锚造成 180 点椭圆范围特殊伤害，不增加船锚能量，覆盖面积约 100 格。",
         "共鸣解放持续 6 秒，移速翻倍，宝箱生成速度提升至 400%；冷却 15 秒。"
       ]
+    },
+    "05": {
+      role: "召唤控场 / 蜃境减速",
+      range: "雨伞索敌半径 4 格；水母近战半径 2 格",
+      interval: "雨伞 4 秒 / 水母 2 秒 / 共鸣解放 18 秒",
+      mechanics: [
+        "生命 660、移动速度 3 格/秒。",
+        "敌人或可索敌召唤物进入半径 4 格后，坎特蕾拉沿攻击方向丢出雨伞。",
+        "雨伞以 2 格/秒直线飞行约 15 格，对每个接触目标最多造成 6 段、每段 10 点伤害并沿飞行方向击退。",
+        "雨伞可以拦截敌方远程子弹，雨伞攻击冷却 4 秒。",
+        "登场时在身边召唤 3 只水母，此后每 5 秒召唤 1 只。",
+        "水母生命 30、移速 2 格/秒，具有碰撞体积且可被索敌，会自动追踪最近敌人。",
+        "水母以半径 2 格进行半圆近战攻击，每次造成 20 点伤害，冷却 2 秒。",
+        "每只水母死亡时为坎特蕾拉恢复 10 点生命，并累计蜃境解锁进度。",
+        "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
+        "蜃境持续 8 秒，使场上所有单位移速降至 20%，敌方单位获得迷梦。",
+        "迷梦单位首次受击追加 150 点伤害，并立即解除迷梦与蜃境减速。",
+        "若蜃境持续期间没有对敌方造成伤害，结束时对仍存活的敌方单位追加 150 点特殊伤害；冷却 18 秒。"
+      ]
     }
   };
 
@@ -577,7 +640,7 @@
   let player = null;
   let enemy = null;
   let multiFighters = [];
-  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "06", "04"];
+  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "06", "04", "05"];
   let score = [0, 0];
   let round = 1;
   let roundSeconds = DEFAULT_ROUND_SECONDS;
@@ -617,6 +680,9 @@
   let brantChests = [];
   let brantAnchors = [];
   let brantSequence = 0;
+  let cantarellaJellies = [];
+  let cantarellaUmbrellas = [];
+  let cantarellaSequence = 0;
   let pickups = [];
   let floatingTexts = [];
   const voiceJobs = [];
@@ -662,9 +728,17 @@
   const formatNumber = (value) => Math.max(0, Math.round(value)).toLocaleString("zh-CN");
   const getConfigId = () => mode === "multi" || configSide === "left" ? selectedId : enemyId;
   const getActiveFighters = () => mode === "multi" ? multiFighters : [player, enemy].filter(Boolean);
+  const getDamageableUnits = () => [
+    ...getActiveFighters(),
+    ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0)
+  ];
 
   function nearestOpponent(fighter) {
-    const candidates = getActiveFighters().filter((candidate) => candidate !== fighter && candidate.hp > 0);
+    const candidates = getDamageableUnits().filter((candidate) => (
+      candidate !== fighter
+      && candidate.hp > 0
+      && candidate.side !== fighter.side
+    ));
     candidates.sort((a, b) => distance(fighter, a) - distance(fighter, b));
     return candidates[0] || null;
   }
@@ -713,6 +787,12 @@
       brantChestClock: template.brantChestInterval || 0,
       brantMeleeMode: false,
       brantAimAngle: 0,
+      cantarellaJellySpawnClock: template.jellySpawnInterval || 0,
+      cantarellaJellyDeaths: 0,
+      cantarellaMirageTimer: 0,
+      cantarellaMirageDamageDealt: false,
+      cantarellaSlowTimer: 0,
+      cantarellaDreamed: false,
       voiceUltimatePending: false,
       voiceDeathSentencePending: false,
       deathVoicePlayed: false,
@@ -966,6 +1046,12 @@
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "船长狂想";
       dom.abilityButton.title = "共鸣能量满后获得双倍移速和宝箱加速";
+      return;
+    }
+    if (fighter.id === "05") {
+      dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
+      dom.abilityLabel.textContent = "蜃境迷梦";
+      dom.abilityButton.title = "累计死亡 3 只水母后，共鸣能量满时开启蜃境";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -1310,6 +1396,9 @@
     brantChests = [];
     brantAnchors = [];
     brantSequence = 0;
+    cantarellaJellies = [];
+    cantarellaUmbrellas = [];
+    cantarellaSequence = 0;
     pickups = [];
     floatingTexts = [];
     timeStopOwner = null;
@@ -1337,6 +1426,7 @@
     [player, enemy].forEach(spawnWhiteSheep);
     multiFighters.slice(2).forEach(spawnWhiteSheep);
     setupVerinaPlants();
+    setupCantarellaJellies();
     battleTimer = roundSeconds;
     pickupTimer = random(3.4, 5.4);
     countdownClock = 3.05;
@@ -1369,6 +1459,7 @@
     resetBattleTransient();
     [player, enemy].forEach(spawnWhiteSheep);
     setupVerinaPlants();
+    setupCantarellaJellies();
     battleTimer = roundSeconds;
     pickupTimer = random(3.4, 5.4);
     countdownClock = 3.05;
@@ -1496,6 +1587,7 @@
       });
     }
     updateSummons(dt);
+    updateCantarellaSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
     updateBlackSlams(dt);
@@ -1567,6 +1659,7 @@
       return;
     }
     updateSummons(dt);
+    updateCantarellaSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
     updateBlackSlams(dt);
@@ -1799,6 +1892,14 @@
     fighter.timeForceTimer = Math.max(0, fighter.timeForceTimer - dt);
     fighter.timeSlowTimer = Math.max(0, fighter.timeSlowTimer - dt);
     fighter.verinaSlowTimer = Math.max(0, fighter.verinaSlowTimer - dt);
+    if (fighter.cantarellaMirageTimer > 0) {
+      fighter.cantarellaMirageTimer = Math.max(0, fighter.cantarellaMirageTimer - dt);
+      if (fighter.cantarellaMirageTimer === 0) finishCantarellaMirage(fighter);
+    }
+    if (fighter.cantarellaSlowTimer > 0) {
+      fighter.cantarellaSlowTimer = Math.max(0, fighter.cantarellaSlowTimer - dt);
+      if (fighter.cantarellaSlowTimer === 0) fighter.cantarellaDreamed = false;
+    }
     fighter.ultimateCooldown = Math.max(0, fighter.ultimateCooldown - dt);
     if (fighter.template.id === "03" && fighter.hp > 0) {
       if (fighter.skillClock > 0) fighter.skillClock = Math.max(0, fighter.skillClock - dt);
@@ -1834,7 +1935,7 @@
     if (fighter.template.id === "kakarot-test" && fighter.specialEnergy >= 3 && fighter.deathSentenceClock > 0) {
       fighter.deathSentenceClock = Math.max(0, fighter.deathSentenceClock - dt);
       if (fighter.deathSentenceClock === 0 && fighter.hp > 0 && state === "playing") {
-        triggerDeathSentence(fighter, fighter === player ? enemy : player);
+        triggerDeathSentence(fighter, nearestOpponent(fighter));
       }
     }
     if (
@@ -2149,6 +2250,7 @@
     if (fighter.timeForceTimer > 0) multiplier *= 1.3;
     if (fighter.timeSlowTimer > 0) multiplier *= 0.7;
     if (fighter.verinaSlowTimer > 0) multiplier *= 0.5;
+    if (fighter.cantarellaSlowTimer > 0) multiplier *= fighter.template.mirageSlowMultiplier || 0.2;
     if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) multiplier *= 2;
     return baseSpeed * multiplier;
   }
@@ -2169,16 +2271,18 @@
   }
 
   function updateCombat(dt) {
-    if (player.vortexLockTimer <= 0) updateWandererCombatState(player, enemy, dt);
+    const playerTarget = nearestOpponent(player) || enemy;
+    const enemyTarget = nearestOpponent(enemy) || player;
+    if (player.vortexLockTimer <= 0) updateWandererCombatState(player, playerTarget, dt);
     if (state !== "playing") return;
-    if (enemy.vortexLockTimer <= 0) updateWandererCombatState(enemy, player, dt);
+    if (enemy.vortexLockTimer <= 0) updateWandererCombatState(enemy, enemyTarget, dt);
     if (state !== "playing") return;
-    handleAbility(player, enemy, dt);
+    handleAbility(player, playerTarget, dt);
     if (state !== "playing" || voicePauseActive) return;
-    handleAbility(enemy, player, dt);
+    handleAbility(enemy, enemyTarget, dt);
     if (state !== "playing" || voicePauseActive) return;
-    tryBasicAttack(player, enemy);
-    if (state === "playing" && !voicePauseActive) tryBasicAttack(enemy, player);
+    tryBasicAttack(player, playerTarget);
+    if (state === "playing" && !voicePauseActive) tryBasicAttack(enemy, enemyTarget);
   }
 
   function updateCombatSingle(fighter, opponent, dt) {
@@ -2193,7 +2297,7 @@
     if (state !== "playing") return;
 
     const orbitRadius = fighter.template.knifeOrbitRadius * CELL_SIZE;
-    const targets = getActiveFighters().filter((target) => target !== fighter && target.hp > 0);
+    const targets = getDamageableUnits().filter((target) => target.side !== fighter.side && target.hp > 0);
     for (const target of targets) {
       const dx = target.x - fighter.x;
       const dy = target.y - fighter.y;
@@ -2350,8 +2454,8 @@
       }
 
       if (field.life > 0) {
-        getActiveFighters().forEach((target) => {
-          if (target === field.owner || target.hp <= 0 || target.knockback) return;
+        getDamageableUnits().forEach((target) => {
+          if (target === field.owner || target.side === field.owner.side || target.hp <= 0 || target.knockback) return;
           const dx = field.x - target.x;
           const dy = field.y - target.y;
           const dist = Math.hypot(dx, dy);
@@ -2363,9 +2467,10 @@
         continue;
       }
 
-      getActiveFighters()
+      getDamageableUnits()
         .filter((target) => (
           target !== field.owner
+          && target.side !== field.owner.side
           && target.hp > 0
           && Math.hypot(target.x - field.x, target.y - field.y) <= field.radius
         ))
@@ -2573,9 +2678,9 @@
       wave.life -= dt;
       wave.x += Math.cos(wave.angle) * wave.speed * dt;
       wave.y += Math.sin(wave.angle) * wave.speed * dt;
-      getActiveFighters().forEach((target) => {
+      getDamageableUnits().forEach((target) => {
         if (
-          target === wave.owner
+          target.side === wave.owner.side
           || target.hp <= 0
           || wave.hitIds.has(target)
           || !isWindWaveContact(wave, target, dt)
@@ -2877,8 +2982,8 @@
         : plant.owner.template.verinaTickInterval;
 
       if (plant.isVine) {
-        getActiveFighters()
-          .filter((target) => target !== plant.owner && target.hp > 0)
+        getDamageableUnits()
+          .filter((target) => target.side !== plant.owner.side && target.hp > 0)
           .forEach((target) => {
             target.verinaSlowTimer = Math.max(target.verinaSlowTimer, plant.owner.template.vineTickInterval * 3);
             applySpecialDamage(target, plant.owner.maxHp / plant.owner.template.vineDamageDivisor, plant.owner, "藤蔓侵蚀", {
@@ -2896,7 +3001,7 @@
       let ownerInside = false;
       let ownerHealed = 0;
       const damagedTargets = [];
-      getActiveFighters().forEach((target) => {
+      getDamageableUnits().forEach((target) => {
         if (
           target.hp <= 0
           || Math.hypot(target.x - plant.x, target.y - plant.y) > plant.radius + target.r
@@ -2908,7 +3013,7 @@
             ownerInside = true;
             ownerHealed += healed;
           }
-        } else {
+        } else if (target.side !== plant.owner.side) {
           applySpecialDamage(target, plant.owner.template.verinaDamagePerTick, plant.owner, "嫩芽灼伤", {
             color: "#d9ef7d",
             noEnergy: true,
@@ -3043,8 +3148,8 @@
     const cos = Math.cos(anchor.angle);
     const sin = Math.sin(anchor.angle);
     let hitAny = false;
-    getActiveFighters()
-      .filter((target) => target !== anchor.owner && target.hp > 0)
+    getDamageableUnits()
+      .filter((target) => target.side !== anchor.owner.side && target.hp > 0)
       .forEach((target) => {
         const dx = target.x - anchor.x;
         const dy = target.y - anchor.y;
@@ -3122,6 +3227,399 @@
       resolveBrantAnchor(anchor);
       brantAnchors.splice(i, 1);
     }
+  }
+
+  function setupCantarellaJellies() {
+    getActiveFighters().forEach((owner) => {
+      if (owner.template.id !== "05") return;
+      owner.cantarellaJellyDeaths = 0;
+      for (let index = 0; index < owner.template.jellyStartingCount; index += 1) {
+        spawnCantarellaJelly(owner, index);
+      }
+    });
+  }
+
+  function spawnCantarellaJelly(owner, initialIndex = null) {
+    if (!owner || owner.hp <= 0 || owner.template.id !== "05") return;
+    const angle = initialIndex === null
+      ? random(0, Math.PI * 2)
+      : -Math.PI / 2 + initialIndex * Math.PI * 2 / owner.template.jellyStartingCount;
+    const orbit = CELL_SIZE * (initialIndex === null ? random(1.8, 3.2) : 2.2);
+    const x = clamp(owner.x + Math.cos(angle) * orbit, BOUNDARY + 12, ARENA_SIZE - BOUNDARY - 12);
+    const y = clamp(owner.y + Math.sin(angle) * orbit, BOUNDARY + 12, ARENA_SIZE - BOUNDARY - 12);
+    const id = ++cantarellaSequence;
+    cantarellaJellies.push({
+      id,
+      isJellyfish: true,
+      owner,
+      side: owner.side,
+      x,
+      y,
+      vx: 0,
+      vy: 0,
+      r: owner.template.jellyRadius,
+      hp: owner.template.jellyHp,
+      maxHp: owner.template.jellyHp,
+      shield: 0,
+      maxShield: 1,
+      energy: 0,
+      attackClock: random(0.35, 1.2),
+      attackAngle: angle,
+      flash: 0,
+      stunned: 0,
+      freeze: 0,
+      paralyzed: 0,
+      vortexLockTimer: 0,
+      knockback: null,
+      cantarellaSlowTimer: 0,
+      cantarellaDreamed: false,
+      defeated: false,
+      phase: random(0, Math.PI * 2),
+      template: {
+        id: `cantarella-jelly-${id}`,
+        name: "巡游水母",
+        color: "#b88cff",
+        dark: "#3d2869",
+        attackType: "melee",
+        attackRange: owner.template.jellyAttackRange
+      }
+    });
+    effects.push({
+      type: "ring",
+      x,
+      y,
+      radius: 4,
+      growth: 150,
+      life: 0.42,
+      maxLife: 0.42,
+      color: "#b88cff",
+      width: 3
+    });
+    spawnBurst(x, y, "#c79cff", 12, 110);
+  }
+
+  function performCantarellaJellyAttack(unit, target) {
+    const owner = unit.owner;
+    if (!owner || owner.hp <= 0 || !target || target.hp <= 0) return;
+    unit.attackClock = owner.template.jellyAttackCooldown;
+    unit.attackAngle = Math.atan2(target.y - unit.y, target.x - unit.x);
+    const range = owner.template.jellyAttackRange * CELL_SIZE;
+    effects.push({
+      type: "jellySlash",
+      x: unit.x,
+      y: unit.y,
+      angle: unit.attackAngle,
+      radius: range,
+      life: 0.34,
+      maxLife: 0.34,
+      color: "#c38fff"
+    });
+    getDamageableUnits()
+      .filter((candidate) => {
+        if (candidate.hp <= 0 || candidate.side === unit.side) return false;
+        const dx = candidate.x - unit.x;
+        const dy = candidate.y - unit.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist > range + candidate.r * 0.15) return false;
+        const relative = Math.atan2(
+          Math.sin(Math.atan2(dy, dx) - unit.attackAngle),
+          Math.cos(Math.atan2(dy, dx) - unit.attackAngle)
+        );
+        return Math.abs(relative) <= Math.PI / 2;
+      })
+      .forEach((candidate) => {
+        applyDamage(candidate, owner.template.jellyAttackDamage, owner, "水母半圆击", {
+          color: "#c38fff",
+          melee: true,
+          noEnergy: true
+        });
+        spawnBurst(candidate.x, candidate.y, "#c38fff", 8, 120);
+      });
+    playSound("wind");
+  }
+
+  function updateCantarellaSystem(dt) {
+    const owners = getActiveFighters().filter((fighter) => fighter.template.id === "05" && fighter.hp > 0);
+    owners.forEach((owner) => {
+      owner.cantarellaJellySpawnClock -= dt;
+      if (owner.cantarellaJellySpawnClock <= 0) {
+        spawnCantarellaJelly(owner);
+        owner.cantarellaJellySpawnClock = owner.template.jellySpawnInterval;
+      }
+    });
+
+    for (let i = cantarellaJellies.length - 1; i >= 0; i -= 1) {
+      const unit = cantarellaJellies[i];
+      if (!unit.owner || unit.owner.hp <= 0 || unit.hp <= 0) {
+        cantarellaJellies.splice(i, 1);
+        continue;
+      }
+      unit.flash = Math.max(0, unit.flash - dt * 5);
+      unit.stunned = Math.max(0, unit.stunned - dt);
+      unit.freeze = Math.max(0, unit.freeze - dt);
+      unit.attackClock = Math.max(0, unit.attackClock - dt);
+      if (unit.cantarellaSlowTimer > 0) {
+        unit.cantarellaSlowTimer = Math.max(0, unit.cantarellaSlowTimer - dt);
+        if (unit.cantarellaSlowTimer === 0) unit.cantarellaDreamed = false;
+      }
+      if (unit.knockback) {
+        unit.x = clamp(unit.x + unit.knockback.vx * dt, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+        unit.y = clamp(unit.y + unit.knockback.vy * dt, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+        unit.knockback.timer -= dt;
+        if (unit.knockback.timer <= 0) {
+          unit.stunned = Math.max(unit.stunned, unit.knockback.stun || 0);
+          unit.knockback = null;
+        }
+        unit.vx = 0;
+        unit.vy = 0;
+        continue;
+      }
+      const target = nearestOpponent(unit);
+      if (target && unit.stunned <= 0 && unit.freeze <= 0) {
+        const dx = target.x - unit.x;
+        const dy = target.y - unit.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const attackRange = unit.owner.template.jellyAttackRange * CELL_SIZE;
+        const speed = unit.owner.template.jellySpeed * CELL_SIZE
+          * (unit.cantarellaSlowTimer > 0 ? unit.owner.template.mirageSlowMultiplier : 1);
+        if (dist > attackRange * 0.82) {
+          unit.vx = (dx / dist) * speed;
+          unit.vy = (dy / dist) * speed;
+        } else {
+          unit.vx = 0;
+          unit.vy = 0;
+          if (unit.attackClock <= 0) performCantarellaJellyAttack(unit, target);
+        }
+      } else {
+        unit.vx = 0;
+        unit.vy = 0;
+      }
+      unit.x = clamp(unit.x + unit.vx * dt, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+      unit.y = clamp(unit.y + unit.vy * dt, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+    }
+    resolveCantarellaJellyCollisions();
+    updateCantarellaUmbrellas(dt);
+  }
+
+  function resolveCantarellaJellyCollisions() {
+    const fighters = getActiveFighters().filter((fighter) => fighter.hp > 0);
+    cantarellaJellies.forEach((unit) => {
+      if (!unit.owner || unit.owner.hp <= 0 || unit.hp <= 0) return;
+      fighters.forEach((fighter) => {
+        const dx = unit.x - fighter.x;
+        const dy = unit.y - fighter.y;
+        const dist = Math.hypot(dx, dy) || 0.001;
+        const minDistance = unit.r + fighter.r;
+        if (dist >= minDistance) return;
+        unit.x = clamp(fighter.x + (dx / dist) * minDistance, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+        unit.y = clamp(fighter.y + (dy / dist) * minDistance, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+      });
+    });
+    for (let i = 0; i < cantarellaJellies.length; i += 1) {
+      const first = cantarellaJellies[i];
+      if (first.hp <= 0) continue;
+      for (let j = i + 1; j < cantarellaJellies.length; j += 1) {
+        const second = cantarellaJellies[j];
+        if (second.hp <= 0) continue;
+        const dx = second.x - first.x;
+        const dy = second.y - first.y;
+        const dist = Math.hypot(dx, dy) || 0.001;
+        const minDistance = first.r + second.r;
+        if (dist >= minDistance) continue;
+        const push = (minDistance - dist) * 0.5;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        first.x = clamp(first.x - nx * push, BOUNDARY + first.r, ARENA_SIZE - BOUNDARY - first.r);
+        first.y = clamp(first.y - ny * push, BOUNDARY + first.r, ARENA_SIZE - BOUNDARY - first.r);
+        second.x = clamp(second.x + nx * push, BOUNDARY + second.r, ARENA_SIZE - BOUNDARY - second.r);
+        second.y = clamp(second.y + ny * push, BOUNDARY + second.r, ARENA_SIZE - BOUNDARY - second.r);
+      }
+    }
+  }
+
+  function launchCantarellaUmbrella(fighter, opponent) {
+    const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    const speed = fighter.template.umbrellaSpeed * CELL_SIZE;
+    cantarellaUmbrellas.push({
+      id: ++cantarellaSequence,
+      owner: fighter,
+      x: fighter.x + Math.cos(angle) * (fighter.r + 10),
+      y: fighter.y + Math.sin(angle) * (fighter.r + 10),
+      angle,
+      speed,
+      traveled: 0,
+      maxDistance: fighter.template.umbrellaDistance * CELL_SIZE,
+      r: CELL_SIZE * 0.82,
+      hitCounts: new Map(),
+      hitCooldowns: new Map(),
+      spin: 0,
+      phase: random(0, Math.PI * 2)
+    });
+    fighter.attackClock = fighter.template.attackCooldown;
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: 7,
+      growth: 260,
+      life: 0.3,
+      maxLife: 0.3,
+      color: "#b88cff",
+      width: 4
+    });
+    addLog(`${fighter.template.name} 丢出雨伞，伞体开始沿直线推进。`, "normal");
+    playSound("windup");
+  }
+
+  function updateCantarellaUmbrellas(dt) {
+    for (let i = cantarellaUmbrellas.length - 1; i >= 0; i -= 1) {
+      const umbrella = cantarellaUmbrellas[i];
+      const owner = umbrella.owner;
+      if (!owner || owner.hp <= 0) {
+        cantarellaUmbrellas.splice(i, 1);
+        continue;
+      }
+      const move = Math.min(umbrella.speed * dt, umbrella.maxDistance - umbrella.traveled);
+      umbrella.x += Math.cos(umbrella.angle) * move;
+      umbrella.y += Math.sin(umbrella.angle) * move;
+      umbrella.traveled += move;
+      umbrella.spin += dt * 4.5;
+      umbrella.hitCooldowns.forEach((remaining, target) => {
+        umbrella.hitCooldowns.set(target, Math.max(0, remaining - dt));
+      });
+
+      for (let projectileIndex = projectiles.length - 1; projectileIndex >= 0; projectileIndex -= 1) {
+        const projectile = projectiles[projectileIndex];
+        if (projectile.owner?.side === owner.side) continue;
+        if (Math.hypot(projectile.x - umbrella.x, projectile.y - umbrella.y) > umbrella.r + projectile.r) continue;
+        spawnBurst(projectile.x, projectile.y, "#bda3ff", 12, 150);
+        projectiles.splice(projectileIndex, 1);
+      }
+
+      getDamageableUnits().forEach((target) => {
+        if (target.hp <= 0 || target.side === owner.side) return;
+        const hits = umbrella.hitCounts.get(target) || 0;
+        if (hits >= owner.template.umbrellaHits || umbrella.hitCooldowns.get(target) > 0) return;
+        if (Math.hypot(target.x - umbrella.x, target.y - umbrella.y) > umbrella.r + target.r) return;
+        umbrella.hitCounts.set(target, hits + 1);
+        umbrella.hitCooldowns.set(target, 0.16);
+        applyDamage(target, owner.template.attackDamage, owner, "伞击", {
+          color: "#d6c1ff",
+          ranged: true
+        });
+        if (target.hp > 0) {
+          target.x = clamp(target.x + Math.cos(umbrella.angle) * 7, BOUNDARY + target.r, ARENA_SIZE - BOUNDARY - target.r);
+          target.y = clamp(target.y + Math.sin(umbrella.angle) * 7, BOUNDARY + target.r, ARENA_SIZE - BOUNDARY - target.r);
+        }
+        spawnBurst(target.x, target.y, "#c9a7ff", 8, 130);
+      });
+
+      if (
+        umbrella.traveled >= umbrella.maxDistance
+        || umbrella.x < BOUNDARY
+        || umbrella.x > ARENA_SIZE - BOUNDARY
+        || umbrella.y < BOUNDARY
+        || umbrella.y > ARENA_SIZE - BOUNDARY
+      ) {
+        cantarellaUmbrellas.splice(i, 1);
+      }
+    }
+  }
+
+  function defeatCantarellaJelly(unit) {
+    if (!unit || unit.defeated) return;
+    unit.defeated = true;
+    unit.hp = 0;
+    unit.vx = 0;
+    unit.vy = 0;
+    const owner = unit.owner;
+    spawnBurst(unit.x, unit.y, "#c9a1ff", 24, 200);
+    effects.push({
+      type: "ring",
+      x: unit.x,
+      y: unit.y,
+      radius: 5,
+      growth: 220,
+      life: 0.45,
+      maxLife: 0.45,
+      color: "#c9a1ff",
+      width: 4
+    });
+    if (!owner || owner.hp <= 0) return;
+    const healed = Math.min(owner.maxHp - owner.hp, owner.template.jellyHealOnDeath);
+    owner.hp = Math.min(owner.maxHp, owner.hp + owner.template.jellyHealOnDeath);
+    if (healed > 0) spawnDamageText(owner.x, owner.y - owner.r, `+${Math.round(healed)}`, "#c9a1ff", true);
+    addLog(`${owner.template.name} 的水母消散，恢复 ${Math.round(healed)} 点生命。`, "ability");
+    const previousDeaths = owner.cantarellaJellyDeaths;
+    owner.cantarellaJellyDeaths += 1;
+    if (
+      previousDeaths < owner.template.jellyDeathsToUnlock
+      && owner.cantarellaJellyDeaths >= owner.template.jellyDeathsToUnlock
+    ) {
+      announce(`${owner.template.name} · 蜃境解锁`, "#d5b8ff", 1.2);
+      addLog(`${owner.template.name} 已献祭 3 只水母，共鸣解放「蜃境迷梦」解锁。`, "ability");
+      playSound("timeStop");
+    }
+  }
+
+  function startCantarellaMirage(fighter) {
+    const duration = fighter.template.ultimateDuration;
+    fighter.cantarellaMirageTimer = duration;
+    fighter.cantarellaMirageDamageDealt = false;
+    getDamageableUnits().forEach((unit) => {
+      if (!unit || unit.hp <= 0) return;
+      unit.cantarellaSlowTimer = Math.max(unit.cantarellaSlowTimer || 0, duration);
+      if (unit.side !== fighter.side) unit.cantarellaDreamed = true;
+    });
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: 12,
+      growth: 620,
+      life: 0.9,
+      maxLife: 0.9,
+      color: "#b88cff",
+      width: 10
+    });
+    spawnBurst(fighter.x, fighter.y, "#c9a1ff", 46, 320);
+    screenShake = Math.max(screenShake, 7);
+    addLog(`${fighter.template.name} 展开蜃境：全场减速 80%，敌方进入迷梦。`, "ability");
+    playSound("timeStop");
+  }
+
+  function finishCantarellaMirage(fighter) {
+    if (!fighter || fighter.hp <= 0) return;
+    if (!fighter.cantarellaMirageDamageDealt && state === "playing") {
+      const targets = getDamageableUnits().filter((unit) => (
+        unit.hp > 0
+        && unit.side !== fighter.side
+      ));
+      if (targets.length) {
+        effects.push({
+          type: "ring",
+          x: fighter.x,
+          y: fighter.y,
+          radius: 18,
+          growth: 760,
+          life: 0.8,
+          maxLife: 0.8,
+          color: "#d9a8ff",
+          width: 11
+        });
+        spawnBurst(fighter.x, fighter.y, "#d9a8ff", 38, 280);
+        announce(`${fighter.template.name} · 蜃境回响`, "#e2baff", 1.1);
+        addLog(`${fighter.template.name} 的蜃境期间未造成伤害，结束时引发 150 点蜃境回响。`, "ability");
+        targets.forEach((target) => {
+          applySpecialDamage(target, 150, fighter, "蜃境回响", {
+            color: "#e0b5ff"
+          });
+        });
+        screenShake = Math.max(screenShake, 8);
+        playSound("abyss");
+      }
+    }
+    fighter.cantarellaMirageDamageDealt = false;
   }
 
   function spawnWhiteSheep(owner) {
@@ -3210,8 +3708,8 @@
     });
     effects.push({ type: "fire", x: projectile.x, y: projectile.y, radius: blastRadius, life: 0.8, maxLife: 0.8, color: "#ff6f43" });
     spawnBurst(projectile.x, projectile.y, "#ffad65", 28, 260);
-    getActiveFighters()
-      .filter((target) => target !== projectile.owner && target.hp > 0)
+    getDamageableUnits()
+      .filter((target) => target.side !== projectile.owner.side && target.hp > 0)
       .forEach((target) => {
         const inBlast = Math.hypot(target.x - projectile.x, target.y - projectile.y) <= blastRadius + target.r * 0.2;
         if (target === directTarget || inBlast) {
@@ -3231,8 +3729,8 @@
       if (crater.tickClock <= 0 && state === "playing") {
         crater.tickClock += 0.5;
         const radius = crater.size / 2;
-        getActiveFighters()
-          .filter((fighter) => fighter !== crater.owner && fighter.hp > 0)
+        getDamageableUnits()
+          .filter((fighter) => fighter.side !== crater.owner.side && fighter.hp > 0)
           .forEach((target) => {
             if (Math.hypot(target.x - crater.x, target.y - crater.y) <= radius + target.r * 0.25) {
               applySpecialDamage(target, 10, crater.owner, "爆炎", {
@@ -3284,6 +3782,10 @@
         fireBrantShot(fighter, opponent);
         fighter.attackClock = fighter.template.rangedAttackCooldown;
       }
+    } else if (fighter.template.id === "05") {
+      if (distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE + opponent.r * 0.15) {
+        launchCantarellaUmbrella(fighter, opponent);
+      }
     } else if (fighter.template.attackType === "thrust") {
       if (inMeleeRange(fighter, opponent)) {
         performThrust(fighter, opponent);
@@ -3319,9 +3821,10 @@
       maxLife: 0.28,
       color: "#d26083"
     });
-    getActiveFighters()
+    getDamageableUnits()
       .filter((target) => (
         target !== fighter
+        && target.side !== fighter.side
         && target.hp > 0
         && distance(fighter, target) <= fighter.template.attackRange * CELL_SIZE
       ))
@@ -3533,10 +4036,10 @@
       empowered: empowered || overclocked
     });
     const strikeDamage = overclocked || empowered ? applySpecialDamage : applyDamage;
-    strikeDamage(opponent, damage, fighter, overclocked ? "共鸣横扫" : empowered ? "回旋斩" : "横扫", {
+    const dealt = strikeDamage(opponent, damage, fighter, overclocked ? "共鸣横扫" : empowered ? "回旋斩" : "横扫", {
       color: fighter.template.color
-    });
-    if (fighter.template.id === "kakarot-test" && opponent.hp > 0 && state === "playing") {
+    }) || 0;
+    if (fighter.template.id === "kakarot-test" && dealt > 0 && state === "playing") {
       gainKakarotSpecialEnergy(fighter, opponent);
     }
     spawnBurst(opponent.x, opponent.y, fighter.template.color, empowered ? 30 : 16, empowered ? 280 : 180);
@@ -3633,6 +4136,10 @@
       && distance(fighter, opponent) > fighter.template.ultimateSeekRadius * CELL_SIZE
     ) return;
     if (fighter.template.ultimateType === "verinaBloom" && !hasVerinaVine(fighter)) return;
+    if (
+      fighter.template.ultimateType === "cantarellaMirage"
+      && fighter.cantarellaJellyDeaths < fighter.template.jellyDeathsToUnlock
+    ) return;
     if (fighter.template.ultimateType === "overclock" && fighter.overclock > 0) return;
     if (fighter.template.attackType === "melee" && fighter.template.ultimateType !== "overclock" && !inMeleeRange(fighter, opponent)) return;
     if (!options.voicePlayed) {
@@ -3666,8 +4173,8 @@
       const blastY = opponent.y;
       const blastRadius = fighter.template.ultimateBlastRadius * CELL_SIZE;
       let totalDamage = 0;
-      getActiveFighters()
-        .filter((target) => target !== fighter && target.hp > 0 && Math.hypot(target.x - blastX, target.y - blastY) <= blastRadius)
+      getDamageableUnits()
+        .filter((target) => target.side !== fighter.side && target.hp > 0 && Math.hypot(target.x - blastX, target.y - blastY) <= blastRadius)
         .forEach((target) => {
           totalDamage += applySpecialDamage(target, fighter.template.ultimateDamage, fighter, "湮灭万律", {
             color: "#c878ff"
@@ -3681,8 +4188,8 @@
       screenShake = 13;
       playSound("abyss");
     } else if (fighter.template.ultimateType === "verinaBloom") {
-      getActiveFighters()
-        .filter((target) => target !== fighter && target.hp > 0)
+      getDamageableUnits()
+        .filter((target) => target.side !== fighter.side && target.hp > 0)
         .forEach((target) => {
           const healed = Math.min(target.maxHp - target.hp, fighter.template.verinaUltimateEnemyHeal);
           target.hp = Math.min(target.maxHp, target.hp + fighter.template.verinaUltimateEnemyHeal);
@@ -3712,6 +4219,8 @@
       spawnBurst(fighter.x, fighter.y, "#e58ab0", 42, 320);
       addLog(`${fighter.template.name} 开启船长狂想：移速翻倍，宝箱生成速度提升至 400%。`, "ability");
       playSound("timeStop");
+    } else if (fighter.template.ultimateType === "cantarellaMirage") {
+      startCantarellaMirage(fighter);
     } else if (fighter.template.ultimateType === "timeStop") {
       timeStopOwner = fighter;
       timeStopTimer = fighter.template.ultimateDuration;
@@ -3760,6 +4269,21 @@
       target.flash = Math.max(target.flash, 0.42);
       return 0;
     }
+    if (target.cantarellaDreamed && !options.ignoreDream) {
+      finalAmount += 150;
+      target.cantarellaDreamed = false;
+      target.cantarellaSlowTimer = 0;
+      spawnDamageText(target.x, target.y - target.r - 16, "+150 迷梦", "#e0b9ff", true);
+      effects.push({
+        type: "dreamBreak",
+        x: target.x,
+        y: target.y,
+        radius: target.r + 12,
+        life: 0.5,
+        maxLife: 0.5,
+        color: "#d8a8ff"
+      });
+    }
     if (target.paralyzed > 0 && !options.ignoreVulnerability) finalAmount *= 1.1;
     let absorbed = 0;
 
@@ -3793,6 +4317,14 @@
       }
     }
 
+    if (
+      source?.template.id === "05"
+      && source.cantarellaMirageTimer > 0
+      && target.side !== source.side
+      && finalAmount + absorbed > 0
+    ) {
+      source.cantarellaMirageDamageDealt = true;
+    }
     target.hp = Math.max(0, target.hp - finalAmount);
     target.flash = options.noText ? Math.max(target.flash, 0.16) : (finalAmount > 0 ? 1 : 0.45);
     if (target.template.id === "02" && !target.abyssForm && !options.selfDrain) gainAbyssEnergy(target, 20);
@@ -3837,6 +4369,10 @@
       screenShake = Math.max(screenShake, 3.2);
     }
     if (target.hp <= 0 && state === "playing") {
+      if (target.isJellyfish) {
+        defeatCantarellaJelly(target);
+        return finalAmount;
+      }
       if (mode === "multi") {
         target.vx = 0;
         target.vy = 0;
@@ -3864,6 +4400,10 @@
     target.hp = Math.max(0, target.hp - Math.max(1, amount));
     spawnDamageText(target.x, target.y - target.r, Math.round(amount), color);
     if (target.hp <= 0 && state === "playing") {
+      if (target.isJellyfish) {
+        defeatCantarellaJelly(target);
+        return amount;
+      }
       if (mode === "multi") {
         target.vx = 0;
         target.vy = 0;
@@ -4356,6 +4896,7 @@
         else if (fighter.template.id === "04" && fighter.brantBigAnchorLock) status = "落锚定身";
         else if (fighter.template.id === "04" && fighter.brantAirborneTimer > 0) status = "空中";
         else if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) status = "加速";
+        else if (fighter.template.id === "05" && fighter.cantarellaMirageTimer > 0) status = "蜃境";
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
         return {
@@ -4463,12 +5004,15 @@
     const abyssInRange = player.template.ultimateType !== "abyssBurst"
       || (abyssTarget && distance(player, abyssTarget) <= player.template.ultimateSeekRadius * CELL_SIZE);
     const verinaUnlocked = player.template.ultimateType !== "verinaBloom" || hasVerinaVine(player);
+    const cantarellaUnlocked = player.template.ultimateType !== "cantarellaMirage"
+      || player.cantarellaJellyDeaths >= player.template.jellyDeathsToUnlock;
     const ultimateAvailable = !player.template.transformThreshold
       && player.template.ultimateType !== "autoThreshold"
       && !player.charge
       && !(player.template.ultimateType === "abyssBurst" && !player.abyssForm)
       && abyssInRange
       && verinaUnlocked
+      && cantarellaUnlocked
       && !(player.template.ultimateType === "overclock" && player.overclock > 0);
     const ready = mode === "play" && energy >= 100 && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
@@ -4502,6 +5046,10 @@
         dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s · ${Math.round(player.template.brantAirborneDodgeChance * 100)}% 闪避`;
       } else if (player.template.id === "04" && player.brantUltimateTimer > 0) {
         dom.battleStatus.textContent = `船长狂想 ${player.brantUltimateTimer.toFixed(1)}s`;
+      } else if (player.template.id === "05" && player.cantarellaMirageTimer > 0) {
+        dom.battleStatus.textContent = `蜃境迷梦 ${player.cantarellaMirageTimer.toFixed(1)}s`;
+      } else if (player.template.id === "05" && player.cantarellaJellyDeaths < player.template.jellyDeathsToUnlock) {
+        dom.battleStatus.textContent = `水母献祭 ${player.cantarellaJellyDeaths}/${player.template.jellyDeathsToUnlock}`;
       } else if (player.timeForceTimer > 0) {
         dom.battleStatus.textContent = `时序加速 ${player.timeForceTimer.toFixed(1)}s`;
       } else if (player.horned) {
@@ -4611,6 +5159,7 @@
     }
     ctx.translate(shakeX, shakeY);
     ctx.drawImage(arenaLayer, 0, 0, ARENA_SIZE, ARENA_SIZE);
+    drawCantarellaMirage();
     drawBrantTreasures();
     drawVerinaPlants();
     drawWindFields();
@@ -4619,8 +5168,10 @@
     drawPickups();
     drawTrails();
     drawSummons();
+    drawCantarellaJellies();
     if (mode !== "multi") drawContactLink();
     drawProjectiles();
+    drawCantarellaUmbrellas();
     drawEffects(true);
     getActiveFighters().forEach((fighter, index) => {
       if (fighter.hp > 0 || (voicePauseActive && voiceFocusFighter === fighter)) {
@@ -4982,6 +5533,179 @@
       ctx.font = "700 6px 'Trebuchet MS'";
       ctx.textAlign = "center";
       ctx.fillText("芽", 0, 15);
+      ctx.restore();
+    });
+  }
+
+  function drawCantarellaMirage() {
+    const casters = getActiveFighters().filter((fighter) => (
+      fighter.template.id === "05"
+      && fighter.hp > 0
+      && fighter.cantarellaMirageTimer > 0
+    ));
+    casters.forEach((caster, index) => {
+      const pulse = 0.5 + Math.sin(visualTime * 2.6 + index) * 0.18;
+      ctx.save();
+      ctx.strokeStyle = `rgba(179, 132, 255, ${0.3 + pulse * 0.22})`;
+      ctx.lineWidth = 10;
+      ctx.shadowColor = "#a56dff";
+      ctx.shadowBlur = 18;
+      ctx.setLineDash([24, 12]);
+      ctx.lineDashOffset = -visualTime * 32;
+      ctx.strokeRect(BOUNDARY + 3, BOUNDARY + 3, ARENA_SIZE - BOUNDARY * 2 - 6, ARENA_SIZE - BOUNDARY * 2 - 6);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(218, 190, 255, 0.52)";
+      ctx.setLineDash([7, 15]);
+      ctx.lineDashOffset = visualTime * 24;
+      ctx.strokeRect(BOUNDARY + 15, BOUNDARY + 15, ARENA_SIZE - BOUNDARY * 2 - 30, ARENA_SIZE - BOUNDARY * 2 - 30);
+      ctx.setLineDash([]);
+      for (let i = 0; i < 20; i += 1) {
+        const t = i / 20;
+        const x = BOUNDARY + 28 + t * (ARENA_SIZE - BOUNDARY * 2 - 56);
+        const drift = Math.sin(visualTime * 2.1 + i * 1.7) * 7;
+        ctx.fillStyle = `rgba(211, 174, 255, ${0.18 + (i % 3) * 0.05})`;
+        ctx.beginPath();
+        ctx.arc(x, BOUNDARY + 25 + drift, i % 2 ? 2.2 : 1.4, 0, Math.PI * 2);
+        ctx.arc(x, ARENA_SIZE - BOUNDARY - 25 - drift, i % 2 ? 1.6 : 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+  }
+
+  function drawCantarellaJellies() {
+    cantarellaJellies.forEach((unit) => {
+      if (!unit.owner || unit.owner.hp <= 0 || unit.hp <= 0) return;
+      const bob = Math.sin(visualTime * 2.7 + unit.phase) * 2.5;
+      const slowTint = unit.cantarellaSlowTimer > 0;
+      const r = unit.r * 1.18;
+      ctx.save();
+      ctx.translate(unit.x, unit.y + bob);
+
+      const aura = ctx.createRadialGradient(0, -2, 1, 0, 0, r * 2.1);
+      aura.addColorStop(0, "rgba(214, 234, 255, 0.2)");
+      aura.addColorStop(0.5, "rgba(154, 119, 238, 0.12)");
+      aura.addColorStop(1, "rgba(101, 72, 181, 0)");
+      ctx.fillStyle = aura;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 2.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.lineCap = "round";
+      for (let i = 0; i < 3; i += 1) {
+        const offset = (i - 1) * r * 0.42;
+        const sway = Math.sin(visualTime * 3.6 + unit.phase + i * 1.4) * r * 0.34;
+        const ribbon = ctx.createLinearGradient(offset, r * 0.2, offset + sway, r * 2.8);
+        ribbon.addColorStop(0, "rgba(216, 239, 255, 0.5)");
+        ribbon.addColorStop(0.55, i === 1 ? "rgba(156, 121, 239, 0.3)" : "rgba(185, 215, 255, 0.28)");
+        ribbon.addColorStop(1, "rgba(137, 100, 223, 0.03)");
+        ctx.fillStyle = ribbon;
+        ctx.beginPath();
+        ctx.moveTo(offset - r * 0.16, r * 0.28);
+        ctx.bezierCurveTo(offset + sway, r * 1.05, offset - sway, r * 1.95, offset + sway * 0.45, r * 2.8);
+        ctx.bezierCurveTo(offset + sway * 0.62 + r * 0.25, r * 2.1, offset - sway * 0.3 + r * 0.2, r * 1.1, offset + r * 0.16, r * 0.28);
+        ctx.closePath();
+        ctx.fill();
+      }
+      for (let i = 0; i < 4; i += 1) {
+        const offset = (i - 1.5) * r * 0.3;
+        const sway = Math.sin(visualTime * 4.3 + unit.phase + i) * r * 0.22;
+        ctx.strokeStyle = i % 2 ? "rgba(164, 129, 242, 0.42)" : "rgba(218, 239, 255, 0.4)";
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(offset, r * 0.38);
+        ctx.bezierCurveTo(offset + sway, r * 1.25, offset - sway, r * 2.2, offset + sway * 0.65, r * 3.05);
+        ctx.stroke();
+      }
+
+      const bell = ctx.createLinearGradient(0, -r * 1.25, 0, r * 0.5);
+      bell.addColorStop(0, "rgba(244, 249, 255, 0.92)");
+      bell.addColorStop(0.24, "rgba(203, 218, 255, 0.88)");
+      bell.addColorStop(0.62, "rgba(158, 126, 235, 0.82)");
+      bell.addColorStop(1, slowTint ? "rgba(111, 86, 181, 0.78)" : "rgba(136, 96, 221, 0.8)");
+      ctx.fillStyle = bell;
+      ctx.strokeStyle = "rgba(224, 242, 255, 0.82)";
+      ctx.lineWidth = 1.15;
+      ctx.shadowColor = "rgba(171, 136, 255, 0.55)";
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+      ctx.moveTo(-r, r * 0.08);
+      ctx.bezierCurveTo(-r * 1.05, -r * 0.9, -r * 0.55, -r * 1.28, 0, -r * 1.24);
+      ctx.bezierCurveTo(r * 0.62, -r * 1.2, r * 1.05, -r * 0.76, r, r * 0.08);
+      for (let i = 0; i < 6; i += 1) {
+        const x0 = r - (i / 6) * r * 2;
+        const x1 = r - ((i + 0.5) / 6) * r * 2;
+        const x2 = r - ((i + 1) / 6) * r * 2;
+        ctx.quadraticCurveTo(x1, r * 0.34, x2, r * (i % 2 ? 0.08 : 0.16));
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = "rgba(247, 252, 255, 0.58)";
+      ctx.beginPath();
+      ctx.ellipse(-r * 0.32, -r * 0.66, r * 0.42, r * 0.13, -0.36, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(226, 246, 255, 0.56)";
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(-r * 0.66, -r * 0.18);
+      ctx.quadraticCurveTo(-r * 0.22, -r * 0.52, r * 0.12, -r * 0.25);
+      ctx.stroke();
+
+      if (unit.cantarellaDreamed) {
+        ctx.strokeStyle = "rgba(229, 190, 255, 0.9)";
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.arc(0, 0, r + 7 + Math.sin(visualTime * 5) * 1.5, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      ctx.fillStyle = "rgba(20, 12, 34, 0.72)";
+      ctx.fillRect(-r, r + 7, r * 2, 3);
+      ctx.fillStyle = "#d6b3ff";
+      ctx.fillRect(-r, r + 7, r * 2 * clamp(unit.hp / unit.maxHp, 0, 1), 3);
+      ctx.fillStyle = "rgba(235, 218, 255, 0.8)";
+      ctx.font = "700 6px 'Trebuchet MS'";
+      ctx.textAlign = "center";
+      ctx.fillText("水母", 0, r + 18);
+      ctx.restore();
+    });
+  }
+
+  function drawCantarellaUmbrellas() {
+    const umbrella = weaponPortraits.get("05");
+    cantarellaUmbrellas.forEach((unit) => {
+      const size = CELL_SIZE * 1.75;
+      ctx.save();
+      ctx.translate(unit.x, unit.y + Math.sin(visualTime * 3 + unit.phase) * 2);
+      ctx.rotate(unit.angle + Math.PI / 2 + unit.spin);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 0.34;
+      ctx.strokeStyle = "#d7c4ff";
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([5, 7]);
+      for (let i = 0; i < 3; i += 1) {
+        const offset = i * Math.PI * 2 / 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, size * (0.48 + i * 0.045), offset, offset + Math.PI * 0.62);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = "#b88cff";
+      ctx.shadowBlur = 6;
+      if (umbrella?.complete && umbrella.naturalWidth > 0) {
+        ctx.drawImage(umbrella, -size / 2, -size / 2, size, size);
+      } else {
+        ctx.strokeStyle = "#cdaaff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, size * 0.4, Math.PI * 0.15, Math.PI * 1.85);
+        ctx.stroke();
+      }
       ctx.restore();
     });
   }
@@ -5414,6 +6138,8 @@
       else drawWandererWeapon(fighter, radius, t);
     } else if (fighter.template.id === "04") {
       drawBrantWeapons(fighter, radius, t);
+    } else if (fighter.template.id === "05") {
+      drawCantarellaWeapon(fighter, radius, t);
     }
 
     if (fighter.overclock > 0) {
@@ -5440,6 +6166,24 @@
       ctx.beginPath();
       ctx.arc(0, 0, radius + 13 + Math.sin(t * 5.2) * 3, 0, Math.PI * 2);
       ctx.stroke();
+      ctx.restore();
+    }
+
+    if (fighter.cantarellaDreamed) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = "rgba(226, 187, 255, 0.82)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 5]);
+      ctx.lineDashOffset = -visualTime * 16;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius + 11 + Math.sin(t * 4.8) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(231, 202, 255, 0.86)";
+      ctx.font = "800 7px 'Trebuchet MS'";
+      ctx.textAlign = "center";
+      ctx.fillText("迷梦", 0, -radius - 13);
       ctx.restore();
     }
 
@@ -5685,6 +6429,20 @@
     ctx.restore();
   }
 
+  function drawCantarellaWeapon(fighter, radius, t) {
+    const umbrella = weaponPortraits.get("05");
+    if (!umbrella?.complete || !umbrella.naturalWidth) return;
+    const size = radius * 1.42;
+    ctx.save();
+    ctx.translate(radius * 0.78, radius * 0.12);
+    ctx.rotate(-0.55 + Math.sin(t * 1.4) * 0.035);
+    ctx.globalAlpha = 0.94;
+    ctx.shadowColor = "#b88cff";
+    ctx.shadowBlur = 5;
+    ctx.drawImage(umbrella, -size / 2, -size / 2, size, size);
+    ctx.restore();
+  }
+
   function drawAbyssAura(radius, t) {
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
@@ -5849,7 +6607,7 @@
   function drawEffects(front) {
     effects.forEach((effect) => {
       const alpha = clamp(effect.life / effect.maxLife, 0, 1);
-      const isFront = ["impact", "lightning", "shield", "brantAnchorImpact"].includes(effect.type);
+      const isFront = ["impact", "lightning", "shield", "brantAnchorImpact", "jellySlash", "dreamBreak"].includes(effect.type);
       if (isFront !== front) return;
       ctx.save();
       ctx.globalAlpha = alpha;
@@ -6087,6 +6845,35 @@
         ctx.arc(effect.fighter.x, effect.fighter.y, effect.fighter.r + 16 + (1 - alpha) * 45, 0, Math.PI * 2);
         ctx.stroke();
         ctx.setLineDash([]);
+      } else if (effect.type === "jellySlash") {
+        const progress = 1 - alpha;
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.9);
+        ctx.lineWidth = 6 * alpha + 1;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radius * (0.78 + progress * 0.28), -Math.PI / 2, Math.PI / 2);
+        ctx.stroke();
+        ctx.strokeStyle = colorWithAlpha("#f1dcff", alpha * 0.66);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radius * 0.94, -Math.PI / 2, Math.PI / 2);
+        ctx.stroke();
+      } else if (effect.type === "dreamBreak") {
+        const progress = 1 - alpha;
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.9);
+        ctx.lineWidth = 4 * alpha + 1;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 16;
+        for (let i = 0; i < 3; i += 1) {
+          ctx.beginPath();
+          ctx.arc(effect.x, effect.y, effect.radius + progress * (18 + i * 13), 0, Math.PI * 2);
+          ctx.stroke();
+        }
       } else if (effect.type === "shield") {
         if (!effect.fighter) return;
         if (effect.fighter.template.id === "04") {
