@@ -252,12 +252,12 @@
       image: "assets/brant.png",
       weaponImage: "assets/brant-sword.png",
       rangedWeaponImage: "assets/brant-gun.png",
-      hp: 800,
+      hp: 880,
       power: 1,
-      speed: 8,
+      speed: 10,
       radius: 27,
       stats: { power: 86, speed: 100, hp: 100 },
-      display: { attack: "剑50 / 枪25", speed: "8.0格/s", hp: "800" },
+      display: { attack: "剑50 / 枪25", speed: "10.0格/s", hp: "880" },
       attackType: "hybrid",
       meleeAttackDamage: 50,
       rangedAttackDamage: 25,
@@ -266,18 +266,19 @@
       attackRange: 3,
       projectileSpeed: 12,
       ultimateType: "brantOverdrive",
-      ultimateDuration: 10,
-      ultimateCooldown: 30,
+      ultimateDuration: 6,
+      ultimateCooldown: 15,
       brantChestInterval: 10,
       brantChestDuration: 24,
       brantChestLimit: 3,
       brantTreasureSpeedMultiplier: 4,
-      brantPickupShield: 50,
+      brantPickupShield: 55,
       brantSpecialMax: 100,
       brantHitEnergy: 5,
       brantPickupEnergy: 25,
       brantAnchorEnergy: 50,
       brantAirborneDuration: 8,
+      brantAirborneDodgeChance: 0.2,
       brantAnchorDamage: 180,
       brantAnchorWindup: 0.4,
       brantSmallRadiusX: 5.5,
@@ -286,8 +287,8 @@
       brantBigRadiusY: 4.45,
       ability: "船长狂想",
       abilityIcon: "⚓",
-      abilityDesc: "共鸣能量满后获得 10 秒双倍移速，宝箱生成速度提高 300%；冷却 30 秒。",
-      cooldown: 30
+      abilityDesc: "共鸣能量满后获得 6 秒双倍移速，宝箱生成速度提升至 400%；冷却 15 秒。",
+      cooldown: 15
     }
   ];
 
@@ -425,18 +426,18 @@
     "04": {
       role: "近战远程双武器 / 宝箱船锚",
       range: "剑半径 3 格；枪全图锁定",
-      interval: "近战 1.5 秒 / 远程 2 秒 / 共鸣解放 30 秒",
+      interval: "近战 1.5 秒 / 远程 2 秒 / 共鸣解放 15 秒",
       mechanics: [
-        "生命 800、移动速度 8 格/秒；敌人进入半径 3 格内使用剑前刺，否则使用全图锁定手枪。",
+        "生命 880、移动速度 10 格/秒；敌人进入半径 3 格内使用剑前刺，否则使用全图锁定手枪。",
         "近战伤害 50、冷却 1.5 秒；远程伤害 25、冷却 2 秒，弹速 12 格/秒。",
         "近战时隐藏手枪，远程时隐藏剑。",
         "每 10 秒在场地随机位置生成宝箱，存在 24 秒，场上最多同时存在 3 个；宝箱拾取范围为半径 1 格。",
-        "拾取宝箱获得 50 护盾和 25 点船锚能量，并在宝箱位置召唤船锚，前摇 0.4 秒后造成 180 点椭圆范围特殊伤害，覆盖面积约 60 格。",
+        "拾取宝箱获得 55 护盾和 25 点船锚能量，并在宝箱位置召唤船锚，前摇 0.4 秒后造成 180 点椭圆范围特殊伤害，覆盖面积约 60 格。",
         "普通攻击命中获得 5 点船锚能量；小宝箱船锚命中获得 50 点，大船锚不会增加能量。",
-        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间免疫近战伤害，仍可攻击。",
-        "空中状态结束后在地图中心降下大船锚，造成 180 点椭圆范围特殊伤害，不增加船锚能量，覆盖面积约 100 格。",
-        "特殊伤害不属于近战伤害，无法被空中状态免疫。",
-        "共鸣解放持续 10 秒，移速翻倍，宝箱生成速度为原来的 4 倍；冷却 30 秒。"
+        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间受到任何伤害时有 20% 概率完全闪避，仍可攻击。",
+        "空中状态结束时瞬移到地图中心并保持定身，大船锚落地后恢复移动。",
+        "大船锚造成 180 点椭圆范围特殊伤害，不增加船锚能量，覆盖面积约 100 格。",
+        "共鸣解放持续 6 秒，移速翻倍，宝箱生成速度提升至 400%；冷却 15 秒。"
       ]
     }
   };
@@ -620,6 +621,7 @@
   let voiceEntryStartedAt = 0;
   let roundResultVoicePending = false;
   let multiResultVoicePending = false;
+  let lastRoundFinishReason = "KO";
   const GAME_SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
   const keys = Object.create(null);
   const touchDirection = { up: false, down: false, left: false, right: false };
@@ -695,6 +697,9 @@
       brantSpecialEnergy: 0,
       brantUltimateTimer: 0,
       brantAirborneTimer: 0,
+      brantBigAnchorLock: false,
+      brantBigAnchorResumeX: 0,
+      brantBigAnchorResumeY: 0,
       brantChestClock: template.brantChestInterval || 0,
       brantMeleeMode: false,
       brantAimAngle: 0,
@@ -1268,6 +1273,7 @@
     manualPaused = false;
     roundResultVoicePending = false;
     multiResultVoicePending = false;
+    lastRoundFinishReason = "KO";
     if (mode === "multi") {
       startMultiMatch();
       return;
@@ -1454,6 +1460,7 @@
     } else {
       resolveCollision();
     }
+    pinBrantBigAnchorFighters();
     if (voicePauseActive) {
       updateHud();
       return;
@@ -1544,6 +1551,7 @@
     updateWindFields(dt);
     updateWindWaves(dt);
     resolveMultiCollisions();
+    pinBrantBigAnchorFighters();
     if (voicePauseActive) {
       updateHud();
       return;
@@ -1644,6 +1652,15 @@
   }
 
   function updateFighter(fighter, opponent, dt, isPlayer) {
+    if (fighter.template.id === "04" && fighter.brantBigAnchorLock) {
+      fighter.x = ARENA_SIZE / 2;
+      fighter.y = ARENA_SIZE / 2;
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.knockback = null;
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
     if (fighter.vortexLockTimer > 0) return;
     fighter.abilityCooldown = Math.max(0, fighter.abilityCooldown - dt);
     fighter.flash = Math.max(0, fighter.flash - dt * 5.5);
@@ -2020,6 +2037,16 @@
     }
   }
 
+  function pinBrantBigAnchorFighters() {
+    getActiveFighters().forEach((fighter) => {
+      if (!fighter || fighter.template.id !== "04" || !fighter.brantBigAnchorLock) return;
+      fighter.x = ARENA_SIZE / 2;
+      fighter.y = ARENA_SIZE / 2;
+      fighter.vx = 0;
+      fighter.vy = 0;
+    });
+  }
+
   function resolveMultiCollisions() {
     const fighters = getActiveFighters().filter((fighter) => fighter.hp > 0);
     fighters.forEach((fighter) => {
@@ -2104,6 +2131,7 @@
   }
 
   function getEffectiveMoveSpeed(fighter) {
+    if (fighter.template.id === "04" && fighter.brantBigAnchorLock) return 0;
     let baseSpeed = fighter.moveSpeed;
     if (fighter.template.id === "02" && fighter.abyssForm) baseSpeed = fighter.template.abyssFormSpeed * CELL_SIZE;
     let multiplier = fighter.frenzy > 0 ? 1.24 : 1;
@@ -2952,15 +2980,24 @@
     effects.push({ type: "brantAirborne", fighter, life: 0.7, maxLife: 0.7, color: "#d3658f" });
     spawnBurst(fighter.x, fighter.y, "#e58ab0", 34, 250);
     announce(`${fighter.template.name} · 绳索巡航`, "#efa0c1", 1.2);
-    addLog(`${fighter.template.name} 登上绳索，8 秒内免疫近战伤害。`, "ability");
+    addLog(`${fighter.template.name} 登上绳索，8 秒内获得 20% 闪避率。`, "ability");
     playSound("blade");
   }
 
   function finishBrantAirborne(fighter) {
+    const previousSpeed = Math.hypot(fighter.vx, fighter.vy);
+    const fallbackAngle = random(0, Math.PI * 2);
+    fighter.brantBigAnchorResumeX = previousSpeed > 0 ? fighter.vx / previousSpeed : Math.cos(fallbackAngle);
+    fighter.brantBigAnchorResumeY = previousSpeed > 0 ? fighter.vy / previousSpeed : Math.sin(fallbackAngle);
     fighter.brantAirborneTimer = 0;
+    fighter.brantBigAnchorLock = true;
+    fighter.x = ARENA_SIZE / 2;
+    fighter.y = ARENA_SIZE / 2;
+    fighter.vx = 0;
+    fighter.vy = 0;
     spawnBrantAnchor(fighter, ARENA_SIZE / 2, ARENA_SIZE / 2, "big", 0.25);
     announce(`${fighter.template.name} · 大船锚坠落`, "#ef9aba", 1.2);
-    addLog(`${fighter.template.name} 结束空中巡航，地图中心落下大船锚。`, "ability");
+    addLog(`${fighter.template.name} 瞬移至中场并进入落锚定身，大船锚落地后恢复移动。`, "ability");
   }
 
   function spawnBrantAnchor(owner, x, y, kind, windup) {
@@ -2978,8 +3015,16 @@
   }
 
   function resolveBrantAnchor(anchor) {
-    if (!anchor.owner || anchor.owner.hp <= 0) return;
     const isBig = anchor.kind === "big";
+    if (isBig && anchor.owner?.brantBigAnchorLock) {
+      const owner = anchor.owner;
+      owner.brantBigAnchorLock = false;
+      const directionLength = Math.hypot(owner.brantBigAnchorResumeX, owner.brantBigAnchorResumeY) || 1;
+      const resumeSpeed = getEffectiveMoveSpeed(owner);
+      owner.vx = (owner.brantBigAnchorResumeX / directionLength) * resumeSpeed;
+      owner.vy = (owner.brantBigAnchorResumeY / directionLength) * resumeSpeed;
+    }
+    if (!anchor.owner || anchor.owner.hp <= 0) return;
     const radiusX = (isBig ? anchor.owner.template.brantBigRadiusX : anchor.owner.template.brantSmallRadiusX) * CELL_SIZE;
     const radiusY = (isBig ? anchor.owner.template.brantBigRadiusY : anchor.owner.template.brantSmallRadiusY) * CELL_SIZE;
     const cos = Math.cos(anchor.angle);
@@ -3018,6 +3063,7 @@
   }
 
   function updateBrantSystem(dt) {
+    const brantAirborneDt = dt / Math.max(0.01, gameSpeed);
     const brants = getActiveFighters().filter((fighter) => fighter.template.id === "04" && fighter.hp > 0);
     brants.forEach((fighter) => {
       if (fighter.brantUltimateTimer > 0) {
@@ -3032,7 +3078,7 @@
         fighter.brantChestClock = getBrantChestInterval(fighter);
       }
       if (fighter.brantAirborneTimer > 0) {
-        fighter.brantAirborneTimer = Math.max(0, fighter.brantAirborneTimer - dt);
+        fighter.brantAirborneTimer = Math.max(0, fighter.brantAirborneTimer - brantAirborneDt);
         if (fighter.brantAirborneTimer === 0) finishBrantAirborne(fighter);
       }
     });
@@ -3651,7 +3697,7 @@
       fighter.brantChestClock = Math.min(fighter.brantChestClock, getBrantChestInterval(fighter));
       effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 14, growth: 780, life: 0.7, maxLife: 0.7, color: "#d7749b", width: 9 });
       spawnBurst(fighter.x, fighter.y, "#e58ab0", 42, 320);
-      addLog(`${fighter.template.name} 开启船长狂想：移速翻倍，宝箱生成速度提高 300%。`, "ability");
+      addLog(`${fighter.template.name} 开启船长狂想：移速翻倍，宝箱生成速度提升至 400%。`, "ability");
       playSound("timeStop");
     } else if (fighter.template.ultimateType === "timeStop") {
       timeStopOwner = fighter;
@@ -3684,11 +3730,21 @@
     if (
       target.template.id === "04"
       && target.brantAirborneTimer > 0
-      && meleeDamage
-      && !options.ignoreAirborneImmunity
+      && random(0, 1) < target.template.brantAirborneDodgeChance
     ) {
-      spawnDamageText(target.x, target.y - target.r, "空中免疫", "#e7a2c5", true);
-      target.flash = Math.max(target.flash, 0.3);
+      spawnDamageText(target.x, target.y - target.r, "闪避", "#f2bad2", true);
+      effects.push({
+        type: "ring",
+        x: target.x,
+        y: target.y,
+        radius: target.r + 8,
+        growth: 150,
+        life: 0.32,
+        maxLife: 0.32,
+        color: "#ef9bb9",
+        width: 4
+      });
+      target.flash = Math.max(target.flash, 0.42);
       return 0;
     }
     if (target.paralyzed > 0 && !options.ignoreVulnerability) finalAmount *= 1.1;
@@ -3838,12 +3894,22 @@
     playSound("hit");
   }
 
+  function markFighterDefeated(fighter) {
+    if (!fighter) return;
+    fighter.hp = 0;
+    fighter.shield = 0;
+    fighter.vx = 0;
+    fighter.vy = 0;
+    fighter.knockback = null;
+  }
+
   function finishRound(winnerSide, reason) {
     if (state !== "playing") return;
     if (roundResultVoicePending) return;
     roundResultVoicePending = true;
     const winner = winnerSide === 0 ? player : enemy;
     const loser = winnerSide === 0 ? enemy : player;
+    if (reason === "KO") markFighterDefeated(loser);
     if (loser.hp <= 0) animateDefeat(loser, winner);
     const voiceEntries = loser.hp <= 0
       ? [
@@ -3863,6 +3929,7 @@
   function commitRoundFinish(winnerSide, reason) {
     if (state !== "playing") return;
     state = "roundEnd";
+    lastRoundFinishReason = reason;
     syncPauseControl();
     roundEndTimer = 2.6;
     score[winnerSide] += 1;
@@ -3887,33 +3954,40 @@
     updateTrails(dt);
     if (roundEndTimer > 0) return;
     if (score[0] >= WINNING_SCORE || score[1] >= WINNING_SCORE) {
-      finishMatch(score[0] > score[1] ? 0 : 1);
+      finishMatch(score[0] > score[1] ? 0 : 1, lastRoundFinishReason);
     } else {
       round += 1;
       startRound();
     }
   }
 
-  function finishMatch(winnerSide) {
+  function finishMatch(winnerSide, reason = lastRoundFinishReason) {
     state = "matchEnd";
     manualPaused = false;
     syncPauseControl();
     syncWandererFormState();
-    dom.battleStatus.textContent = "比赛结束";
+    const loser = winnerSide === 0 ? enemy : player;
+    if (reason === "KO") markFighterDefeated(loser);
+    const timeUp = reason === "时间到";
+    dom.battleStatus.textContent = timeUp ? "时间到 · 比赛结束" : "比赛结束";
     dom.liveBadge.classList.remove("is-live");
     const playerWon = winnerSide === 0;
-    dom.overlayEyebrow.textContent = playerWon ? "MATCH COMPLETE · WINNER" : "MATCH COMPLETE";
+    dom.overlayEyebrow.textContent = timeUp
+      ? "TIME UP · WINNER"
+      : playerWon ? "MATCH COMPLETE · WINNER" : "MATCH COMPLETE";
     dom.overlayTitle.textContent = playerWon ? `${player.template.name} 夺冠！` : "惜败，但还能再撞一次";
+    const reasonCopy = timeUp ? "时间到，按双方剩余生命判定胜负。" : "";
     dom.overlayCopy.textContent = playerWon
-      ? `三局两胜，最终比分 ${score[0]} : ${score[1]}。这场的碰撞数据已经写进你的战报。`
-      : `对手以 ${score[1]} : ${score[0]} 拿下比赛。换个球，或者再试一次。`;
+      ? `${reasonCopy}三局两胜，最终比分 ${score[0]} : ${score[1]}。这场的碰撞数据已经写进你的战报。`
+      : `${reasonCopy}对手以 ${score[1]} : ${score[0]} 拿下比赛。换个球，或者再试一次。`;
     dom.overlayButton.querySelector("span").textContent = "再来一局";
     dom.overlayHint.textContent = "按 R 也可以立即重开";
     dom.gameOverlay.classList.remove("is-hidden");
-    dom.matchState.textContent = "比赛结束";
+    dom.matchState.textContent = timeUp ? "时间到" : "比赛结束";
     playSound(playerWon ? "win" : "lose");
     addLog(playerWon ? "整场比赛拿下，冠军诞生！" : "对手拿下整场比赛，等待下一次挑战。", "round");
     dom.screenReaderStatus.textContent = playerWon ? "你赢下了比赛" : "你输掉了比赛";
+    updateHud();
   }
 
   function finishMultiMatch(winner, reason = "KO") {
@@ -4253,6 +4327,7 @@
         else if (fighter.stunned > 0) status = "眩晕";
         else if (fighter.abyssForm) status = "镰刀";
         else if (fighter.template.id === "06" && hasVerinaVine(fighter)) status = "藤";
+        else if (fighter.template.id === "04" && fighter.brantBigAnchorLock) status = "落锚定身";
         else if (fighter.template.id === "04" && fighter.brantAirborneTimer > 0) status = "空中";
         else if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) status = "加速";
         else if (fighter.overclock > 0) status = "解放";
@@ -4395,8 +4470,10 @@
         dom.battleStatus.textContent = "藤蔓复苏 · 全场侵蚀";
       } else if (player.template.id === "06" && player.verinaSlowTimer > 0) {
         dom.battleStatus.textContent = "藤蔓束缚 · 移速 -50%";
+      } else if (player.template.id === "04" && player.brantBigAnchorLock) {
+        dom.battleStatus.textContent = "中场落锚 · 定身";
       } else if (player.template.id === "04" && player.brantAirborneTimer > 0) {
-        dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s`;
+        dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s · 20% 闪避`;
       } else if (player.template.id === "04" && player.brantUltimateTimer > 0) {
         dom.battleStatus.textContent = `船长狂想 ${player.brantUltimateTimer.toFixed(1)}s`;
       } else if (player.timeForceTimer > 0) {
