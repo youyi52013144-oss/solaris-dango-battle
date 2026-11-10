@@ -71,10 +71,10 @@
       altImage: "assets/anko-horned.png",
       hp: 1000,
       power: 1,
-      speed: 5,
+      speed: 6,
       radius: 27,
-      stats: { power: 38, speed: 100, hp: 100 },
-      display: { attack: "召唤", speed: "5.0格/s", hp: "1000" },
+      stats: { power: 38, speed: 75, hp: 100 },
+      display: { attack: "召唤", speed: "6.0格/s", hp: "1000" },
       attackType: "summoner",
       attackDamage: 0,
       attackCooldown: 5,
@@ -91,6 +91,7 @@
       hornedHitRange: 4,
       hornedCooldown: 1,
       blackSlamWindup: 0.3,
+      blackSlamClock: 0,
       cooldown: 0
     },
     {
@@ -337,10 +338,12 @@
       ultimateCooldown: 18,
       mirageSlowMultiplier: 0.2,
       mirageBonusDamage: 170,
-      mirageFallbackDamage: 130,
+      perceptionSearchRange: 8,
+      perceptionBlastRadius: 4,
+      perceptionDamage: 120,
       ability: "蜃境迷梦",
       abilityIcon: "梦",
-      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时追加 130 点伤害。冷却 18 秒。",
+      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害并解除迷梦与减速。若蜃境期间未造成伤害，结束时获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
       cooldown: 18
     }
   ];
@@ -509,7 +512,9 @@
         "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
         "蜃境持续 8 秒，使场上所有单位移速降至 20%，敌方单位获得迷梦。",
         "迷梦单位首次受击追加 170 点伤害，并立即解除迷梦与蜃境减速。",
-        "若蜃境持续期间没有对敌方造成伤害，结束时对仍存活的敌方单位追加 130 点特殊伤害；冷却 18 秒。"
+        "若蜃境持续期间没有对敌方造成伤害，结束时获得一次「感知汲取」。",
+        "感知汲取会替换普通攻击：敌人进入半径 8 格后，立即在其位置引爆半径 4 格的暗紫水母爆炸，造成 120 点范围特殊伤害。",
+        "感知汲取触发后失效，坎特蕾拉恢复雨伞普通攻击，直到下一次蜃境再次赋予该状态；冷却 18 秒。"
       ]
     }
   };
@@ -772,6 +777,7 @@
       abilityCooldown: 1.6,
       ultimateCooldown: 0,
       attackClock: random(0.55, 1.35),
+      blackSlamClock: template.blackSlamClock || 0,
       flash: 0,
       freeze: 0,
       burn: 0,
@@ -793,6 +799,7 @@
       cantarellaJellyDeaths: 0,
       cantarellaMirageTimer: 0,
       cantarellaMirageDamageDealt: false,
+      cantarellaPerceptionReady: false,
       cantarellaSlowTimer: 0,
       cantarellaDreamed: false,
       voiceUltimatePending: false,
@@ -1894,6 +1901,7 @@
     fighter.timeForceTimer = Math.max(0, fighter.timeForceTimer - dt);
     fighter.timeSlowTimer = Math.max(0, fighter.timeSlowTimer - dt);
     fighter.verinaSlowTimer = Math.max(0, fighter.verinaSlowTimer - dt);
+    fighter.blackSlamClock = Math.max(0, fighter.blackSlamClock - dt);
     if (fighter.cantarellaMirageTimer > 0) {
       fighter.cantarellaMirageTimer = Math.max(0, fighter.cantarellaMirageTimer - dt);
       if (fighter.cantarellaMirageTimer === 0) finishCantarellaMirage(fighter);
@@ -1996,6 +2004,7 @@
       }
       activateAnkoHornedForm(fighter);
     }
+    if (fighter.horned) tryStartBlackSheepSlam(fighter);
 
     function activateAnkoHornedForm(fighter) {
       if (fighter.hp <= 0 || fighter.horned) return;
@@ -3593,35 +3602,59 @@
   function finishCantarellaMirage(fighter) {
     if (!fighter || fighter.hp <= 0) return;
     if (!fighter.cantarellaMirageDamageDealt && state === "playing") {
-      const targets = getDamageableUnits().filter((unit) => (
-        unit.hp > 0
-        && unit.side !== fighter.side
-      ));
-      if (targets.length) {
-        effects.push({
-          type: "ring",
-          x: fighter.x,
-          y: fighter.y,
-          radius: 18,
-          growth: 760,
-          life: 0.8,
-          maxLife: 0.8,
-          color: "#d9a8ff",
-          width: 11
-        });
-        spawnBurst(fighter.x, fighter.y, "#d9a8ff", 38, 280);
-        announce(`${fighter.template.name} · 蜃境回响`, "#e2baff", 1.1);
-        addLog(`${fighter.template.name} 的蜃境期间未造成伤害，结束时引发 ${fighter.template.mirageFallbackDamage} 点蜃境回响。`, "ability");
-        targets.forEach((target) => {
-          applySpecialDamage(target, fighter.template.mirageFallbackDamage, fighter, "蜃境回响", {
-            color: "#e0b5ff"
-          });
-        });
-        screenShake = Math.max(screenShake, 8);
-        playSound("abyss");
-      }
+      fighter.cantarellaPerceptionReady = true;
+      effects.push({
+        type: "ring",
+        x: fighter.x,
+        y: fighter.y,
+        radius: 14,
+        growth: 420,
+        life: 0.7,
+        maxLife: 0.7,
+        color: "#d29cff",
+        width: 7
+      });
+      spawnBurst(fighter.x, fighter.y, "#d29cff", 28, 220);
+      announce(`${fighter.template.name} · 感知汲取`, "#e3c2ff", 1.2);
+      addLog(`${fighter.template.name} 的蜃境期间未造成伤害，获得「感知汲取」。`, "ability");
+      playSound("timeStop");
     }
     fighter.cantarellaMirageDamageDealt = false;
+  }
+
+  function triggerCantarellaPerception(fighter, target) {
+    if (!fighter?.cantarellaPerceptionReady || !target || target.hp <= 0 || state !== "playing") return;
+    fighter.cantarellaPerceptionReady = false;
+    fighter.attackClock = fighter.template.attackCooldown;
+    const x = target.x;
+    const y = target.y;
+    const radius = fighter.template.perceptionBlastRadius * CELL_SIZE;
+    effects.push({
+      type: "perceptionBlast",
+      x,
+      y,
+      radius,
+      life: 0.9,
+      maxLife: 0.9,
+      color: "#8d43d9"
+    });
+    getDamageableUnits()
+      .filter((unit) => (
+        unit.hp > 0
+        && unit.side !== fighter.side
+        && Math.hypot(unit.x - x, unit.y - y) <= radius + unit.r * 0.15
+      ))
+      .forEach((unit) => {
+        applySpecialDamage(unit, fighter.template.perceptionDamage, fighter, "感知汲取", {
+          color: "#bd78ff"
+        });
+        spawnBurst(unit.x, unit.y, "#ad66f2", 18, 210);
+      });
+    spawnBurst(x, y, "#a45ee8", 44, 330);
+    screenShake = Math.max(screenShake, 10);
+    announce(`${fighter.template.name} · 感知汲取`, "#e3c2ff", 1);
+    addLog(`${fighter.template.name} 在敌人位置引爆水母幻影，造成 ${fighter.template.perceptionDamage} 点范围伤害。`, "ability");
+    playSound("abyss");
   }
 
   function spawnWhiteSheep(owner) {
@@ -3767,8 +3800,18 @@
   }
 
   function tryBasicAttack(fighter, opponent) {
-    if (fighter.attackClock > 0 || fighter.freeze > 0 || fighter.stunned > 0 || fighter.vortexLockTimer > 0) return;
-    if (fighter.template.attackType === "none" || fighter.charge || fighter.knockback) return;
+    if (fighter.freeze > 0 || fighter.stunned > 0 || fighter.vortexLockTimer > 0 || fighter.charge || fighter.knockback) return;
+    if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) {
+      const target = nearestOpponent(fighter) || opponent;
+      if (
+        target
+        && distance(fighter, target) <= fighter.template.perceptionSearchRange * CELL_SIZE + target.r * 0.15
+      ) {
+        triggerCantarellaPerception(fighter, target);
+      }
+      return;
+    }
+    if (fighter.attackClock > 0 || fighter.template.attackType === "none") return;
     if (fighter.template.id === "02" && fighter.abyssForm) {
       if (inMeleeRange(fighter, opponent)) {
         performAbyssSweep(fighter, opponent);
@@ -3797,12 +3840,7 @@
       fireProjectile(fighter, opponent, false);
       fighter.attackClock = fighter.template.attackCooldown;
     } else if (fighter.template.transformThreshold) {
-      const inSeekRange = fighter.inContact
-        || distance(fighter, opponent) <= fighter.template.hornedSeekRange * CELL_SIZE + Math.min(fighter.r, opponent.r) * 0.2;
-      if (fighter.horned && inSeekRange) {
-        startBlackSheepSlam(fighter, opponent);
-        fighter.attackClock = fighter.template.hornedCooldown;
-      }
+      tryStartBlackSheepSlam(fighter);
     } else if (inMeleeRange(fighter, opponent)) {
       performSweep(fighter, opponent, false);
       fighter.attackClock = fighter.template.attackCooldown;
@@ -3924,6 +3962,30 @@
     announce(`${fighter.template.name} · 黑咩蓄势`, "#d8dee8", 0.6);
     addLog(`${fighter.template.name} 召唤黑咩，0.3 秒后砸向地面。`, "ability");
     playSound("windup");
+  }
+
+  function tryStartBlackSheepSlam(fighter) {
+    if (
+      !fighter
+      || fighter.hp <= 0
+      || !fighter.horned
+      || state !== "playing"
+      || fighter.voiceUltimatePending
+      || fighter.blackSlamClock > 0
+      || fighter.stunned > 0
+      || fighter.freeze > 0
+      || fighter.vortexLockTimer > 0
+      || fighter.knockback
+    ) return false;
+    const target = nearestOpponent(fighter);
+    if (
+      !target
+      || distance(fighter, target) > fighter.template.hornedSeekRange * CELL_SIZE + Math.min(fighter.r, target.r) * 0.2
+    ) return false;
+    startBlackSheepSlam(fighter, target);
+    fighter.blackSlamClock = fighter.template.hornedCooldown;
+    fighter.attackClock = Math.max(fighter.attackClock, fighter.template.hornedCooldown);
+    return true;
   }
 
   function updateBlackSlams(dt) {
@@ -4908,6 +4970,7 @@
         else if (fighter.template.id === "04" && fighter.brantBigAnchorLock) status = "落锚定身";
         else if (fighter.template.id === "04" && fighter.brantAirborneTimer > 0) status = "空中";
         else if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) status = "加速";
+        else if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) status = "感知汲取";
         else if (fighter.template.id === "05" && fighter.cantarellaMirageTimer > 0) status = "蜃境";
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
@@ -5058,6 +5121,8 @@
         dom.battleStatus.textContent = `绳索巡航 ${player.brantAirborneTimer.toFixed(1)}s · ${Math.round(player.template.brantAirborneDodgeChance * 100)}% 闪避`;
       } else if (player.template.id === "04" && player.brantUltimateTimer > 0) {
         dom.battleStatus.textContent = `船长狂想 ${player.brantUltimateTimer.toFixed(1)}s`;
+      } else if (player.template.id === "05" && player.cantarellaPerceptionReady) {
+        dom.battleStatus.textContent = "感知汲取 · 半径 8 格";
       } else if (player.template.id === "05" && player.cantarellaMirageTimer > 0) {
         dom.battleStatus.textContent = `蜃境迷梦 ${player.cantarellaMirageTimer.toFixed(1)}s`;
       } else if (player.template.id === "05" && player.cantarellaJellyDeaths < player.template.jellyDeathsToUnlock) {
@@ -6205,6 +6270,26 @@
       ctx.restore();
     }
 
+    if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.strokeStyle = `rgba(190, 121, 255, ${0.48 + Math.sin(t * 5) * 0.16})`;
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = "#9847e4";
+      ctx.shadowBlur = 14;
+      ctx.setLineDash([4, 5]);
+      ctx.lineDashOffset = -visualTime * 20;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius + 14 + Math.sin(t * 3.7) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(232, 199, 255, 0.9)";
+      ctx.font = "800 7px 'Trebuchet MS'";
+      ctx.textAlign = "center";
+      ctx.fillText("感知汲取", 0, -radius - 15);
+      ctx.restore();
+    }
+
     if (fighter.cantarellaDreamed) {
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
@@ -6466,6 +6551,33 @@
   }
 
   function drawCantarellaWeapon(fighter, radius, t) {
+    if (fighter.cantarellaPerceptionReady) {
+      const orbRadius = radius * 0.34;
+      ctx.save();
+      ctx.translate(radius * 0.78, radius * 0.08);
+      ctx.globalCompositeOperation = "lighter";
+      ctx.shadowColor = "#a75bff";
+      ctx.shadowBlur = 9;
+      const orb = ctx.createRadialGradient(-orbRadius * 0.25, -orbRadius * 0.3, 1, 0, 0, orbRadius);
+      orb.addColorStop(0, "#efd9ff");
+      orb.addColorStop(0.42, "#b36de8");
+      orb.addColorStop(1, "rgba(76, 29, 130, 0.1)");
+      ctx.fillStyle = orb;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, orbRadius, orbRadius * 0.86, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(214, 166, 255, 0.75)";
+      ctx.lineWidth = 1.1;
+      for (let i = -1; i <= 1; i += 1) {
+        const sway = Math.sin(t * 4 + i) * 2;
+        ctx.beginPath();
+        ctx.moveTo(i * orbRadius * 0.38, orbRadius * 0.5);
+        ctx.quadraticCurveTo(i * orbRadius * 0.55 + sway, orbRadius * 1.1, i * orbRadius * 0.2, orbRadius * 1.62);
+        ctx.stroke();
+      }
+      ctx.restore();
+      return;
+    }
     const umbrella = weaponPortraits.get("05");
     if (!umbrella?.complete || !umbrella.naturalWidth) return;
     const size = radius * 1.42;
@@ -6909,6 +7021,51 @@
           ctx.beginPath();
           ctx.arc(effect.x, effect.y, effect.radius + progress * (18 + i * 13), 0, Math.PI * 2);
           ctx.stroke();
+        }
+      } else if (effect.type === "perceptionBlast") {
+        const progress = 1 - alpha;
+        const radius = effect.radius * (0.32 + progress * 0.68);
+        ctx.translate(effect.x, effect.y);
+        ctx.globalCompositeOperation = "lighter";
+        const bloom = ctx.createRadialGradient(0, 0, 3, 0, 0, radius);
+        bloom.addColorStop(0, `rgba(244, 216, 255, ${alpha * 0.88})`);
+        bloom.addColorStop(0.22, `rgba(174, 91, 238, ${alpha * 0.55})`);
+        bloom.addColorStop(0.62, `rgba(96, 39, 157, ${alpha * 0.3})`);
+        bloom.addColorStop(1, "rgba(49, 13, 89, 0)");
+        ctx.fillStyle = bloom;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = colorWithAlpha("#e0aaff", alpha * 0.9);
+        ctx.lineWidth = 4 * alpha + 1;
+        ctx.shadowColor = "#9b4cff";
+        ctx.shadowBlur = 18;
+        for (let i = 0; i < 3; i += 1) {
+          ctx.beginPath();
+          ctx.arc(0, 0, radius * (0.48 + i * 0.2), 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        for (let i = 0; i < 6; i += 1) {
+          const angle = i / 6 * Math.PI * 2 + progress * 0.7;
+          const distance = radius * (0.42 + progress * 0.58);
+          const size = 9 + progress * 8;
+          ctx.save();
+          ctx.translate(Math.cos(angle) * distance, Math.sin(angle) * distance);
+          ctx.rotate(angle + Math.PI / 2);
+          ctx.globalAlpha = alpha * 0.75;
+          ctx.fillStyle = "#8b47ce";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, size, size * 0.82, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#d2a0ff";
+          ctx.lineWidth = 1.2;
+          for (let tentacle = -1; tentacle <= 1; tentacle += 1) {
+            ctx.beginPath();
+            ctx.moveTo(tentacle * size * 0.35, size * 0.45);
+            ctx.quadraticCurveTo(tentacle * size * 0.55, size * 1.05, tentacle * size * 0.2, size * 1.55);
+            ctx.stroke();
+          }
+          ctx.restore();
         }
       } else if (effect.type === "shield") {
         if (!effect.fighter) return;
