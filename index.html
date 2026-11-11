@@ -48,7 +48,7 @@
         </div>
         <label class="duration-control" for="durationInput" title="设置每局对局时长">
           <span>对局</span>
-          <input id="durationInput" type="number" min="10" max="300" step="5" value="50" inputmode="numeric" aria-label="对局时长，单位秒">
+          <input id="durationInput" type="number" min="10" max="300" step="5" value="300" inputmode="numeric" aria-label="对局时长，单位秒">
           <span>秒</span>
         </label>
         <button id="replayButton" class="icon-button replay-button" type="button" aria-label="对局回放" title="对局回放">
@@ -120,9 +120,9 @@
         <div class="pool-card">
           <div class="pool-title">
             <span>赛场道具</span>
-            <button id="itemToggle" class="pool-switch" type="button" aria-pressed="true" aria-label="关闭赛场道具">
+            <button id="itemToggle" class="pool-switch" type="button" aria-pressed="false" aria-label="开启赛场道具">
               <span class="pool-switch-track" aria-hidden="true"><i></i></span>
-              <b id="itemSwitchText">开启</b>
+              <b id="itemSwitchText">关闭</b>
             </button>
           </div>
           <div id="poolItems" class="pool-items">
@@ -208,7 +208,7 @@
           <div class="arena-scanlines" aria-hidden="true"></div>
           <div class="timer-orb" aria-label="剩余时间">
             <span>TIME</span>
-            <b id="timerText">50</b>
+            <b id="timerText">300</b>
           </div>
 
           <div id="countdown" class="countdown" aria-live="assertive"></div>
@@ -249,9 +249,9 @@
             <b id="gameSpeedText" aria-live="polite">1×</b>
             <button id="fastButton" type="button" aria-label="快进">快进 +</button>
             <button id="pauseButton" type="button" aria-label="暂停对局" aria-pressed="false">暂停</button>
-            <button id="mobileItemToggle" class="mobile-item-toggle" type="button" aria-label="关闭赛场道具" aria-pressed="true">
+            <button id="mobileItemToggle" class="mobile-item-toggle" type="button" aria-label="开启赛场道具" aria-pressed="false">
               <span aria-hidden="true">✦</span>
-              <b id="mobileItemToggleText">道具开</b>
+              <b id="mobileItemToggleText">道具关</b>
             </button>
           </div>
           <button id="abilityButton" class="ability-button" type="button" disabled title="共鸣能量满后释放共鸣解放">
@@ -364,7 +364,7 @@
 
     <footer class="app-footer">
       <span>索拉里斯团子 · 共鸣能量对战</span>
-      <span id="footerSettings">三局两胜 · 每局 50 秒</span>
+      <span id="footerSettings">三局两胜 · 每局 300 秒</span>
     </footer>
   </main>
 

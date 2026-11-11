@@ -6,7 +6,7 @@
   const BOUNDARY = MAP_PADDING;
   let MAP_SIZE = 20;
   let CELL_SIZE = (ARENA_SIZE - MAP_PADDING * 2) / MAP_SIZE;
-  const DEFAULT_ROUND_SECONDS = 50;
+  const DEFAULT_ROUND_SECONDS = 300;
   const WINNING_SCORE = 2;
   const PARALYSIS_DURATION = 10;
   const DAMAGE_CATEGORIES = Object.freeze({
@@ -211,7 +211,7 @@
       ultimateCooldown: 40,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "两次风息斩击完成后解锁，冷却结束后自动开启 15 秒。期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑，路径敌人各受到 80 点伤害；普攻突刺方向改为远离最近敌人。冷却 40 秒。",
+      abilityDesc: "两次风息斩击完成后解锁，冷却结束后自动开启 15 秒。期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑；飞剑按实际飞行轨迹判定，对路径上每个敌人各造成一次 80 点伤害，触碰地图边缘后消失；普攻突刺方向改为远离最近敌人。冷却 40 秒。",
       cooldown: 40
     },
     {
@@ -662,8 +662,8 @@
         "普攻仅在实际命中敌人时恢复 50 风息。",
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
         "每刀消耗 50 风息并造成 60 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
-        "共鸣解放冷却 40 秒，倒计时结束后自动开启 15 秒；期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑。",
-        "每柄飞剑对所有路径敌人各造成一次 80 点伤害，命中后继续沿直线飞行，触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
+        "共鸣解放冷却 40 秒，倒计时结束后自动开启 15 秒；期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的独立飞剑。",
+        "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 80 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
         "大招期间普攻突刺方向改为远离最近敌人。大招结束后恢复风息获取。"
       ]
     },
@@ -923,7 +923,7 @@
   let lastFrame = performance.now();
   let visualTime = 0;
   let soundEnabled = true;
-  let arenaItemsEnabled = true;
+  let arenaItemsEnabled = false;
   let gameSpeedIndex = 3;
   let gameSpeed = 1;
   let manualPaused = false;
@@ -3161,6 +3161,7 @@
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
         r: fighter.template.aeroSwordRadius * CELL_SIZE,
+        collisionRadius: CELL_SIZE * 0.14,
         damage: fighter.template.aeroSwordDamage,
         life: fighter.template.aeroSwordLife,
         color: "#72efb5",
@@ -3185,6 +3186,8 @@
 
   function updateAeroSwordProjectile(projectile, dt) {
     const owner = projectile.owner;
+    const previousX = projectile.x;
+    const previousY = projectile.y;
     projectile.x += projectile.vx * dt;
     projectile.y += projectile.vy * dt;
     projectile.life -= dt;
@@ -3196,30 +3199,32 @@
       }
       trail.life = trail.maxLife;
     }
-    getDamageableUnits()
-      .filter((unit) => (
-        unit.side !== owner.side
-        && unit.hp > 0
-        && !projectile.hitIds.has(unit)
-        && Math.hypot(unit.x - projectile.x, unit.y - projectile.y) <= projectile.r + unit.r
-      ))
-      .forEach((hitUnit) => {
-        projectile.hitIds.add(hitUnit);
-        applySpecialDamage(hitUnit, projectile.damage, owner, "气动飞剑", {
-          color: projectile.color,
-          noEnergy: true
-        });
-        effects.push({
-          type: "aeroHit",
-          x: hitUnit.x,
-          y: hitUnit.y,
-          angle: Math.atan2(projectile.vy, projectile.vx),
-          life: 0.34,
-          maxLife: 0.34,
-          color: projectile.color
-        });
-        spawnBurst(hitUnit.x, hitUnit.y, projectile.color, 12, 180);
+    const hits = findAeroSwordTrajectoryHits(
+      projectile,
+      owner,
+      previousX,
+      previousY,
+      projectile.x,
+      projectile.y
+    );
+    hits.forEach((hit) => {
+      if (projectile.hitIds.has(hit.unit)) return;
+      projectile.hitIds.add(hit.unit);
+      applySpecialDamage(hit.unit, projectile.damage, owner, "气动飞剑", {
+        color: projectile.color,
+        noEnergy: true
       });
+      effects.push({
+        type: "aeroHit",
+        x: hit.unit.x,
+        y: hit.unit.y,
+        angle: Math.atan2(projectile.vy, projectile.vx),
+        life: 0.34,
+        maxLife: 0.34,
+        color: projectile.color
+      });
+      spawnBurst(hit.unit.x, hit.unit.y, projectile.color, 12, 180);
+    });
     if (
       projectile.life <= 0
       || projectile.x < BOUNDARY
@@ -3230,6 +3235,37 @@
       projectile.dead = true;
       if (trail) trail.active = false;
     }
+  }
+
+  function findAeroSwordTrajectoryHits(projectile, owner, startX, startY, endX, endY) {
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const segmentLengthSquared = dx * dx + dy * dy;
+    return getDamageableUnits()
+      .filter((unit) => unit.side !== owner.side && unit.hp > 0)
+      .map((unit) => {
+        const hitRadius = projectile.collisionRadius + unit.r;
+        const offsetX = startX - unit.x;
+        const offsetY = startY - unit.y;
+        const c = offsetX * offsetX + offsetY * offsetY - hitRadius * hitRadius;
+        let progress = 0;
+        if (c > 0) {
+          if (segmentLengthSquared <= 0.0001) return null;
+          const b = 2 * (offsetX * dx + offsetY * dy);
+          const discriminant = b * b - 4 * segmentLengthSquared * c;
+          if (discriminant < 0) return null;
+          progress = (-b - Math.sqrt(discriminant)) / (2 * segmentLengthSquared);
+          if (progress < 0 || progress > 1) return null;
+        }
+        return {
+          unit,
+          progress,
+          x: startX + dx * progress,
+          y: startY + dy * progress
+        };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.progress - b.progress);
   }
 
   function updateTimeVortices(dt) {
@@ -10890,7 +10926,7 @@
     knifePortraits.set(fighter.id, knife);
   });
 
-  setArenaItemsEnabled(true);
+  setArenaItemsEnabled(false);
   changeGameSpeed(0);
   createRoster();
   buildArchiveList();
