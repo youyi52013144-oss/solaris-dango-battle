@@ -202,7 +202,7 @@
       aeroSkillDamage: 15,
       aeroSkillWindGain: 50,
       aeroSwordCooldown: 2,
-      aeroSwordSpeed: 25,
+      aeroSwordSpeed: 40,
       aeroSwordRadius: 2,
       aeroSwordDamage: 80,
       aeroSwordLife: 4,
@@ -211,7 +211,7 @@
       ultimateCooldown: 40,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "开局可直接释放一次；后续需完成两次普通斩击解锁。开启后锁定风息获取并解锁强化普攻 15 秒。强化普攻每 2 秒朝最近敌人发射两柄 25 格/秒的穿透飞剑，每柄对同一目标造成一次 80 点伤害，继续飞行直到触碰地图边缘；大招期间技能改为朝最近敌人的反方向突刺。冷却 40 秒。",
+      abilityDesc: "两次风息斩击完成后解锁，冷却结束后自动开启 15 秒。期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑，路径敌人各受到 80 点伤害；普攻突刺方向改为远离最近敌人。冷却 40 秒。",
       cooldown: 40
     },
     {
@@ -652,20 +652,19 @@
       ]
     },
     "08": {
-      role: "风息切换 / 空中双斩 / 追击飞剑",
-      range: "普通斩击横跨全场；技能突刺约 20 格、落点半径 5 格；飞剑命中半径 2 格",
-      interval: "双斩入场 / 突刺 5 秒 / 强化飞剑 2 秒 / 共鸣解放 40 秒",
+      role: "突刺积攒 / 全场双斩 / 平行飞剑",
+      range: "普攻突刺约 20 格、落点半径 5 格；技能双斩横跨全场；飞剑命中半径 2 格",
+      interval: "普攻 5 秒 / 双斩间隔 1 秒 / 大招飞剑 3 秒 / 共鸣解放 40 秒",
       mechanics: [
         "生命 1000、移动速度 8 格/秒。",
-        "风息上限 100，初始为 0；开局技能可用，达到上限后技能锁定，2 秒后解锁普通攻击。",
-        "触发普通攻击后原地停滞 1 秒，再升空并固定在当前位置。",
-        "普攻依次释放地图左上至右下、右上至左下的全场直线斩击，每刀消耗 50 风息并造成 60 点伤害。",
-        "两刀完成后普通攻击锁定，技能与共鸣解放解锁。",
-        "技能朝最近敌人以 20 格/秒突刺约 20 格，对落点半径 5 格内敌人造成 15 点伤害并恢复 50 风息，冷却 5 秒；冲刺途中接触敌人会立即停止并提前结算落点伤害。",
-        "共鸣解放持续 15 秒，期间锁定风息获取并解锁强化普攻；技能突刺方向改为最近敌人的反方向。",
-        "强化普攻每 2 秒从身体两侧朝最近敌人发射两柄 25 格/秒的直线飞剑，每柄穿透目标并造成 80 点伤害，直到触碰地图边缘才消失。",
-        "飞剑不会转向追踪，飞行路径留下绿色轨迹；轨迹完整存在 1 秒后缓慢消散。",
-        "大招结束后强化普攻锁定，风息获取恢复。"
+        "风息上限 100，初始为 0。风息达到上限时立刻锁定普攻与大招，2 秒后解锁技能。",
+        "普攻朝最近敌人以 25 格/秒突刺约 20 格，冷却 5 秒；对落点半径 5 格内敌人造成 15 点伤害，冲刺途中接触敌人会立即停止并提前结算。",
+        "普攻仅在实际命中敌人时恢复 50 风息。",
+        "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
+        "每刀消耗 50 风息并造成 60 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
+        "共鸣解放冷却 40 秒，倒计时结束后自动开启 15 秒；期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑。",
+        "每柄飞剑对所有路径敌人各造成一次 80 点伤害，命中后继续沿直线飞行，触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
+        "大招期间普攻突刺方向改为远离最近敌人。大招结束后恢复风息获取。"
       ]
     },
     "03": {
@@ -1141,12 +1140,13 @@
       abyssScytheSwing: 0,
       aeroWind: 0,
       aeroBasicUnlockTimer: 0,
-      aeroBasicUnlocked: false,
+      aeroBasicUnlocked: template.id === "08",
       aeroSkillClock: 0,
-      aeroSkillUnlocked: template.id === "08",
+      aeroSkillUnlocked: false,
       aeroUltimateTimer: 0,
+      aeroSwordClock: 0,
       aeroEnhanced: false,
-      aeroUltimateUnlocked: template.id === "08",
+      aeroUltimateUnlocked: false,
       aeroWindGainLocked: false,
       aeroUltimateReadyTimer: 0,
       aeroSequenceActive: false,
@@ -1402,7 +1402,7 @@
     if (fighter.id === "08") {
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "飘渺无相";
-      dom.abilityButton.title = "开局可直接释放一次；后续完成两次普通斩击后解锁";
+      dom.abilityButton.title = "完成两次风息斩击后解锁，冷却结束后自动释放";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -2854,10 +2854,10 @@
     if (fighter.template.id !== "08") return;
     const max = fighter.template.aeroWindMax;
     const atMax = fighter.aeroWind >= max;
-    fighter.aeroBasicUnlocked = atMax
+    fighter.aeroBasicUnlocked = !atMax && !fighter.aeroSequenceActive;
+    fighter.aeroSkillUnlocked = atMax
       && fighter.aeroBasicUnlockTimer <= 0
       && !fighter.aeroSequenceActive;
-    fighter.aeroSkillUnlocked = !atMax && !fighter.aeroSequenceActive;
   }
 
   function addAeroWind(fighter, amount) {
@@ -2866,6 +2866,8 @@
     fighter.aeroWind = Math.min(fighter.template.aeroWindMax, fighter.aeroWind + amount);
     if (fighter.aeroWind >= fighter.template.aeroWindMax) {
       fighter.aeroBasicUnlocked = false;
+      fighter.aeroSkillUnlocked = false;
+      fighter.aeroUltimateUnlocked = false;
       fighter.aeroBasicUnlockTimer = fighter.template.aeroWindUnlockDelay;
     }
     refreshAeroAccess(fighter);
@@ -2878,19 +2880,11 @@
   function updateWandererAeroState(fighter, dt) {
     if (!fighter || fighter.template.id !== "08" || fighter.hp <= 0) return;
     fighter.aeroSkillClock = Math.max(0, fighter.aeroSkillClock - dt);
-    const ultimateReady = fighter.aeroUltimateUnlocked
-      && fighter.abilityCooldown <= 0
-      && fighter.aeroUltimateTimer <= 0
-      && fighter.aeroAirTimer <= 0
-      && fighter.aeroPreLiftTimer <= 0;
-    fighter.aeroUltimateReadyTimer = ultimateReady
-      ? fighter.aeroUltimateReadyTimer + dt
-      : 0;
     if (fighter.aeroBasicUnlockTimer > 0) {
       fighter.aeroBasicUnlockTimer = Math.max(0, fighter.aeroBasicUnlockTimer - dt);
       if (fighter.aeroBasicUnlockTimer === 0 && fighter.aeroWind >= fighter.template.aeroWindMax) {
-        fighter.aeroBasicUnlocked = true;
-        fighter.aeroSkillUnlocked = false;
+        fighter.aeroBasicUnlocked = false;
+        fighter.aeroSkillUnlocked = true;
       }
     }
 
@@ -2902,15 +2896,6 @@
         refreshAeroAccess(fighter);
         announce(`${fighter.template.name} · 无相结束`, fighter.template.color, 1);
         addLog(`${fighter.template.name} 的「飘渺无相」结束，风息获取恢复。`, "system");
-      }
-    }
-
-    if (fighter.aeroPreLiftTimer > 0) {
-      fighter.vx = 0;
-      fighter.vy = 0;
-      fighter.aeroPreLiftTimer = Math.max(0, fighter.aeroPreLiftTimer - dt);
-      if (fighter.aeroPreLiftTimer === 0 && state === "playing") {
-        launchAeroAerialAttack(fighter);
       }
     }
 
@@ -2936,18 +2921,26 @@
       && fighter.aeroAirTimer <= 0
       && !fighter.aeroSequenceActive
       && fighter.aeroSkillUnlocked
-      && fighter.aeroSkillClock <= 0
-      && !(ultimateReady && (
-        mode !== "play"
-        || fighter.side !== 0
-        || fighter.aeroUltimateReadyTimer < 0.8
-      ))
       && fighter.stunned <= 0
       && fighter.freeze <= 0
       && fighter.vortexLockTimer <= 0
       && state === "playing"
     ) {
-      beginAeroSkillDash(fighter);
+      beginAeroAerialAttack(fighter);
+    }
+
+    if (
+      fighter.aeroUltimateTimer > 0
+      && fighter.stunned <= 0
+      && fighter.freeze <= 0
+      && fighter.vortexLockTimer <= 0
+      && state === "playing"
+    ) {
+      fighter.aeroSwordClock = Math.max(0, fighter.aeroSwordClock - dt);
+      if (fighter.aeroSwordClock === 0) {
+        fireAeroSwords(fighter, nearestOpponent(fighter));
+        fighter.aeroSwordClock = fighter.template.aeroSwordCooldown;
+      }
     }
   }
 
@@ -3068,30 +3061,16 @@
     fighter.aeroAirResumeX = currentSpeed > 0 ? fighter.vx / currentSpeed : Math.cos(fallbackAngle);
     fighter.aeroAirResumeY = currentSpeed > 0 ? fighter.vy / currentSpeed : Math.sin(fallbackAngle);
     fighter.aeroSequenceActive = true;
-    fighter.aeroPreLiftTimer = 1;
+    fighter.aeroPreLiftTimer = 0;
     fighter.aeroBasicUnlocked = false;
     fighter.aeroSkillUnlocked = false;
     fighter.aeroUltimateUnlocked = false;
     fighter.aeroUltimateReadyTimer = 0;
-    fighter.attackClock = 1 + fighter.template.aeroAirDuration;
-    fighter.vx = 0;
-    fighter.vy = 0;
-    effects.push({
-      type: "windCharge",
-      fighter,
-      life: 1,
-      maxLife: 1,
-      color: fighter.template.color
-    });
-    announce(`${fighter.template.name} · 定风蓄势`, fighter.template.color, 1);
-    addLog(`${fighter.template.name} 风息已满，停滞 1 秒后升空。`, "ability");
-  }
-
-  function launchAeroAerialAttack(fighter) {
-    if (!fighter || fighter.hp <= 0 || state !== "playing") return;
     fighter.aeroAirTimer = fighter.template.aeroAirDuration;
     fighter.aeroAirSecondClock = 1;
     fighter.aeroAirSecondDone = false;
+    fighter.vx = 0;
+    fighter.vy = 0;
     performAeroLineSlash(fighter, Math.PI * 0.25, false);
     playAttackVoice(fighter);
     announce(`${fighter.template.name} · 双刃凌空`, fighter.template.color, 0.8);
@@ -3144,7 +3123,7 @@
       fighter.aeroSkillUnlocked = true;
       fighter.aeroUltimateUnlocked = true;
       announce(`${fighter.template.name} · 共鸣解放就绪`, fighter.template.color, 1);
-      addLog(`${fighter.template.name} 完成两次普攻，技能与「飘渺无相」已解锁。`, "ability");
+      addLog(`${fighter.template.name} 完成两次风息斩击，普攻与「飘渺无相」已解锁。`, "ability");
     } else {
       fighter.aeroBasicUnlocked = false;
       fighter.aeroSkillUnlocked = false;
@@ -3164,7 +3143,6 @@
     [-1, 1].forEach((side) => {
       const startX = fighter.x + sideX * side;
       const startY = fighter.y + sideY * side;
-      const swordAngle = Math.atan2(target.y - startY, target.x - startX);
       const trailEffect = {
         type: "aeroSwordTrail",
         points: [{ x: startX, y: startY }],
@@ -3180,8 +3158,8 @@
         category: DAMAGE_CATEGORIES.SPECIAL,
         x: startX,
         y: startY,
-        vx: Math.cos(swordAngle) * speed,
-        vy: Math.sin(swordAngle) * speed,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
         r: fighter.template.aeroSwordRadius * CELL_SIZE,
         damage: fighter.template.aeroSwordDamage,
         life: fighter.template.aeroSwordLife,
@@ -3201,7 +3179,7 @@
       color: "#72efb5",
       width: 4
     });
-    addLog(`${fighter.template.name} 朝最近敌人方向射出两柄直线飞剑。`, "ability");
+    addLog(`${fighter.template.name} 朝最近敌人方向平行射出两柄直线飞剑。`, "ability");
     playSound("windup");
   }
 
@@ -5176,14 +5154,9 @@
         launchCantarellaUmbrella(fighter, opponent);
       }
     } else if (fighter.template.id === "08") {
-      if (fighter.aeroUltimateTimer > 0) {
-        fireAeroSwords(fighter, opponent);
-        fighter.attackClock = fighter.template.aeroSwordCooldown;
-      } else if (
-        fighter.aeroBasicUnlocked
-        && fighter.aeroWind >= fighter.template.aeroWindAttackCost
-      ) {
-        beginAeroAerialAttack(fighter);
+      if (fighter.aeroBasicUnlocked) {
+        beginAeroSkillDash(fighter);
+        fighter.attackClock = fighter.template.aeroSkillCooldown;
       }
     } else if (fighter.template.id === "07") {
       const searchRange = getAttackRangeCells(fighter) * CELL_SIZE;
@@ -5554,8 +5527,7 @@
     const canAutocast = mode !== "play" || fighter.side !== 0;
     if (fighter.template.ultimateType === "aeroUnbound") {
       if (
-        canAutocast
-        && fighter.aeroUltimateUnlocked
+        fighter.aeroUltimateUnlocked
         && fighter.abilityCooldown <= 0
         && fighter.aeroUltimateTimer <= 0
         && fighter.aeroPreLiftTimer <= 0
@@ -5710,6 +5682,7 @@
       startCantarellaMirage(fighter);
     } else if (isAeroUltimate) {
       fighter.aeroUltimateTimer = fighter.template.ultimateDuration;
+      fighter.aeroSwordClock = 0;
       fighter.aeroEnhanced = true;
       fighter.aeroUltimateUnlocked = false;
       fighter.aeroWindGainLocked = true;
@@ -6438,9 +6411,8 @@
         else if (fighter.template.id === "07" && fighter.jinhsiUltimateUnlocked) status = "龙吟";
         else if (fighter.template.id === "07" && fighter.jinhsiEmpowered) status = "强化";
         else if (fighter.template.id === "08" && fighter.aeroUltimateTimer > 0) status = `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`;
-        else if (fighter.template.id === "08" && fighter.aeroPreLiftTimer > 0) status = `蓄势 ${fighter.aeroPreLiftTimer.toFixed(1)}s`;
         else if (fighter.template.id === "08" && fighter.aeroSequenceActive) status = "双刃斩击";
-        else if (fighter.template.id === "08" && fighter.aeroBasicUnlockTimer > 0) status = `风息解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
+        else if (fighter.template.id === "08" && fighter.aeroBasicUnlockTimer > 0) status = `技能解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
         else if (fighter.template.id === "08" && fighter.aeroUltimateUnlocked) status = "共鸣解放就绪";
         else if (fighter.template.id === "08") status = `风息 ${Math.round(fighter.aeroWind)}/100`;
         else if (fighter.overclock > 0) status = "解放";
@@ -6588,7 +6560,6 @@
       || (
         player.aeroUltimateUnlocked
         && player.aeroUltimateTimer <= 0
-        && player.aeroPreLiftTimer <= 0
         && player.aeroAirTimer <= 0
         && player.aeroDashTimer <= 0
         && !player.aeroSequenceActive
@@ -6666,14 +6637,12 @@
         dom.battleStatus.textContent = `初始普攻 · ${player.jinhsiAttackCount}/4`;
       } else if (player.template.id === "08" && player.aeroUltimateTimer > 0) {
         dom.battleStatus.textContent = `飘渺无相 ${player.aeroUltimateTimer.toFixed(1)}s · 飞剑追击`;
-      } else if (player.template.id === "08" && player.aeroPreLiftTimer > 0) {
-        dom.battleStatus.textContent = `风息充盈 · 停滞蓄势 ${player.aeroPreLiftTimer.toFixed(1)}s`;
       } else if (player.template.id === "08" && player.aeroAirTimer > 0) {
         dom.battleStatus.textContent = "双刃凌空 · 免疫伤害";
       } else if (player.template.id === "08" && player.aeroDashTimer > 0) {
         dom.battleStatus.textContent = "风迹突刺 · 20 格/秒";
       } else if (player.template.id === "08" && player.aeroBasicUnlockTimer > 0) {
-        dom.battleStatus.textContent = `风息充盈 · ${player.aeroBasicUnlockTimer.toFixed(1)}s 后解锁普攻`;
+        dom.battleStatus.textContent = `风息充盈 · ${player.aeroBasicUnlockTimer.toFixed(1)}s 后解锁技能`;
       } else if (player.template.id === "08" && player.aeroUltimateUnlocked) {
         dom.battleStatus.textContent = "两次普攻完成 · 共鸣解放就绪";
       } else if (player.template.id === "08") {
@@ -6895,12 +6864,10 @@
     if (id === "08") {
       const modeText = fighter.aeroUltimateTimer > 0
         ? `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`
-        : fighter.aeroPreLiftTimer > 0
-          ? `蓄势 ${fighter.aeroPreLiftTimer.toFixed(1)}s`
-          : fighter.aeroSequenceActive
-            ? "双刃斩击"
+        : fighter.aeroSequenceActive
+          ? "双刃斩击"
         : fighter.aeroBasicUnlockTimer > 0
-            ? `普攻解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`
+            ? `技能解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`
             : fighter.aeroUltimateUnlocked
               ? "共鸣解放就绪"
               : "风息积攒";
@@ -6924,7 +6891,6 @@
     if (fighter.freeze > 0) states.push("冻结");
     if (fighter.cantarellaSlowTimer > 0) states.push("减速");
     if (fighter.aeroUltimateTimer > 0) states.push("飘渺无相");
-    if (fighter.aeroPreLiftTimer > 0) states.push("定风蓄势");
     if (fighter.aeroAirTimer > 0) states.push("升空免疫");
     if (fighter.aeroDashTimer > 0) states.push("风迹突刺");
     return states.join(" · ") || "战斗中";
