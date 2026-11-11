@@ -231,16 +231,16 @@
       attackCooldown: 0,
       attackRange: 0,
       skillCooldown: 10,
-      verinaFieldRadius: 3.5,
+      verinaFieldRadius: 2.5,
       verinaTickInterval: 0.05,
-      verinaSproutsForVine: 4,
+      verinaSproutsForVine: 5,
       vineTickInterval: 0.05,
       ultimateType: "verinaBloom",
       ultimateCooldown: 15,
-      verinaUltimateHealthCost: 150,
+      verinaUltimateHealthCost: 100,
       ability: "生命庭院",
       abilityIcon: "❧",
-      abilityDesc: "倒计时结束后自动释放一次；此后场上存在藤、生命不低于 200 且冷却就绪时可用。自身失去 150 生命，芽的回复等级提高 1。冷却 15 秒。",
+      abilityDesc: "倒计时结束后自动释放一次；此后场上存在藤、生命不低于 160 且冷却就绪时可用。自身失去 100 生命，芽的回复等级提高 1。冷却 15 秒。",
       cooldown: 15
     },
     {
@@ -364,7 +364,7 @@
       attackRange: 2.5,
       jinhsiEmpoweredRange: 6,
       jinhsiEmpoweredDamage: 65,
-      jinhsiEmpoweredWindup: 0.8,
+      jinhsiEmpoweredWindup: 0.65,
       jinhsiHitsToEmpower: 4,
       jinhsiHitsToUltimate: 4,
       jinhsiArcAngle: Math.PI * 0.9,
@@ -373,7 +373,7 @@
       jinhsiSkillImpactDelay: 1.5,
       jinhsiSkillRadius: 6,
       jinhsiSkillDamage: 100,
-      jinhsiSkillStun: 0.7,
+      jinhsiSkillStun: 2,
       jinhsiUltimateCharge: 2,
       jinhsiUltimateAirTime: 3,
       jinhsiUltimateRadius: 10,
@@ -627,18 +627,18 @@
     },
     "06": {
       role: "光属性场地养成 / 生命控制",
-      range: "芽半径 3.5 格；藤作用于全场",
+      range: "芽半径 2.5 格；藤作用于全场",
       interval: "种芽 10 秒 / 共鸣解放 15 秒",
       mechanics: [
         "生命 500、移动速度 5 格/秒，自身没有普通攻击。",
-        "登场时在场地正中央种下第一颗芽；倒计时结束进入战斗时自动释放一次生命庭院：失去 150 生命，芽愈等级提升至 1。",
+        "登场时在场地正中央种下第一颗芽；倒计时结束进入战斗时自动释放一次生命庭院：失去 100 生命，芽愈等级提升至 1。",
         "此后每 10 秒在自身脚下种下一颗芽；芽只治疗维里奈，不再对敌人造成伤害。",
         "芽没有实体、不可被索敌，也不会移动。",
-        "每颗芽以自身为中心形成半径 3.5 格领域，维里奈处于范围内时每 0.05 秒恢复等同于芽愈等级的数值。",
+        "每颗芽以自身为中心形成半径 2.5 格领域，维里奈处于范围内时每 0.05 秒恢复等同于芽愈等级的数值。",
         "芽愈等级初始为 0，每次释放生命庭院增加 1。",
-        "场上芽的数量达到 4 颗时，正中央的芽生长为藤。",
+        "场上芽的数量达到 5 颗时，正中央的芽生长为藤。",
         "藤本身不提供治疗；藤存续期间，维里奈每次受到治疗时，所有敌人承受等同于该次治疗量的特殊伤害，维里奈满血时同样响应治疗事件。",
-        "生命庭院在倒计时结束后自动释放一次；其后场上有藤、生命不低于 200 且冷却结束时自动释放。每次失去 150 生命并使芽愈等级 +1，冷却 15 秒。"
+        "生命庭院在倒计时结束后自动释放一次；其后场上有藤、生命不低于 160 且冷却结束时自动释放。每次失去 100 生命并使芽愈等级 +1，冷却 15 秒。"
       ]
     },
     "04": {
@@ -687,10 +687,10 @@
         "生命 900、移动速度 6 格/秒。",
         "初始普攻冷却 2 秒，以自身为中心对半径 2.5 格内所有敌人进行 360° 圆形横扫，造成 5 点伤害。",
         "普攻每次成功命中获得 1 格龙刃层数，最多显示 4 格；逐光定界释放时清空层数。",
-        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.8 秒前摇并造成 65 点伤害。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.65 秒前摇并造成 65 点伤害。",
         "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
         "每次切换普攻形态时解锁技能；自身停滞 1 秒，在最近敌人脚下生成半径 6 格光圈，恢复移动。",
-        "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 0.7 秒，随后技能重新锁定。",
+        "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 2 秒，随后技能重新锁定。",
         "技能命中会使大招半径永久增加 1 格，增程效果仅在当前整场战斗中保留。",
         "大招释放时自身停滞 2 秒，随后腾空 3 秒；腾空期间不可被索敌且免疫全部伤害。",
         "腾空期间在敌人脚下生成半径 10 格以上的光圈，光圈以 2 格/秒追踪敌人。",
@@ -3308,7 +3308,7 @@
   }
 
   function executeVerinaBloom(fighter, initial = false) {
-    if (!fighter || fighter.template.id !== "06" || fighter.hp < 200) return;
+    if (!fighter || fighter.template.id !== "06" || fighter.hp < 160) return;
     const cost = fighter.template.verinaUltimateHealthCost;
     fighter.hp = Math.max(1, fighter.hp - cost);
     fighter.verinaHealLevel += 1;
@@ -5003,7 +5003,7 @@
       if (
         canAutocast
         && hasVerinaVine(fighter)
-        && fighter.hp >= 200
+        && fighter.hp >= 160
         && fighter.abilityCooldown <= 0
         && !fighter.voiceUltimatePending
       ) {
@@ -5029,7 +5029,7 @@
     if (fighter.template.ultimateType === "autoThreshold") return;
     const isJinhsiUltimate = fighter.template.ultimateType === "jinhsiDragon";
     const isVerinaUltimate = fighter.template.ultimateType === "verinaBloom";
-    if (isVerinaUltimate && fighter.hp < 200) return;
+    if (isVerinaUltimate && fighter.hp < 160) return;
     if (isJinhsiUltimate) {
       if (!fighter.jinhsiUltimateUnlocked || fighter.jinhsiUltimatePhase !== "idle") return;
     } else if (!isVerinaUltimate && fighter.energy < 100) {
@@ -5939,7 +5939,7 @@
       || player.cantarellaJellyDeaths >= player.template.jellyDeathsToUnlock;
     const jinhsiUnlocked = player.template.ultimateType !== "jinhsiDragon"
       || (player.jinhsiUltimateUnlocked && player.jinhsiUltimatePhase === "idle");
-    const verinaHealthReady = player.template.ultimateType !== "verinaBloom" || player.hp >= 200;
+    const verinaHealthReady = player.template.ultimateType !== "verinaBloom" || player.hp >= 160;
     const ultimateAvailable = !player.template.transformThreshold
       && player.template.ultimateType !== "autoThreshold"
       && !player.charge
@@ -5977,8 +5977,8 @@
         dom.battleStatus.textContent = `共鸣解放 ${player.overclock.toFixed(1)}s`;
       } else if (player.abyssForm) {
         dom.battleStatus.textContent = `恐怖镰刀人 · 暗涌 ${Math.ceil(player.abyssEnergy)}`;
-      } else if (player.template.id === "06" && player.hp < 200) {
-        dom.battleStatus.textContent = "生命低于 200 · 生命庭院锁定";
+      } else if (player.template.id === "06" && player.hp < 160) {
+        dom.battleStatus.textContent = "生命低于 160 · 生命庭院锁定";
       } else if (player.template.id === "06" && hasVerinaVine(player)) {
         dom.battleStatus.textContent = `生命共鸣 · 芽愈 Lv.${player.verinaHealLevel}`;
       } else if (player.template.id === "06" && player.verinaSlowTimer > 0) {
