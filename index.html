@@ -144,7 +144,7 @@
               </div>
               <div class="energy-track hud-energy-track"><i id="playerEnergyBar"></i></div>
               <div class="special-gauge" id="playerSpecialGauge" hidden>
-                <span id="playerSpecialLabel">死告</span><i></i><i></i><i></i><b id="playerSpecialText">0/3</b>
+                <span id="playerSpecialLabel">死告</span><i></i><i></i><i></i><i></i><b id="playerSpecialText">0/3</b>
               </div>
               <div class="abyss-gauge" id="playerAbyssGauge" hidden>
                 <span>暗涌</span><div class="abyss-track"><i></i></div><b id="playerAbyssText">0</b>
@@ -181,7 +181,7 @@
               </div>
               <div class="energy-track hud-energy-track"><i id="enemyEnergyBar"></i></div>
               <div class="special-gauge" id="enemySpecialGauge" hidden>
-                <span id="enemySpecialLabel">死告</span><i></i><i></i><i></i><b id="enemySpecialText">0/3</b>
+                <span id="enemySpecialLabel">死告</span><i></i><i></i><i></i><i></i><b id="enemySpecialText">0/3</b>
               </div>
               <div class="abyss-gauge" id="enemyAbyssGauge" hidden>
                 <span>暗涌</span><div class="abyss-track"><i></i></div><b id="enemyAbyssText">0</b>
@@ -381,7 +381,12 @@
         <span class="eyebrow">MATCH REPLAY</span>
         <h2 id="replayTitle">对局回放</h2>
       </div>
-      <button id="replayClose" class="archive-close" type="button" aria-label="关闭对局回放">×</button>
+      <div class="replay-header-actions">
+        <button id="autoReplayToggle" class="auto-replay-toggle" type="button" aria-pressed="false">
+          <span id="autoReplayText">自动录制关闭</span><i aria-hidden="true"></i>
+        </button>
+        <button id="replayClose" class="archive-close" type="button" aria-label="关闭对局回放">×</button>
+      </div>
     </div>
     <div class="replay-body">
       <nav id="replayList" class="replay-list" aria-label="最近三局回放"></nav>

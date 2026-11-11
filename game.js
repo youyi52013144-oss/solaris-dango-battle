@@ -233,20 +233,15 @@
       skillCooldown: 10,
       verinaFieldRadius: 2,
       verinaTickInterval: 0.05,
-      verinaHealPerTick: 1,
-      verinaDamagePerTick: 1,
-      verinaSproutsForVine: 6,
-      vineSlowMultiplier: 0.5,
+      verinaSproutsForVine: 4,
       vineTickInterval: 0.05,
-      vineDamageDivisor: 100,
       ultimateType: "verinaBloom",
-      ultimateCooldown: 10,
-      verinaUltimateEnemyHeal: 300,
-      verinaUltimateMaxHpGain: 500,
+      ultimateCooldown: 15,
+      verinaUltimateHealthCost: 150,
       ability: "生命庭院",
       abilityIcon: "❧",
-      abilityDesc: "场上存在藤时解锁；为所有敌人恢复 300 生命，并为自身增加 500 最大生命。冷却 10 秒。",
-      cooldown: 10
+      abilityDesc: "开局立即自动释放一次；此后场上存在藤且冷却就绪时可用。自身失去 150 生命，芽的回复等级提高 1。冷却 15 秒。",
+      cooldown: 15
     },
     {
       id: "04",
@@ -343,7 +338,7 @@
       perceptionDamage: 120,
       ability: "蜃境迷梦",
       abilityIcon: "梦",
-      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害，并立即结束整个蜃境、解除全场减速。若蜃境自然结束且期间未造成伤害，获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
+      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害，并解除该单位自身的迷梦与减速，蜃境及其他单位仍继续。若蜃境自然结束且期间未造成伤害，获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
       cooldown: 18
     },
     {
@@ -366,14 +361,12 @@
       attackType: "jinhsiSlash",
       attackDamage: 5,
       attackCooldown: 2,
-      attackRange: 3,
+      attackRange: 2.5,
       jinhsiEmpoweredRange: 6,
       jinhsiEmpoweredDamage: 65,
-      jinhsiEmpoweredWindup: 0.2,
+      jinhsiEmpoweredWindup: 0.8,
       jinhsiHitsToEmpower: 4,
       jinhsiHitsToUltimate: 4,
-      jinhsiBaseRectLength: 5,
-      jinhsiBaseRectWidth: 1,
       jinhsiArcAngle: Math.PI * 0.9,
       jinhsiSkillCooldown: 0,
       jinhsiSkillStopTime: 1,
@@ -635,17 +628,17 @@
     "06": {
       role: "光属性场地养成 / 生命控制",
       range: "芽半径 2 格；藤作用于全场",
-      interval: "种芽 10 秒 / 共鸣解放 10 秒",
+      interval: "种芽 10 秒 / 共鸣解放 15 秒",
       mechanics: [
         "生命 500、移动速度 5 格/秒，自身没有普通攻击。",
-        "登场时在场地正中央种下第一颗芽，此后每 10 秒在自身脚下种下一颗芽。",
+        "登场时在场地正中央种下第一颗芽；倒计时结束进入战斗时自动释放一次生命庭院：失去 150 生命，芽愈等级提升至 1。",
+        "此后每 10 秒在自身脚下种下一颗芽；芽只治疗维里奈，不再对敌人造成伤害。",
         "芽没有实体、不可被索敌，也不会移动。",
-        "每颗芽以自身为中心形成半径 2 格领域：维里奈处于范围内时每 0.05 秒恢复 1 生命。",
-        "敌人处于芽的半径 2 格范围内时，每 0.05 秒受到 1 点特殊伤害。",
-        "场上芽的数量达到 6 颗时，正中央的芽生长为藤。",
-        "藤会使全场敌人移动速度降低 50%，并每 0.05 秒造成相当于维里奈最大生命值 1/100 的特殊伤害。",
-        "生命庭院需要场上存在藤才能释放；为所有敌人恢复 300 生命，自身最大生命增加 500。",
-        "生命庭院冷却 10 秒。"
+        "每颗芽以自身为中心形成半径 2 格领域，维里奈处于范围内时每 0.05 秒恢复等同于芽愈等级的数值。",
+        "芽愈等级初始为 0，每次释放生命庭院增加 1。",
+        "场上芽的数量达到 4 颗时，正中央的芽生长为藤。",
+        "藤本身不提供治疗；藤存续期间，维里奈每次受到治疗时，所有敌人承受等同于该次治疗量的特殊伤害，维里奈满血时同样响应治疗事件。",
+        "生命庭院在倒计时结束后自动释放一次；其后场上有藤且冷却结束时自动释放。每次失去 150 生命并使芽愈等级 +1，冷却 15 秒。"
       ]
     },
     "04": {
@@ -680,7 +673,7 @@
         "每只水母死亡时为坎特蕾拉恢复 10 点生命，并累计蜃境解锁进度。",
         "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
         "蜃境持续 8 秒，使场上所有单位与期间后续召唤的水母移速降至 20%，敌方单位获得迷梦。",
-        "迷梦单位首次受击追加 170 点伤害，并立即解除所有单位的蜃境减速、关闭蜃境特效并结束本次大招。",
+        "迷梦单位首次受击追加 170 点伤害，并解除该单位自身的迷梦与减速；蜃境、坎特蕾拉与其他单位的减速继续生效。",
         "若蜃境持续期间没有对敌方造成伤害，结束时获得一次「感知汲取」。",
         "感知汲取会替换普通攻击：敌人进入半径 8 格后，立即在其位置引爆半径 4 格的暗紫水母爆炸，造成 120 点范围特殊伤害。",
         "感知汲取触发后失效，坎特蕾拉恢复雨伞普通攻击，直到下一次蜃境再次赋予该状态；冷却 18 秒。"
@@ -688,12 +681,13 @@
     },
     "07": {
       role: "近战强化 / 腾空爆发",
-      range: "初始普攻索敌半径 3 格，矩形攻击 5×1 格；技能光圈半径 6 格；大招光圈半径 10 格",
+      range: "初始普攻半径 2.5 格，360° 圆形攻击；技能光圈半径 6 格；大招光圈半径 10 格",
       interval: "初始普攻 2 秒 / 强化普攻 1.45 秒 / 技能切换形态时解锁 / 大招解锁后可用",
       mechanics: [
         "生命 900、移动速度 6 格/秒。",
-        "初始普攻索敌半径 3 格、冷却 2 秒，使用长刃对前方长 5 格、宽 1 格的矩形区域造成 5 点伤害，不绘制矩形判定特效。",
-        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.2 秒前摇并造成 65 点伤害。",
+        "初始普攻冷却 2 秒，以自身为中心对半径 2.5 格内所有敌人进行 360° 圆形横扫，造成 5 点伤害。",
+        "普攻每次成功命中获得 1 格龙刃层数，最多显示 4 格；逐光定界释放时清空层数。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.8 秒前摇并造成 65 点伤害。",
         "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
         "每次切换普攻形态时解锁技能；自身停滞 1 秒，在最近敌人脚下生成半径 6 格光圈，恢复移动。",
         "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 0.7 秒，随后技能重新锁定。",
@@ -790,6 +784,8 @@
     replayButton: document.getElementById("replayButton"),
     replayCount: document.getElementById("replayCount"),
     replayDialog: document.getElementById("replayDialog"),
+    autoReplayToggle: document.getElementById("autoReplayToggle"),
+    autoReplayText: document.getElementById("autoReplayText"),
     replayClose: document.getElementById("replayClose"),
     replayList: document.getElementById("replayList"),
     replayVideo: document.getElementById("replayVideo"),
@@ -919,6 +915,12 @@
   let replaySequence = 0;
   let replayStatusMessage = "";
   let lastReplayCompositeAt = 0;
+  let autoReplayEnabled = false;
+  try {
+    autoReplayEnabled = localStorage.getItem("solaris-auto-replay") === "on";
+  } catch {
+    // Playback recording remains enabled when storage is unavailable.
+  }
   let voicePauseActive = false;
   let voiceFocusFighter = null;
   let voiceCameraMix = 0;
@@ -1012,6 +1014,8 @@
       maxShield: Math.max(template.startingShield || 0, template.alternateShield || 0, 1),
       skillClock: template.skillCooldown || 0,
       verinaSlowTimer: 0,
+      verinaHealLevel: 0,
+      verinaInitialUltimateUsed: false,
       brantSpecialEnergy: 0,
       brantUltimateTimer: 0,
       brantAirborneTimer: 0,
@@ -1820,6 +1824,12 @@
       dom.statusDot.classList.add("live");
       playSound("fight");
       announce("开撞！", "#ffd84d");
+      getActiveFighters().forEach((fighter) => {
+        if (fighter.template.id === "06" && !fighter.verinaInitialUltimateUsed) {
+          fighter.verinaInitialUltimateUsed = true;
+          executeVerinaBloom(fighter, true);
+        }
+      });
     }
   }
 
@@ -2433,7 +2443,6 @@
       enemy.inContact = false;
       player.contactTime = 0;
       enemy.contactTime = 0;
-      dom.battleStatus.textContent = "激战中";
       return;
     }
 
@@ -2760,6 +2769,34 @@
     spawnDamageText(fighter.x, fighter.y - fighter.r, `${Math.round(amount)} 护盾`, color, true);
     spawnBurst(fighter.x, fighter.y, fighter.template.id === "04" ? "#9f508d" : color, 22, 190);
     if (fighter.template.id === "04") spawnBurst(fighter.x, fighter.y, "#e58d9d", 12, 125);
+  }
+
+  function healFighter(fighter, amount, options = {}) {
+    if (!fighter || fighter.hp <= 0 || amount <= 0) return 0;
+    const before = fighter.hp;
+    fighter.hp = Math.min(fighter.maxHp, fighter.hp + amount);
+    const healed = Math.max(0, fighter.hp - before);
+    if (healed > 0 && !options.noText) {
+      spawnDamageText(fighter.x, fighter.y - fighter.r, `+${Math.round(healed)}`, options.color || "#d9ef7d", true);
+    }
+    if (fighter.template.id === "06" && hasVerinaVine(fighter)) {
+      triggerVerinaVineReaction(fighter, amount);
+    }
+    return healed;
+  }
+
+  function triggerVerinaVineReaction(owner, healingAmount) {
+    if (!owner || owner.template.id !== "06" || healingAmount <= 0 || !hasVerinaVine(owner)) return;
+    getDamageableUnits()
+      .filter((target) => target.side !== owner.side && target.hp > 0)
+      .forEach((target) => {
+        applySpecialDamage(target, healingAmount, owner, "生命共鸣", {
+          color: "#d7e76d",
+          noEnergy: true,
+          quiet: true,
+          noText: true
+        });
+      });
   }
 
   function spawnWindField(owner) {
@@ -3209,10 +3246,7 @@
 
   function healAbyssDamage(fighter, damage) {
     if (!fighter.abyssForm || damage <= 0) return;
-    const heal = Math.min(fighter.maxHp - fighter.hp, damage * fighter.template.abyssHitHealRatio);
-    if (heal <= 0) return;
-    fighter.hp = Math.min(fighter.maxHp, fighter.hp + heal);
-    spawnDamageText(fighter.x, fighter.y - fighter.r, `+${Math.round(heal)}`, "#d9a3ff", true);
+    healFighter(fighter, damage * fighter.template.abyssHitHealRatio, { color: "#d9a3ff" });
   }
 
   function performAbyssSweep(fighter, opponent) {
@@ -3273,6 +3307,44 @@
     });
   }
 
+  function executeVerinaBloom(fighter, initial = false) {
+    if (!fighter || fighter.template.id !== "06" || fighter.hp <= 0) return;
+    const cost = fighter.template.verinaUltimateHealthCost;
+    fighter.hp = Math.max(1, fighter.hp - cost);
+    fighter.verinaHealLevel += 1;
+    fighter.abilityCooldown = fighter.template.ultimateCooldown;
+    fighter.flash = Math.max(fighter.flash, 0.8);
+    effects.push({
+      type: "lifeBloom",
+      fighter,
+      x: fighter.x,
+      y: fighter.y,
+      radius: ARENA_SIZE * 0.72,
+      life: 1.65,
+      maxLife: 1.65,
+      color: "#e7f58a"
+    });
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: 10,
+      growth: 920,
+      life: 1.05,
+      maxLife: 1.05,
+      color: "#f3ffad",
+      width: 10
+    });
+    spawnBurst(fighter.x, fighter.y, "#eaff9d", 54, 360);
+    screenShake = Math.max(screenShake, 8);
+    announce(`${fighter.template.name} · 生命庭院`, fighter.template.color, 1.25);
+    addLog(
+      `${fighter.template.name}${initial ? "开局" : ""}释放生命庭院，失去 ${cost} 生命，芽愈等级提升至 ${fighter.verinaHealLevel}。`,
+      "ability"
+    );
+    playSound("shield");
+  }
+
   function spawnVerinaPlant(owner, x, y, atCenter = false) {
     if (!owner || owner.hp <= 0 || owner.template.id !== "06") return;
     const plant = {
@@ -3300,7 +3372,7 @@
       width: 4
     });
     spawnBurst(x, y, "#d9ef7d", 16, 120);
-    addLog(`${owner.template.name} 种下一颗芽（${verinaPlants.filter((item) => item.owner === owner).length}/6）。`, "ability");
+    addLog(`${owner.template.name} 种下一颗芽（${verinaPlants.filter((item) => item.owner === owner).length}/${owner.template.verinaSproutsForVine}）。`, "ability");
     const ownerPlants = verinaPlants.filter((item) => item.owner === owner);
     if (ownerPlants.length >= owner.template.verinaSproutsForVine) {
       growVerinaVine(owner);
@@ -3326,7 +3398,7 @@
     spawnBurst(centerPlant.x, centerPlant.y, "#f1ff9f", 64, 390);
     playAttackVoice(owner, "verinaVine");
     announce(`${owner.template.name} · 藤蔓复苏`, "#eaff9d", 1.4);
-    addLog(`${owner.template.name} 的第 6 颗芽已出现，中场嫩芽成长为藤。`, "ability");
+    addLog(`${owner.template.name} 的第 ${owner.template.verinaSproutsForVine} 颗芽已出现，中场嫩芽成长为藤。`, "ability");
     screenShake = Math.max(screenShake, 9);
     playSound("lightning");
   }
@@ -3350,17 +3422,20 @@
         : plant.owner.template.verinaTickInterval;
 
       if (plant.isVine) {
-        getDamageableUnits()
-          .filter((target) => target.side !== plant.owner.side && target.hp > 0)
-          .forEach((target) => {
-            target.verinaSlowTimer = Math.max(target.verinaSlowTimer, plant.owner.template.vineTickInterval * 3);
-            applySpecialDamage(target, plant.owner.maxHp / plant.owner.template.vineDamageDivisor, plant.owner, "藤蔓侵蚀", {
-              color: "#d7e76d",
-              noEnergy: true,
-              quiet: true,
-              noText: true
-            });
+        if (plant.displayClock >= 0.5) {
+          plant.displayClock = 0;
+          effects.push({
+            type: "ring",
+            x: plant.x,
+            y: plant.y,
+            radius: plant.radius * 1.25,
+            growth: 24,
+            life: 0.3,
+            maxLife: 0.3,
+            color: "#e9fa96",
+            width: 2
           });
+        }
         continue;
       }
 
@@ -3368,29 +3443,14 @@
       if (feedbackDue) plant.displayClock = 0;
       let ownerInside = false;
       let ownerHealed = 0;
-      const damagedTargets = [];
-      getDamageableUnits().forEach((target) => {
-        if (
-          target.hp <= 0
-          || Math.hypot(target.x - plant.x, target.y - plant.y) > plant.radius + target.r
-        ) return;
-        if (target === plant.owner) {
-          const healed = Math.min(target.maxHp - target.hp, plant.owner.template.verinaHealPerTick);
-          target.hp = Math.min(target.maxHp, target.hp + plant.owner.template.verinaHealPerTick);
-          if (healed > 0) {
-            ownerInside = true;
-            ownerHealed += healed;
-          }
-        } else if (target.side !== plant.owner.side) {
-          applySpecialDamage(target, plant.owner.template.verinaDamagePerTick, plant.owner, "嫩芽灼伤", {
-            color: "#d9ef7d",
-            noEnergy: true,
-            quiet: true,
-            noText: true
-          });
-          if (target.hp > 0) damagedTargets.push(target);
-        }
-      });
+      if (Math.hypot(plant.owner.x - plant.x, plant.owner.y - plant.y) <= plant.radius + plant.owner.r) {
+        ownerInside = true;
+        const healAmount = Math.max(0, plant.owner.verinaHealLevel);
+        ownerHealed += healFighter(plant.owner, healAmount, {
+          color: "#d9ef7d",
+          noText: true
+        });
+      }
       if (feedbackDue) {
         effects.push({
           type: "ring",
@@ -3406,9 +3466,6 @@
         if (ownerInside && ownerHealed > 0) {
           spawnDamageText(plant.owner.x, plant.owner.y - plant.owner.r, `+${Math.ceil(ownerHealed)}`, "#d9ef7d", true);
         }
-        damagedTargets.forEach((target) => {
-          spawnDamageText(target.x, target.y - target.r, 10, "#d9ef7d");
-        });
       }
     }
   }
@@ -3938,9 +3995,7 @@
       width: 4
     });
     if (!owner || owner.hp <= 0) return;
-    const healed = Math.min(owner.maxHp - owner.hp, owner.template.jellyHealOnDeath);
-    owner.hp = Math.min(owner.maxHp, owner.hp + owner.template.jellyHealOnDeath);
-    if (healed > 0) spawnDamageText(owner.x, owner.y - owner.r, `+${Math.round(healed)}`, "#c9a1ff", true);
+    const healed = healFighter(owner, owner.template.jellyHealOnDeath, { color: "#c9a1ff" });
     addLog(`${owner.template.name} 的水母消散，恢复 ${Math.round(healed)} 点生命。`, "ability");
     const previousDeaths = owner.cantarellaJellyDeaths;
     owner.cantarellaJellyDeaths += 1;
@@ -4015,29 +4070,6 @@
     });
   }
 
-  function breakCantarellaMirage(fighter) {
-    if (!fighter || fighter.cantarellaMirageTimer <= 0) return;
-    fighter.cantarellaMirageTimer = 0;
-    fighter.cantarellaMirageDamageDealt = true;
-    fighter.cantarellaPerceptionReady = false;
-    clearCantarellaMirageStatuses(fighter);
-    effects.push({
-      type: "ring",
-      x: fighter.x,
-      y: fighter.y,
-      radius: 18,
-      growth: 720,
-      life: 0.75,
-      maxLife: 0.75,
-      color: "#d8a8ff",
-      width: 9
-    });
-    spawnBurst(fighter.x, fighter.y, "#e7c8ff", 38, 280);
-    announce(`${fighter.template.name} · 迷梦破碎`, "#e7c8ff", 1.1);
-    addLog(`${fighter.template.name} 的迷梦被击破，蜃境提前结束，全场减速解除。`, "ability");
-    playSound("timeEnd");
-  }
-
   function triggerCantarellaPerception(fighter, target) {
     if (!fighter?.cantarellaPerceptionReady || !target || target.hp <= 0 || state !== "playing") return;
     fighter.cantarellaPerceptionReady = false;
@@ -4098,9 +4130,7 @@
     fighter.weaponSwingMax = fighter.jinhsiSwingTime;
     fighter.weaponSwing = fighter.jinhsiSwingTime;
 
-    const rectLength = fighter.template.jinhsiBaseRectLength * CELL_SIZE;
-    const rectWidth = fighter.template.jinhsiBaseRectWidth * CELL_SIZE;
-    const rectOffset = rectLength / 2;
+    const circleRadius = fighter.template.attackRange * CELL_SIZE;
     const arcRadius = fighter.template.jinhsiEmpoweredRange * CELL_SIZE;
     const arcHalfAngle = fighter.template.jinhsiArcAngle / 2;
     const cos = Math.cos(angle);
@@ -4108,12 +4138,12 @@
     let dealtAny = false;
 
     effects.push({
-      type: empowered ? "jinhsiArcSlash" : "jinhsiLongSlash",
+      type: empowered ? "jinhsiArcSlash" : "jinhsiCircleSlash",
       fighter,
       angle,
-      radius: empowered ? arcRadius : rectLength / 2,
-      width: rectWidth,
-      offset: rectOffset,
+      radius: empowered ? arcRadius : circleRadius,
+      width: empowered ? 0 : circleRadius * 2,
+      offset: 0,
       arcHalfAngle,
       life: empowered ? 0.55 : 0.62,
       maxLife: empowered ? 0.55 : 0.62,
@@ -4125,16 +4155,14 @@
       .forEach((target) => {
         const dx = target.x - fighter.x;
         const dy = target.y - fighter.y;
-        const forward = dx * cos + dy * sin;
-        const lateral = -dx * sin + dy * cos;
         const targetDistance = Math.hypot(dx, dy);
         const inArea = empowered
           ? targetDistance <= arcRadius + target.r * 0.2
             && Math.abs(Math.atan2(Math.sin(Math.atan2(dy, dx) - angle), Math.cos(Math.atan2(dy, dx) - angle))) <= arcHalfAngle
-          : forward >= -target.r * 0.15
-            && forward <= rectLength + target.r * 0.15
-            && Math.abs(lateral) <= rectWidth / 2 + target.r * 0.15;
+          : targetDistance <= circleRadius + target.r * 0.2;
         if (!inArea) return;
+        const hpBefore = target.hp;
+        const shieldBefore = target.shield;
         const dealt = applyDamage(
           target,
           empowered ? fighter.template.jinhsiEmpoweredDamage : fighter.template.attackDamage,
@@ -4142,11 +4170,12 @@
           empowered ? "龙刃回旋" : "横断",
           { color: "#ffe39a", melee: true }
         ) || 0;
-        if (dealt > 0) dealtAny = true;
+        if (dealt > 0 || target.hp < hpBefore || target.shield < shieldBefore) dealtAny = true;
         spawnBurst(target.x, target.y, "#ffe39a", empowered ? 24 : 13, empowered ? 240 : 160);
       });
 
     if (dealtAny && state === "playing") {
+      fighter.specialEnergy = Math.min(4, fighter.specialEnergy + 1);
       fighter.jinhsiAttackCount += 1;
       if (!empowered && fighter.jinhsiAttackCount >= fighter.template.jinhsiHitsToEmpower) {
         fighter.jinhsiEmpowered = true;
@@ -4182,6 +4211,7 @@
     const previousVy = fighter.vy;
     const previousSpeed = Math.hypot(previousVx, previousVy);
     const fallbackAngle = random(0, Math.PI * 2);
+    fighter.specialEnergy = 0;
     fighter.jinhsiSkillUnlocked = false;
     fighter.jinhsiUltimatePhase = "skillChannel";
     fighter.vx = 0;
@@ -4968,12 +4998,23 @@
       }
       return;
     }
+    const canAutocast = mode !== "play" || fighter.side !== 0;
+    if (fighter.template.ultimateType === "verinaBloom") {
+      if (
+        canAutocast
+        && hasVerinaVine(fighter)
+        && fighter.abilityCooldown <= 0
+        && !fighter.voiceUltimatePending
+      ) {
+        useAbility(fighter, opponent);
+      }
+      return;
+    }
     if (fighter.energy >= 100) {
       fighter.fullEnergyTime += dt;
     } else {
       fighter.fullEnergyTime = 0;
     }
-    const canAutocast = mode !== "play" || fighter.side !== 0;
     if (canAutocast && fighter.energy >= 100 && fighter.fullEnergyTime >= 1.1 && fighter.abilityCooldown <= 0) {
       useAbility(fighter, opponent);
     }
@@ -4986,9 +5027,10 @@
     if (fighter.template.transformThreshold) return;
     if (fighter.template.ultimateType === "autoThreshold") return;
     const isJinhsiUltimate = fighter.template.ultimateType === "jinhsiDragon";
+    const isVerinaUltimate = fighter.template.ultimateType === "verinaBloom";
     if (isJinhsiUltimate) {
       if (!fighter.jinhsiUltimateUnlocked || fighter.jinhsiUltimatePhase !== "idle") return;
-    } else if (fighter.energy < 100) {
+    } else if (!isVerinaUltimate && fighter.energy < 100) {
       return;
     }
     if (fighter.abilityCooldown > 0) return;
@@ -5028,11 +5070,15 @@
     addLog(
       isJinhsiUltimate
         ? `${fighter.template.name} 释放已解锁的「${fighter.template.ability}」！`
+        : isVerinaUltimate
+          ? `${fighter.template.name} 场上有藤，触发「${fighter.template.ability}」！`
         : `${fighter.template.name} 共鸣能量已满，触发「${fighter.template.ability}」！`,
       "ability"
     );
     dom.screenReaderStatus.textContent = isJinhsiUltimate
       ? `${fighter.template.name}释放${fighter.template.ability}`
+      : isVerinaUltimate
+        ? `${fighter.template.name}场上有藤，触发${fighter.template.ability}`
       : `${fighter.template.name}共鸣能量已满，触发${fighter.template.ability}`;
 
     if (fighter.template.ultimateType === "windCharge") {
@@ -5057,30 +5103,7 @@
       screenShake = 13;
       playSound("abyss");
     } else if (fighter.template.ultimateType === "verinaBloom") {
-      getDamageableUnits()
-        .filter((target) => target.side !== fighter.side && target.hp > 0)
-        .forEach((target) => {
-          const healed = Math.min(target.maxHp - target.hp, fighter.template.verinaUltimateEnemyHeal);
-          target.hp = Math.min(target.maxHp, target.hp + fighter.template.verinaUltimateEnemyHeal);
-          if (healed > 0) {
-            spawnDamageText(target.x, target.y - target.r, `+${Math.round(healed)}`, "#d9ef7d", true);
-          }
-        });
-      fighter.maxHp += fighter.template.verinaUltimateMaxHpGain;
-      effects.push({
-        type: "lifeBloom",
-        fighter,
-        x: fighter.x,
-        y: fighter.y,
-        radius: ARENA_SIZE * 0.72,
-        life: 1.15,
-        maxLife: 1.15,
-        color: "#e7f58a"
-      });
-      effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 10, growth: 920, life: 1.05, maxLife: 1.05, color: "#f3ffad", width: 10 });
-      spawnBurst(fighter.x, fighter.y, "#eaff9d", 54, 360);
-      addLog(`${fighter.template.name} 释放生命庭院：敌人恢复 300 生命，自身最大生命提升至 ${Math.round(fighter.maxHp)}。`, "ability");
-      playSound("shield");
+      executeVerinaBloom(fighter);
     } else if (fighter.template.ultimateType === "brantOverdrive") {
       fighter.brantUltimateTimer = fighter.template.ultimateDuration;
       fighter.brantChestClock = Math.min(fighter.brantChestClock, getBrantChestInterval(fighter));
@@ -5143,8 +5166,6 @@
     }
     if (target.cantarellaDreamed && !options.ignoreDream) {
       const dreamBonus = source?.template.mirageBonusDamage || 170;
-      const mirageOwner = target.cantarellaMirageOwner
-        || (source?.template.id === "05" ? source : null);
       finalAmount += dreamBonus;
       target.cantarellaDreamed = false;
       target.cantarellaSlowTimer = 0;
@@ -5158,7 +5179,6 @@
         maxLife: 0.5,
         color: "#d8a8ff"
       });
-      if (mirageOwner) breakCantarellaMirage(mirageOwner);
     }
     if (target.paralyzed > 0 && !options.ignoreVulnerability) finalAmount *= 1.1;
     let absorbed = 0;
@@ -5544,9 +5564,7 @@
         if (Math.hypot(fighter.x - pickup.x, fighter.y - pickup.y) < fighter.r + pickup.r + 4) {
           consumed = true;
           if (pickup.type === "heal") {
-            const healed = Math.min(fighter.maxHp - fighter.hp, 170);
-            fighter.hp = Math.min(fighter.maxHp, fighter.hp + 170);
-            spawnDamageText(fighter.x, fighter.y - fighter.r, `+${Math.round(healed)}`, "#8ce985", true);
+            healFighter(fighter, 170, { color: "#8ce985" });
           } else if (pickup.type === "rage") {
             addResonanceEnergy(fighter, 42);
             spawnDamageText(fighter.x, fighter.y - fighter.r, `+${42 * getEnergyEfficiency(fighter)} 能量`, "#ffd84d", true);
@@ -5780,7 +5798,7 @@
         else if (fighter.charge) status = "蓄力";
         else if (fighter.stunned > 0) status = "眩晕";
         else if (fighter.abyssForm) status = "镰刀";
-        else if (fighter.template.id === "06" && hasVerinaVine(fighter)) status = "藤";
+        else if (fighter.template.id === "06" && hasVerinaVine(fighter)) status = `藤 · Lv.${fighter.verinaHealLevel}`;
         else if (fighter.template.id === "04" && fighter.brantBigAnchorLock) status = "落锚定身";
         else if (fighter.template.id === "04" && fighter.brantAirborneTimer > 0) status = "空中";
         else if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) status = "加速";
@@ -5853,29 +5871,47 @@
     const enemyEnergy = clamp(enemy.energy, 0, 100);
     dom.playerEnergyBar.style.width = `${energy}%`;
     dom.enemyEnergyBar.style.width = `${enemyEnergy}%`;
-    dom.playerEnergyText.textContent = `共鸣 ${Math.round(energy)}%`;
-    dom.enemyEnergyText.textContent = `共鸣 ${Math.round(enemyEnergy)}%`;
-    const playerHasSpecial = player.template.id === "kakarot-test" || player.template.id === "01";
-    const enemyHasSpecial = enemy.template.id === "kakarot-test" || enemy.template.id === "01";
+    dom.playerEnergyText.textContent = `共鸣 ${Math.round(energy)}%${player.template.id === "06" ? ` · 芽愈 Lv.${player.verinaHealLevel}` : ""}`;
+    dom.enemyEnergyText.textContent = `共鸣 ${Math.round(enemyEnergy)}%${enemy.template.id === "06" ? ` · 芽愈 Lv.${enemy.verinaHealLevel}` : ""}`;
+    const playerHasSpecial = ["kakarot-test", "01", "07"].includes(player.template.id);
+    const enemyHasSpecial = ["kakarot-test", "01", "07"].includes(enemy.template.id);
     const playerHasAbyss = player.template.id === "02";
     const enemyHasAbyss = enemy.template.id === "02";
     const playerHasBrant = player.template.id === "04";
     const enemyHasBrant = enemy.template.id === "04";
     dom.playerSpecialGauge.hidden = !playerHasSpecial;
     dom.enemySpecialGauge.hidden = !enemyHasSpecial;
+    dom.playerSpecialGauge.classList.toggle("is-jinhsi", player.template.id === "07");
+    dom.enemySpecialGauge.classList.toggle("is-jinhsi", enemy.template.id === "07");
     dom.playerAbyssGauge.hidden = !playerHasAbyss;
     dom.enemyAbyssGauge.hidden = !enemyHasAbyss;
     dom.playerBrantGauge.hidden = !playerHasBrant;
     dom.enemyBrantGauge.hidden = !enemyHasBrant;
     if (playerHasSpecial) {
       const isTime = player.template.id === "01";
-      dom.playerSpecialLabel.textContent = isTime ? "时序" : "死告";
-      updateSpecialGauge(dom.playerSpecialGauge, dom.playerSpecialText, player.specialEnergy, player.deathSentenceClock, player.knifeCount);
+      const isJinhsi = player.template.id === "07";
+      dom.playerSpecialLabel.textContent = isJinhsi ? "龙刃" : isTime ? "时序" : "死告";
+      updateSpecialGauge(
+        dom.playerSpecialGauge,
+        dom.playerSpecialText,
+        player.specialEnergy,
+        player.deathSentenceClock,
+        player.knifeCount,
+        isJinhsi ? 4 : 3
+      );
     }
     if (enemyHasSpecial) {
       const isTime = enemy.template.id === "01";
-      dom.enemySpecialLabel.textContent = isTime ? "时序" : "死告";
-      updateSpecialGauge(dom.enemySpecialGauge, dom.enemySpecialText, enemy.specialEnergy, enemy.deathSentenceClock, enemy.knifeCount);
+      const isJinhsi = enemy.template.id === "07";
+      dom.enemySpecialLabel.textContent = isJinhsi ? "龙刃" : isTime ? "时序" : "死告";
+      updateSpecialGauge(
+        dom.enemySpecialGauge,
+        dom.enemySpecialText,
+        enemy.specialEnergy,
+        enemy.deathSentenceClock,
+        enemy.knifeCount,
+        isJinhsi ? 4 : 3
+      );
     }
     if (playerHasAbyss) {
       dom.playerAbyssGauge.querySelector("i").style.width = `${clamp(player.abyssEnergy, 0, 100)}%`;
@@ -5910,7 +5946,11 @@
       && cantarellaUnlocked
       && jinhsiUnlocked
       && !(player.template.ultimateType === "overclock" && player.overclock > 0);
-    const energyReady = player.template.ultimateType === "jinhsiDragon" ? jinhsiUnlocked : energy >= 100;
+    const energyReady = player.template.ultimateType === "jinhsiDragon"
+      ? jinhsiUnlocked
+      : player.template.ultimateType === "verinaBloom"
+        ? verinaUnlocked
+        : energy >= 100;
     const ready = mode === "play" && energyReady && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
     dom.abilityButton.classList.toggle("is-ready", ready);
@@ -5934,7 +5974,7 @@
       } else if (player.abyssForm) {
         dom.battleStatus.textContent = `恐怖镰刀人 · 暗涌 ${Math.ceil(player.abyssEnergy)}`;
       } else if (player.template.id === "06" && hasVerinaVine(player)) {
-        dom.battleStatus.textContent = "藤蔓复苏 · 全场侵蚀";
+        dom.battleStatus.textContent = `生命共鸣 · 芽愈 Lv.${player.verinaHealLevel}`;
       } else if (player.template.id === "06" && player.verinaSlowTimer > 0) {
         dom.battleStatus.textContent = "藤蔓束缚 · 移速 -50%";
       } else if (player.template.id === "04" && player.brantBigAnchorLock) {
@@ -5977,14 +6017,15 @@
     }
   }
 
-  function updateSpecialGauge(gauge, label, value, countdown = 0, knifeCount = 0) {
-    const filled = Math.round(clamp(value, 0, 3));
+  function updateSpecialGauge(gauge, label, value, countdown = 0, knifeCount = 0, maxValue = 3) {
+    const filled = Math.round(clamp(value, 0, maxValue));
     gauge.querySelectorAll("i").forEach((pip, index) => {
+      pip.classList.toggle("is-unused", index >= maxValue);
       pip.classList.toggle("is-filled", index < filled);
     });
     if (knifeCount > 0) label.textContent = `飞刃 ×${knifeCount}`;
-    else label.textContent = filled >= 3 && countdown > 0 ? `${countdown.toFixed(1)}s` : `${filled}/3`;
-    gauge.setAttribute("aria-label", knifeCount > 0 ? `永久时序飞刃 ${knifeCount} 柄` : `特殊能量 ${filled}/3`);
+    else label.textContent = filled >= maxValue && countdown > 0 ? `${countdown.toFixed(1)}s` : `${filled}/${maxValue}`;
+    gauge.setAttribute("aria-label", knifeCount > 0 ? `永久时序飞刃 ${knifeCount} 柄` : `特殊能量 ${filled}/${maxValue}`);
   }
 
   function spawnBurst(x, y, color, count, speed) {
@@ -6149,13 +6190,13 @@
       return `水母献祭 ${fighter.cantarellaJellyDeaths}/3${mirage}`;
     }
     if (id === "06") {
-      const plants = verinaPlants.filter((item) => item.owner === fighter && !item.isVine).length;
-      return `芽 ${plants}/6${hasVerinaVine(fighter) ? " · 藤蔓复苏" : ""}`;
+      const plants = verinaPlants.filter((item) => item.owner === fighter).length;
+      return `芽 ${plants}/${fighter.template.verinaSproutsForVine} · 芽愈 Lv.${fighter.verinaHealLevel}${hasVerinaVine(fighter) ? " · 藤蔓复苏" : ""}`;
     }
     if (id === "07") {
       const modeText = fighter.jinhsiEmpowered ? "强化" : "初始";
       const ultimate = fighter.jinhsiUltimateUnlocked ? " · 解放就绪" : "";
-      return `龙刃 ${modeText} ${fighter.jinhsiAttackCount}/4${ultimate}`;
+      return `龙刃层数 ${Math.round(fighter.specialEnergy)}/4 · ${modeText} ${fighter.jinhsiAttackCount}/4${ultimate}`;
     }
     return `特殊能量 ${Math.round(fighter.specialEnergy || 0)}`;
   }
@@ -6230,12 +6271,15 @@
 
     replayBar(paint, contentX, 39, contentRight - contentX, 9, hpRatio, hpColor, "rgba(255,255,255,0.1)");
     replayBar(paint, contentX, 52, contentRight - contentX, 4, fighter.energy / 100, "#ffd84d", "rgba(255,255,255,0.1)");
+    if (fighter.template.id === "07") {
+      replayBar(paint, contentX, 59, contentRight - contentX, 3, fighter.specialEnergy / 4, "#ffe39a", "rgba(255,255,255,0.08)");
+    }
     paint.textAlign = "left";
     paint.font = "700 8px 'Microsoft YaHei'";
     paint.fillStyle = "#aeb6c6";
-    paint.fillText(`共鸣 ${Math.round(fighter.energy)}% · ${replaySpecialReadout(fighter)}`, contentX, 65);
+    paint.fillText(`共鸣 ${Math.round(fighter.energy)}% · ${replaySpecialReadout(fighter)}`, contentX, fighter.template.id === "07" ? 72 : 65);
     paint.fillStyle = colorWithAlpha(fighter.template.color, 0.94);
-    paint.fillText(replayFighterStatus(fighter), contentX, 80);
+    paint.fillText(replayFighterStatus(fighter), contentX, fighter.template.id === "07" ? 84 : 80);
   }
 
   function drawReplayFighterCard(paint, fighter, x, y, width, height, compact = false) {
@@ -8242,16 +8286,45 @@
       } else if (effect.type === "lifeBloom") {
         const progress = 1 - alpha;
         ctx.globalCompositeOperation = "screen";
-        ctx.fillStyle = colorWithAlpha("#d9ef7d", alpha * 0.085);
+        ctx.fillStyle = colorWithAlpha("#d9ef7d", alpha * 0.14);
         ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
         const bloom = ctx.createRadialGradient(effect.x, effect.y, 2, effect.x, effect.y, effect.radius * (0.45 + progress * 0.55));
-        bloom.addColorStop(0, colorWithAlpha("#fbffd2", alpha * 0.82));
-        bloom.addColorStop(0.25, colorWithAlpha("#e7f58a", alpha * 0.34));
+        bloom.addColorStop(0, colorWithAlpha("#fbffd2", alpha * 0.95));
+        bloom.addColorStop(0.25, colorWithAlpha("#e7f58a", alpha * 0.48));
         bloom.addColorStop(1, colorWithAlpha("#8bc86b", 0));
         ctx.fillStyle = bloom;
         ctx.beginPath();
         ctx.arc(effect.x, effect.y, effect.radius * (0.45 + progress * 0.55), 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = colorWithAlpha("#f3ffad", alpha * 0.82);
+        ctx.lineWidth = 4 * alpha + 1;
+        for (let ring = 0; ring < 4; ring += 1) {
+          ctx.beginPath();
+          ctx.arc(
+            effect.x,
+            effect.y,
+            effect.radius * (0.18 + progress * (0.52 + ring * 0.12)),
+            0,
+            Math.PI * 2
+          );
+          ctx.stroke();
+        }
+        ctx.strokeStyle = colorWithAlpha("#eaff9d", alpha * 0.7);
+        ctx.lineWidth = 2;
+        for (let petal = 0; petal < 12; petal += 1) {
+          const angle = petal / 12 * Math.PI * 2 + progress * 0.35;
+          const inner = effect.radius * (0.12 + progress * 0.28);
+          const outer = effect.radius * (0.28 + progress * 0.48);
+          ctx.beginPath();
+          ctx.moveTo(effect.x + Math.cos(angle) * inner, effect.y + Math.sin(angle) * inner);
+          ctx.quadraticCurveTo(
+            effect.x + Math.cos(angle + 0.12) * (outer * 0.72),
+            effect.y + Math.sin(angle + 0.12) * (outer * 0.72),
+            effect.x + Math.cos(angle) * outer,
+            effect.y + Math.sin(angle) * outer
+          );
+          ctx.stroke();
+        }
       } else if (effect.type === "timeFlash") {
         const expansion = (1 - alpha) * ARENA_SIZE * 0.72;
         ctx.globalCompositeOperation = "screen";
@@ -8550,37 +8623,39 @@
           ctx.lineTo(Math.cos(angle) * radius * 0.84, Math.sin(angle) * radius * 0.84);
           ctx.stroke();
         }
-      } else if (effect.type === "jinhsiLongSlash") {
+      } else if (effect.type === "jinhsiCircleSlash") {
         if (!effect.fighter) return;
         const fighter = effect.fighter;
         const progress = 1 - alpha;
         ctx.translate(fighter.x, fighter.y);
-        ctx.rotate(effect.angle);
         ctx.globalCompositeOperation = "lighter";
-        const centerX = effect.offset;
-        const radiusX = effect.radius * (0.8 + progress * 0.2);
-        const radiusY = effect.width * 0.5;
-        const rangeGlow = ctx.createRadialGradient(centerX, 0, 3, centerX, 0, radiusX);
-        rangeGlow.addColorStop(0, `rgba(255, 254, 226, ${alpha * 0.52})`);
-        rangeGlow.addColorStop(0.34, colorWithAlpha(effect.color, alpha * 0.28));
-        rangeGlow.addColorStop(0.76, colorWithAlpha("#ffc940", alpha * 0.12));
+        const radius = effect.radius * (0.82 + progress * 0.18);
+        const rangeGlow = ctx.createRadialGradient(0, 0, fighter.r * 0.3, 0, 0, radius);
+        rangeGlow.addColorStop(0, `rgba(255, 254, 226, ${alpha * 0.42})`);
+        rangeGlow.addColorStop(0.48, colorWithAlpha(effect.color, alpha * 0.2));
+        rangeGlow.addColorStop(0.88, colorWithAlpha("#ffc940", alpha * 0.08));
         rangeGlow.addColorStop(1, "rgba(255, 191, 42, 0)");
         ctx.fillStyle = rangeGlow;
         ctx.shadowColor = effect.color;
         ctx.shadowBlur = 20;
         ctx.beginPath();
-        ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.88);
-        ctx.lineWidth = 3 * alpha + 1;
+        ctx.lineWidth = 4 * alpha + 1;
         ctx.beginPath();
-        ctx.ellipse(centerX, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.arc(0, 0, radius, -Math.PI * 0.25, Math.PI * 1.55);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255, 252, 226, ${alpha * 0.9})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.93, Math.PI * 0.1, Math.PI * 1.9);
         ctx.stroke();
         const flash = Math.max(0, 1 - progress * 2.4);
         ctx.globalAlpha = alpha * (0.24 + flash * 0.76);
-        ctx.fillStyle = "rgba(255, 251, 214, 0.62)";
+        ctx.fillStyle = "rgba(255, 251, 214, 0.38)";
         ctx.beginPath();
-        ctx.ellipse(centerX, 0, radiusX * (0.68 + flash * 0.32), radiusY * (0.58 + flash * 0.42), 0, 0, Math.PI * 2);
+        ctx.arc(0, 0, radius * (0.68 + flash * 0.32), 0, Math.PI * 2);
         ctx.fill();
       } else if (effect.type === "jinhsiArcSlash") {
         if (!effect.fighter) return;
@@ -9276,21 +9351,31 @@
 
   function updateReplayButton() {
     const supported = replayRecordingSupported();
-    const recording = Boolean(activeReplaySession);
+    const recording = autoReplayEnabled && Boolean(activeReplaySession);
     dom.replayCount.textContent = supported ? (recording ? "●" : String(replayRecords.length)) : "×";
     dom.replayButton.classList.toggle("is-unsupported", !supported);
     dom.replayButton.classList.toggle("is-recording", recording);
     dom.replayButton.setAttribute(
       "aria-label",
-      recording
+      !autoReplayEnabled
+        ? `对局回放，自动录制已关闭，已保存 ${replayRecords.length} 局`
+        : recording
         ? `正在录制${activeReplaySession.meta.label}，已保存 ${replayRecords.length} 局回放`
         : `对局回放，已保存 ${replayRecords.length} 局`
     );
-    dom.replayButton.title = supported
+    dom.replayButton.title = !autoReplayEnabled
+      ? "对局回放 · 自动录制已关闭"
+      : supported
       ? recording
         ? `正在录制 · ${activeReplaySession.meta.label}`
         : `对局回放 · 最近 ${REPLAY_LIMIT} 局`
       : "当前浏览器不支持对局录制";
+  }
+
+  function updateAutoReplayControl() {
+    dom.autoReplayToggle.setAttribute("aria-pressed", String(autoReplayEnabled));
+    dom.autoReplayToggle.setAttribute("aria-label", autoReplayEnabled ? "关闭自动录制" : "开启自动录制");
+    dom.autoReplayText.textContent = autoReplayEnabled ? "自动录制开启" : "自动录制关闭";
   }
 
   function selectReplayRecord(recordId) {
@@ -9319,7 +9404,9 @@
     dom.replayList.innerHTML = "";
     const status = document.createElement("p");
     status.className = "replay-list-status";
-    if (!replayRecordingSupported()) {
+    if (!autoReplayEnabled) {
+      status.textContent = "自动录制已关闭。你仍可播放和下载已保存的回放。";
+    } else if (!replayRecordingSupported()) {
       status.textContent = "当前浏览器不支持画布录制，无法生成新回放。";
     } else if (activeReplaySession) {
       status.textContent = `正在录制 ${activeReplaySession.meta.label}，本局结束后自动保存。`;
@@ -9365,11 +9452,11 @@
     }
   }
 
-  function discardReplayRecording() {
+  function discardReplayRecording(reason = "上一局尚未完成，录制已重置。") {
     const session = activeReplaySession;
     if (!session) return;
     session.discard = true;
-    session.discardReason = "上一局尚未完成，录制已重置。";
+    session.discardReason = reason;
     activeReplaySession = null;
     if (session.recorder.state !== "inactive") {
       try {
@@ -9383,6 +9470,11 @@
   }
 
   function startReplayRecording(meta) {
+    if (!autoReplayEnabled) {
+      replayStatusMessage = "自动录制已关闭，本局不会生成回放。";
+      updateReplayButton();
+      return;
+    }
     if (!replayRecordingSupported()) {
       replayStatusMessage = "当前浏览器不支持画布录制。";
       updateReplayButton();
@@ -9528,6 +9620,23 @@
     if (!dom.replayDialog.open) dom.replayDialog.showModal();
   }
 
+  function setAutoReplayEnabled(enabled) {
+    autoReplayEnabled = Boolean(enabled);
+    try {
+      localStorage.setItem("solaris-auto-replay", autoReplayEnabled ? "on" : "off");
+    } catch {
+      // The setting remains active for the current page when storage is unavailable.
+    }
+    if (!autoReplayEnabled) {
+      discardReplayRecording("自动录制已关闭，本局录制已停止。");
+    } else {
+      replayStatusMessage = "自动录制已开启，将从下一局开始保存回放。";
+    }
+    updateAutoReplayControl();
+    updateReplayButton();
+    renderReplayList();
+  }
+
   function normalizeReplayVideoDuration() {
     const video = dom.replayVideo;
     if (Number.isFinite(video.duration)) return;
@@ -9647,6 +9756,7 @@
     if (mode === "play" && !manualPaused) useAbility(player, enemy);
   });
   dom.replayButton.addEventListener("click", openReplayDialog);
+  dom.autoReplayToggle.addEventListener("click", () => setAutoReplayEnabled(!autoReplayEnabled));
   dom.replayClose.addEventListener("click", () => dom.replayDialog.close());
   dom.replayDialog.addEventListener("click", (event) => {
     if (event.target === dom.replayDialog) dom.replayDialog.close();
@@ -9756,6 +9866,7 @@
   syncPauseControl();
   updateChosenPanel();
   preparePreview();
+  updateAutoReplayControl();
   updateReplayButton();
   renderReplayList();
   restoreReplayRecords();
