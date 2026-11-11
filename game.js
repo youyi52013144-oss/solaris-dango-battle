@@ -170,6 +170,51 @@
       abyssHitHealRatio: 0.5
     },
     {
+      id: "08",
+      voiceOrder: 10,
+      name: "漂泊者·气动",
+      element: "气动 · 风息型",
+      tagline: "双刃破风，无相而行。",
+      color: "#72efb5",
+      dark: "#245c4b",
+      symbol: "气",
+      image: "assets/wanderer-aero-male.jpg",
+      femaleImage: "assets/wanderer-aero-female.jpg",
+      weaponImage: "assets/wanderer-aero-weapon.png",
+      hp: 1000,
+      power: 1,
+      speed: 8,
+      radius: 27,
+      stats: { power: 92, speed: 100, hp: 100 },
+      display: { attack: "60×2", speed: "8.0格/s", hp: "1000" },
+      attackType: "aeroBlade",
+      attackDamage: 60,
+      attackCooldown: 1.2,
+      attackRange: 6,
+      aeroWindMax: 100,
+      aeroWindAttackCost: 50,
+      aeroWindUnlockDelay: 2,
+      aeroAirDuration: 0.72,
+      aeroSkillCooldown: 5,
+      aeroSkillSpeed: 20,
+      aeroSkillDistance: 20,
+      aeroSkillRadius: 5,
+      aeroSkillDamage: 15,
+      aeroSkillWindGain: 50,
+      aeroSwordCooldown: 2,
+      aeroSwordSpeed: 15,
+      aeroSwordRadius: 2,
+      aeroSwordDamage: 80,
+      aeroSwordLife: 4,
+      ultimateType: "aeroUnbound",
+      ultimateDuration: 15,
+      ultimateCooldown: 40,
+      ability: "飘渺无相",
+      abilityIcon: "风",
+      abilityDesc: "完成两次普通斩击后解锁；开启后锁定风息获取并解锁强化普攻 15 秒。强化普攻每 2 秒从身体两侧发射两柄自动追击的高速飞剑，每柄造成 80 点伤害并命中即消失；大招期间技能改为朝最近敌人的反方向突刺。冷却 40 秒。",
+      cooldown: 40
+    },
+    {
       id: "03",
       voiceOrder: 5,
       name: "鉴心团子",
@@ -606,6 +651,22 @@
         "释放后固定恢复 50 暗涌；冷却 15 秒。"
       ]
     },
+    "08": {
+      role: "风息切换 / 空中双斩 / 追击飞剑",
+      range: "普通斩击横跨全场；技能突刺约 20 格、落点半径 5 格；飞剑命中半径 2 格",
+      interval: "双斩入场 / 突刺 5 秒 / 强化飞剑 2 秒 / 共鸣解放 40 秒",
+      mechanics: [
+        "生命 1000、移动速度 8 格/秒。",
+        "风息上限 100，初始为 0；开局技能可用，达到上限后技能锁定，2 秒后解锁普通攻击。",
+        "触发普通攻击后原地停滞 1 秒，再升空并固定在当前位置。",
+        "普攻依次释放地图左上至右下、右上至左下的全场直线斩击，每刀消耗 50 风息并造成 60 点伤害。",
+        "两刀完成后普通攻击锁定，技能与共鸣解放解锁。",
+        "技能朝最近敌人以 20 格/秒突刺约 20 格，对落点半径 5 格内敌人造成 15 点伤害并恢复 50 风息，冷却 5 秒；冲刺途中接触敌人会立即停止并提前结算落点伤害。",
+        "共鸣解放持续 15 秒，期间锁定风息获取并解锁强化普攻；技能突刺方向改为最近敌人的反方向。",
+        "强化普攻每 2 秒从身体两侧发射两柄速度 15 格/秒、命中半径 2 格的追踪飞剑，每柄造成 80 点伤害；剑头朝向目标，命中后立即消失。",
+        "大招结束后强化普攻锁定，风息获取恢复。"
+      ]
+    },
     "03": {
       role: "风属性肉盾 / 牵引控场",
       range: "风场半径 8 格；风波半径 8 格",
@@ -832,11 +893,13 @@
   let enemyId = "anko-test";
   let configSide = "left";
   let archiveSelectedId = "kakarot-test";
-  let wandererForms = { "01": "male", "02": "male" };
+  const WANDERER_FORM_IDS = new Set(["01", "02", "08"]);
+  let wandererForms = { "01": "male", "02": "male", "08": "male" };
   try {
     const savedForms = JSON.parse(localStorage.getItem("solaris-wanderer-forms") || "null");
     if (savedForms?.["01"] === "female" || savedForms?.["01"] === "male") wandererForms["01"] = savedForms["01"];
     if (savedForms?.["02"] === "female" || savedForms?.["02"] === "male") wandererForms["02"] = savedForms["02"];
+    if (savedForms?.["08"] === "female" || savedForms?.["08"] === "male") wandererForms["08"] = savedForms["08"];
   } catch {
     // Local file privacy modes can disable storage; defaults still apply.
   }
@@ -845,7 +908,7 @@
   let player = null;
   let enemy = null;
   let multiFighters = [];
-  let multiIds = ["kakarot-test", "anko-test", "01", "02", "03", "06", "04", "05", "07"];
+  let multiIds = ["kakarot-test", "anko-test", "01", "02", "08", "03", "06", "04", "05", "07"];
   let score = [0, 0];
   let round = 1;
   let roundSeconds = DEFAULT_ROUND_SECONDS;
@@ -936,6 +999,7 @@
   const summonPortraits = new Map();
   const weaponPortraits = new Map();
   const knifePortraits = new Map();
+  const aeroEffectPortraits = new Map();
 
   const random = (min, max) => min + Math.random() * (max - min);
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -946,7 +1010,7 @@
   }
   function templateById(id) {
     const fighter = FIGHTERS.find((item) => item.id === id) || FIGHTERS[0];
-    if (fighter.id !== "01" && fighter.id !== "02") return fighter;
+    if (!WANDERER_FORM_IDS.has(fighter.id)) return fighter;
     const gender = wandererForms[fighter.id] || "male";
     const female = gender === "female";
     return {
@@ -1002,7 +1066,7 @@
       specialEnergy: 0,
       deathSentenceClock: 0,
       fullEnergyTime: 0,
-      abilityCooldown: 1.6,
+      abilityCooldown: template.id === "08" ? 0 : 1.6,
       ultimateCooldown: 0,
       attackClock: random(0.55, 1.35),
       blackSlamClock: template.blackSlamClock || 0,
@@ -1074,6 +1138,27 @@
       abyssSavedVx: 0,
       abyssSavedVy: 0,
       abyssScytheSwing: 0,
+      aeroWind: 0,
+      aeroBasicUnlockTimer: 0,
+      aeroBasicUnlocked: false,
+      aeroSkillClock: 0,
+      aeroSkillUnlocked: template.id === "08",
+      aeroUltimateTimer: 0,
+      aeroEnhanced: false,
+      aeroUltimateUnlocked: false,
+      aeroWindGainLocked: false,
+      aeroUltimateReadyTimer: 0,
+      aeroSequenceActive: false,
+      aeroPreLiftTimer: 0,
+      aeroAirTimer: 0,
+      aeroAirSecondClock: 0,
+      aeroAirSecondDone: true,
+      aeroAirResumeX: 1,
+      aeroAirResumeY: 0,
+      aeroDashTimer: 0,
+      aeroDashDuration: 0,
+      aeroDashAngle: 0,
+      aeroDashSpeed: 0,
       vortexLockTimer: 0,
       vortexLockId: null,
       vortexImmunity: new Map(),
@@ -1146,7 +1231,7 @@
       button.setAttribute("aria-pressed", String(active));
       button.disabled = locked;
     });
-    ["01", "02"].forEach((fighterId) => {
+    WANDERER_FORM_IDS.forEach((fighterId) => {
       const fighter = templateById(fighterId);
       const card = dom.rosterGrid.querySelector(`[data-fighter-id="${fighterId}"]`);
       if (!card) return;
@@ -1160,7 +1245,7 @@
   }
 
   function setWandererForm(fighterId, gender) {
-    if (fighterId !== "01" && fighterId !== "02") return;
+    if (!WANDERER_FORM_IDS.has(fighterId)) return;
     if (gender !== "male" && gender !== "female") return;
     if (state !== "idle" && state !== "matchEnd") return;
     wandererForms[fighterId] = gender;
@@ -1311,6 +1396,12 @@
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "天光龙吟";
       dom.abilityButton.title = "强化普攻命中 4 次后解锁，释放后重新锁定";
+      return;
+    }
+    if (fighter.id === "08") {
+      dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
+      dom.abilityLabel.textContent = "飘渺无相";
+      dom.abilityButton.title = "完成两次普通斩击后解锁；开启后持续 15 秒并解锁强力飞剑";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -2097,6 +2188,44 @@
       fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
       return;
     }
+    if (fighter.template.id === "08" && fighter.aeroPreLiftTimer > 0) {
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
+    if (fighter.template.id === "08" && fighter.aeroDashTimer > 0) {
+      const dashStartX = fighter.x;
+      const dashStartY = fighter.y;
+      const step = fighter.aeroDashSpeed * dt;
+      fighter.x += Math.cos(fighter.aeroDashAngle) * step;
+      fighter.y += Math.sin(fighter.aeroDashAngle) * step;
+      fighter.aeroDashTimer = Math.max(0, fighter.aeroDashTimer - dt);
+      const minX = BOUNDARY + fighter.r;
+      const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
+      const minY = BOUNDARY + fighter.r;
+      const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
+      const hitWall = fighter.x <= minX || fighter.x >= maxX || fighter.y <= minY || fighter.y >= maxY;
+      fighter.x = clamp(fighter.x, minX, maxX);
+      fighter.y = clamp(fighter.y, minY, maxY);
+      const dashContact = findAeroDashContact(fighter, dashStartX, dashStartY, fighter.x, fighter.y);
+      if (dashContact) {
+        fighter.x = clamp(dashContact.x, minX, maxX);
+        fighter.y = clamp(dashContact.y, minY, maxY);
+        fighter.aeroDashTimer = 0;
+      } else if (hitWall) {
+        fighter.aeroDashTimer = 0;
+      }
+      if (fighter.aeroDashTimer === 0) resolveAeroDashLanding(fighter);
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
+    if (fighter.template.id === "08" && fighter.aeroAirTimer > 0) {
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
     if (fighter.vortexLockTimer > 0) return;
     fighter.abilityCooldown = Math.max(0, fighter.abilityCooldown - dt);
     fighter.flash = Math.max(0, fighter.flash - dt * 5.5);
@@ -2267,6 +2396,7 @@
     ) {
       beginJinhsiSkill(fighter);
     }
+    if (fighter.template.id === "08") updateWandererAeroState(fighter, dt);
     fighter.ultimateCooldown = Math.max(0, fighter.ultimateCooldown - dt);
     if (fighter.template.id === "03" && fighter.hp > 0) {
       if (fighter.skillClock > 0) fighter.skillClock = Math.max(0, fighter.skillClock - dt);
@@ -2424,7 +2554,14 @@
 
   function resolveCollision() {
     if (!player || !enemy || state !== "playing") return;
-    if (player.jinhsiAirborne || enemy.jinhsiAirborne) {
+    if (
+      player.jinhsiAirborne
+      || enemy.jinhsiAirborne
+      || player.aeroAirTimer > 0
+      || enemy.aeroAirTimer > 0
+      || player.aeroDashTimer > 0
+      || enemy.aeroDashTimer > 0
+    ) {
       player.inContact = false;
       enemy.inContact = false;
       return;
@@ -2531,7 +2668,12 @@
   }
 
   function resolveMultiCollisions() {
-    const fighters = getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne);
+    const fighters = getActiveFighters().filter((fighter) => (
+      fighter.hp > 0
+      && !fighter.jinhsiAirborne
+      && fighter.aeroAirTimer <= 0
+      && fighter.aeroDashTimer <= 0
+    ));
     fighters.forEach((fighter) => {
       fighter.inContact = false;
     });
@@ -2704,6 +2846,399 @@
         if (state !== "playing" || target.hp <= 0) break;
       }
       if (state !== "playing") break;
+    }
+  }
+
+  function refreshAeroAccess(fighter) {
+    if (fighter.template.id !== "08") return;
+    const max = fighter.template.aeroWindMax;
+    const atMax = fighter.aeroWind >= max;
+    fighter.aeroBasicUnlocked = atMax
+      && fighter.aeroBasicUnlockTimer <= 0
+      && !fighter.aeroSequenceActive;
+    fighter.aeroSkillUnlocked = !atMax && !fighter.aeroSequenceActive;
+  }
+
+  function addAeroWind(fighter, amount) {
+    if (!fighter || fighter.template.id !== "08" || amount <= 0 || fighter.aeroWindGainLocked) return 0;
+    const previous = fighter.aeroWind;
+    fighter.aeroWind = Math.min(fighter.template.aeroWindMax, fighter.aeroWind + amount);
+    if (fighter.aeroWind >= fighter.template.aeroWindMax) {
+      fighter.aeroBasicUnlocked = false;
+      fighter.aeroBasicUnlockTimer = fighter.template.aeroWindUnlockDelay;
+    }
+    refreshAeroAccess(fighter);
+    if (fighter.aeroWind > previous) {
+      spawnDamageText(fighter.x, fighter.y - fighter.r, `+${fighter.aeroWind - previous} 风息`, "#72efb5", true);
+    }
+    return fighter.aeroWind - previous;
+  }
+
+  function updateWandererAeroState(fighter, dt) {
+    if (!fighter || fighter.template.id !== "08" || fighter.hp <= 0) return;
+    fighter.aeroSkillClock = Math.max(0, fighter.aeroSkillClock - dt);
+    const ultimateReady = fighter.aeroUltimateUnlocked
+      && fighter.abilityCooldown <= 0
+      && fighter.aeroUltimateTimer <= 0
+      && fighter.aeroAirTimer <= 0
+      && fighter.aeroPreLiftTimer <= 0;
+    fighter.aeroUltimateReadyTimer = ultimateReady
+      ? fighter.aeroUltimateReadyTimer + dt
+      : 0;
+    if (fighter.aeroBasicUnlockTimer > 0) {
+      fighter.aeroBasicUnlockTimer = Math.max(0, fighter.aeroBasicUnlockTimer - dt);
+      if (fighter.aeroBasicUnlockTimer === 0 && fighter.aeroWind >= fighter.template.aeroWindMax) {
+        fighter.aeroBasicUnlocked = true;
+        fighter.aeroSkillUnlocked = false;
+      }
+    }
+
+    if (fighter.aeroUltimateTimer > 0) {
+      fighter.aeroUltimateTimer = Math.max(0, fighter.aeroUltimateTimer - dt);
+      if (fighter.aeroUltimateTimer === 0) {
+        fighter.aeroEnhanced = false;
+        fighter.aeroWindGainLocked = false;
+        refreshAeroAccess(fighter);
+        announce(`${fighter.template.name} · 无相结束`, fighter.template.color, 1);
+        addLog(`${fighter.template.name} 的「飘渺无相」结束，风息获取恢复。`, "system");
+      }
+    }
+
+    if (fighter.aeroPreLiftTimer > 0) {
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.aeroPreLiftTimer = Math.max(0, fighter.aeroPreLiftTimer - dt);
+      if (fighter.aeroPreLiftTimer === 0 && state === "playing") {
+        launchAeroAerialAttack(fighter);
+      }
+    }
+
+    if (fighter.aeroAirTimer > 0) {
+      fighter.aeroAirTimer = Math.max(0, fighter.aeroAirTimer - dt);
+      fighter.aeroAirSecondClock = Math.max(0, fighter.aeroAirSecondClock - dt);
+      if (!fighter.aeroAirSecondDone && fighter.aeroAirSecondClock === 0 && state === "playing") {
+        fighter.aeroAirSecondDone = true;
+        performAeroLineSlash(fighter, Math.PI * 0.75, true);
+      }
+      if (fighter.aeroAirTimer === 0) {
+        fighter.aeroSequenceActive = false;
+        refreshAeroAccess(fighter);
+        const speed = getEffectiveMoveSpeed(fighter);
+        fighter.vx = fighter.aeroAirResumeX * speed;
+        fighter.vy = fighter.aeroAirResumeY * speed;
+      }
+    }
+
+    if (
+      fighter.aeroDashTimer <= 0
+      && fighter.aeroPreLiftTimer <= 0
+      && fighter.aeroAirTimer <= 0
+      && !fighter.aeroSequenceActive
+      && fighter.aeroSkillUnlocked
+      && fighter.aeroSkillClock <= 0
+      && !(ultimateReady && (
+        mode !== "play"
+        || fighter.side !== 0
+        || fighter.aeroUltimateReadyTimer < 0.8
+      ))
+      && fighter.stunned <= 0
+      && fighter.freeze <= 0
+      && fighter.vortexLockTimer <= 0
+      && state === "playing"
+    ) {
+      beginAeroSkillDash(fighter);
+    }
+  }
+
+  function beginAeroSkillDash(fighter) {
+    const target = nearestOpponent(fighter);
+    if (!target) return;
+    const targetAngle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+    const angle = fighter.aeroUltimateTimer > 0 ? targetAngle + Math.PI : targetAngle;
+    fighter.aeroDashAngle = angle;
+    fighter.aeroDashSpeed = fighter.template.aeroSkillSpeed * CELL_SIZE;
+    fighter.aeroDashDuration = fighter.template.aeroSkillDistance / fighter.template.aeroSkillSpeed;
+    fighter.aeroDashTimer = fighter.aeroDashDuration;
+    fighter.aeroSkillClock = fighter.template.aeroSkillCooldown;
+    fighter.vx = Math.cos(angle) * fighter.aeroDashSpeed;
+    fighter.vy = Math.sin(angle) * fighter.aeroDashSpeed;
+    effects.push({
+      type: "aeroDashBurst",
+      fighter,
+      x: fighter.x,
+      y: fighter.y,
+      angle,
+      life: 0.42,
+      maxLife: 0.42,
+      color: "#72efb5"
+    });
+    announce(`${fighter.template.name} · 风迹突刺`, fighter.template.color, 0.75);
+    playSound("blade");
+  }
+
+  function findAeroDashContact(fighter, startX, startY, endX, endY) {
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const segmentLengthSquared = dx * dx + dy * dy;
+    let nearestContact = null;
+    let nearestProgress = Infinity;
+    getDamageableUnits()
+      .filter((target) => target.side !== fighter.side && target.hp > 0)
+      .forEach((target) => {
+        const amount = segmentLengthSquared > 0
+          ? clamp(((target.x - startX) * dx + (target.y - startY) * dy) / segmentLengthSquared, 0, 1)
+          : 0;
+        const contactX = startX + dx * amount;
+        const contactY = startY + dy * amount;
+        const contactDistance = Math.hypot(target.x - contactX, target.y - contactY);
+        if (contactDistance > fighter.r + target.r + CELL_SIZE * 0.08) return;
+        if (amount >= nearestProgress) return;
+        nearestProgress = amount;
+        nearestContact = { x: contactX, y: contactY, target };
+      });
+    return nearestContact;
+  }
+
+  function resolveAeroDashLanding(fighter) {
+    if (!fighter || fighter.hp <= 0 || state !== "playing") return;
+    fighter.vx = 0;
+    fighter.vy = 0;
+    const radius = fighter.template.aeroSkillRadius * CELL_SIZE;
+    let hitAny = false;
+    getDamageableUnits()
+      .filter((target) => target.side !== fighter.side && target.hp > 0)
+      .forEach((target) => {
+        if (Math.hypot(target.x - fighter.x, target.y - fighter.y) > radius + target.r * 0.2) return;
+        hitAny = true;
+        applySpecialDamage(target, fighter.template.aeroSkillDamage, fighter, "风迹突刺", {
+          color: "#72efb5",
+          noEnergy: true
+        });
+        effects.push({
+          type: "aeroHit",
+          x: target.x,
+          y: target.y,
+          angle: fighter.aeroDashAngle,
+          life: 0.42,
+          maxLife: 0.42,
+          color: "#72efb5"
+        });
+        spawnBurst(target.x, target.y, "#72efb5", 24, 280);
+      });
+    effects.push({
+      type: "aeroLandingImpact",
+      x: fighter.x,
+      y: fighter.y,
+      radius,
+      life: 0.68,
+      maxLife: 0.68,
+      color: "#72efb5",
+      angle: fighter.aeroDashAngle
+    });
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: radius * 0.42,
+      growth: 380,
+      life: 0.48,
+      maxLife: 0.48,
+      color: "#a9ffe0",
+      width: 4
+    });
+    if (hitAny) addAeroWind(fighter, fighter.template.aeroSkillWindGain);
+    const resumeAngle = fighter.aeroDashAngle + Math.PI;
+    fighter.vx = Math.cos(resumeAngle) * getEffectiveMoveSpeed(fighter);
+    fighter.vy = Math.sin(resumeAngle) * getEffectiveMoveSpeed(fighter);
+    playSound("windup");
+  }
+
+  function beginAeroAerialAttack(fighter) {
+    if (
+      !fighter
+      || fighter.aeroWind < fighter.template.aeroWindMax
+      || fighter.aeroSequenceActive
+      || fighter.aeroPreLiftTimer > 0
+      || fighter.aeroAirTimer > 0
+    ) return;
+    const currentSpeed = Math.hypot(fighter.vx, fighter.vy);
+    const target = nearestOpponent(fighter);
+    const fallbackAngle = target ? Math.atan2(target.y - fighter.y, target.x - fighter.x) : fighter.jinhsiAttackAngle;
+    fighter.aeroAirResumeX = currentSpeed > 0 ? fighter.vx / currentSpeed : Math.cos(fallbackAngle);
+    fighter.aeroAirResumeY = currentSpeed > 0 ? fighter.vy / currentSpeed : Math.sin(fallbackAngle);
+    fighter.aeroSequenceActive = true;
+    fighter.aeroPreLiftTimer = 1;
+    fighter.aeroBasicUnlocked = false;
+    fighter.aeroSkillUnlocked = false;
+    fighter.aeroUltimateUnlocked = false;
+    fighter.aeroUltimateReadyTimer = 0;
+    fighter.attackClock = 1 + fighter.template.aeroAirDuration;
+    fighter.vx = 0;
+    fighter.vy = 0;
+    effects.push({
+      type: "windCharge",
+      fighter,
+      life: 1,
+      maxLife: 1,
+      color: fighter.template.color
+    });
+    announce(`${fighter.template.name} · 定风蓄势`, fighter.template.color, 1);
+    addLog(`${fighter.template.name} 风息已满，停滞 1 秒后升空。`, "ability");
+  }
+
+  function launchAeroAerialAttack(fighter) {
+    if (!fighter || fighter.hp <= 0 || state !== "playing") return;
+    fighter.aeroAirTimer = fighter.template.aeroAirDuration;
+    fighter.aeroAirSecondClock = 0.32;
+    fighter.aeroAirSecondDone = false;
+    performAeroLineSlash(fighter, Math.PI * 0.25, false);
+    playAttackVoice(fighter);
+    announce(`${fighter.template.name} · 双刃凌空`, fighter.template.color, 0.8);
+    addLog(`${fighter.template.name} 升空释放第一段全场斜斩，消耗 50 风息。`, "ability");
+  }
+
+  function performAeroLineSlash(fighter, angle, second) {
+    if (fighter.aeroWind < fighter.template.aeroWindAttackCost) return false;
+    fighter.aeroWind = Math.max(0, fighter.aeroWind - fighter.template.aeroWindAttackCost);
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const slashX = ARENA_SIZE / 2;
+    const slashY = ARENA_SIZE / 2;
+    effects.push({
+      type: "aeroSlash",
+      fighter,
+      x: slashX,
+      y: slashY,
+      angle,
+      mirror: second,
+      life: 0.5,
+      maxLife: 0.5,
+      color: "#72efb5"
+    });
+    getDamageableUnits()
+      .filter((target) => target.side !== fighter.side && target.hp > 0)
+      .forEach((target) => {
+        const dx = target.x - slashX;
+        const dy = target.y - slashY;
+        const lateral = -dx * sin + dy * cos;
+        if (Math.abs(lateral) > CELL_SIZE * 1.05 + target.r * 0.28) return;
+        applyDamage(target, fighter.template.attackDamage, fighter, "双刃斩风", {
+          color: "#72efb5",
+          melee: true
+        });
+        effects.push({
+          type: "aeroHit",
+          x: target.x,
+          y: target.y,
+          angle,
+          life: 0.38,
+          maxLife: 0.38,
+          color: "#72efb5"
+        });
+        spawnBurst(target.x, target.y, "#72efb5", second ? 24 : 18, second ? 280 : 220);
+      });
+    spawnBurst(fighter.x, fighter.y, "#72efb5", 18, 180);
+    if (second) {
+      fighter.aeroBasicUnlocked = false;
+      fighter.aeroSkillUnlocked = true;
+      fighter.aeroUltimateUnlocked = true;
+      announce(`${fighter.template.name} · 共鸣解放就绪`, fighter.template.color, 1);
+      addLog(`${fighter.template.name} 完成两次普攻，技能与「飘渺无相」已解锁。`, "ability");
+    } else {
+      fighter.aeroBasicUnlocked = false;
+      fighter.aeroSkillUnlocked = false;
+    }
+    playSound(second ? "blade" : "sword");
+    return true;
+  }
+
+  function fireAeroSwords(fighter, opponent) {
+    const target = nearestOpponent(fighter) || opponent;
+    if (!target) return;
+    const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+    const sideX = Math.cos(angle + Math.PI / 2) * (fighter.r + 8);
+    const sideY = Math.sin(angle + Math.PI / 2) * (fighter.r + 8);
+    const speed = fighter.template.aeroSwordSpeed * CELL_SIZE;
+    playAttackVoice(fighter);
+    [-1, 1].forEach((side) => {
+      const swordAngle = angle + side * 0.12;
+      projectiles.push({
+        owner: fighter,
+        target,
+        kind: "aeroSword",
+        category: DAMAGE_CATEGORIES.SPECIAL,
+        x: fighter.x + sideX * side,
+        y: fighter.y + sideY * side,
+        vx: Math.cos(swordAngle) * speed,
+        vy: Math.sin(swordAngle) * speed,
+        r: fighter.template.aeroSwordRadius * CELL_SIZE,
+        damage: fighter.template.aeroSwordDamage,
+        life: fighter.template.aeroSwordLife,
+        color: "#72efb5",
+        homing: 0.9
+      });
+    });
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: fighter.r + 6,
+      growth: 160,
+      life: 0.32,
+      maxLife: 0.32,
+      color: "#72efb5",
+      width: 4
+    });
+    addLog(`${fighter.template.name} 从身体两侧射出两柄追踪飞剑。`, "ability");
+    playSound("windup");
+  }
+
+  function updateAeroSwordProjectile(projectile, dt) {
+    const owner = projectile.owner;
+    const target = nearestOpponent(owner) || projectile.target;
+    if (target && target.hp > 0) {
+      projectile.target = target;
+      const desired = Math.atan2(target.y - projectile.y, target.x - projectile.x);
+      let current = Math.atan2(projectile.vy, projectile.vx);
+      const difference = Math.atan2(Math.sin(desired - current), Math.cos(desired - current));
+      current += clamp(difference, -5.5 * dt, 5.5 * dt);
+      const speed = owner.template.aeroSwordSpeed * CELL_SIZE;
+      projectile.vx = Math.cos(current) * speed;
+      projectile.vy = Math.sin(current) * speed;
+    }
+    projectile.x += projectile.vx * dt;
+    projectile.y += projectile.vy * dt;
+    projectile.life -= dt;
+    const hitUnit = getDamageableUnits().find((unit) => (
+      unit.side !== owner.side
+      && unit.hp > 0
+      && Math.hypot(unit.x - projectile.x, unit.y - projectile.y) <= projectile.r + unit.r
+    ));
+    if (hitUnit) {
+      applySpecialDamage(hitUnit, projectile.damage, owner, "气动飞剑", {
+        color: projectile.color,
+        noEnergy: true
+      });
+      effects.push({
+        type: "aeroHit",
+        x: hitUnit.x,
+        y: hitUnit.y,
+        angle: Math.atan2(projectile.vy, projectile.vx),
+        life: 0.34,
+        maxLife: 0.34,
+        color: projectile.color
+      });
+      spawnBurst(hitUnit.x, hitUnit.y, projectile.color, 12, 180);
+      projectile.dead = true;
+    }
+    if (
+      projectile.life <= 0
+      || projectile.x < BOUNDARY
+      || projectile.x > ARENA_SIZE - BOUNDARY
+      || projectile.y < BOUNDARY
+      || projectile.y > ARENA_SIZE - BOUNDARY
+    ) {
+      projectile.dead = true;
     }
   }
 
@@ -4591,6 +5126,12 @@
 
   function tryBasicAttack(fighter, opponent) {
     if (fighter.freeze > 0 || fighter.stunned > 0 || fighter.vortexLockTimer > 0 || fighter.charge || fighter.knockback) return;
+    if (
+      fighter.aeroAirTimer > 0
+      || fighter.aeroDashTimer > 0
+      || fighter.aeroPreLiftTimer > 0
+      || fighter.aeroSequenceActive
+    ) return;
     if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") return;
     if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) {
       const target = nearestOpponent(fighter) || opponent;
@@ -4621,6 +5162,16 @@
     } else if (fighter.template.id === "05") {
       if (distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE + opponent.r * 0.15) {
         launchCantarellaUmbrella(fighter, opponent);
+      }
+    } else if (fighter.template.id === "08") {
+      if (fighter.aeroUltimateTimer > 0) {
+        fireAeroSwords(fighter, opponent);
+        fighter.attackClock = fighter.template.aeroSwordCooldown;
+      } else if (
+        fighter.aeroBasicUnlocked
+        && fighter.aeroWind >= fighter.template.aeroWindAttackCost
+      ) {
+        beginAeroAerialAttack(fighter);
       }
     } else if (fighter.template.id === "07") {
       const searchRange = getAttackRangeCells(fighter) * CELL_SIZE;
@@ -4988,6 +5539,23 @@
     if (fighter.template.transformThreshold) return;
     if (fighter.template.ultimateType === "autoThreshold") return;
     if (fighter.stunned > 0 || fighter.freeze > 0 || fighter.vortexLockTimer > 0) return;
+    const canAutocast = mode !== "play" || fighter.side !== 0;
+    if (fighter.template.ultimateType === "aeroUnbound") {
+      if (
+        canAutocast
+        && fighter.aeroUltimateUnlocked
+        && fighter.abilityCooldown <= 0
+        && fighter.aeroUltimateTimer <= 0
+        && fighter.aeroPreLiftTimer <= 0
+        && fighter.aeroAirTimer <= 0
+        && fighter.aeroDashTimer <= 0
+        && !fighter.aeroSequenceActive
+        && !fighter.voiceUltimatePending
+      ) {
+        useAbility(fighter, opponent);
+      }
+      return;
+    }
     if (fighter.template.ultimateType === "jinhsiDragon") {
       if (
         fighter.jinhsiUltimateUnlocked
@@ -4998,7 +5566,6 @@
       }
       return;
     }
-    const canAutocast = mode !== "play" || fighter.side !== 0;
     if (fighter.template.ultimateType === "verinaBloom") {
       if (
         canAutocast
@@ -5029,9 +5596,19 @@
     if (fighter.template.ultimateType === "autoThreshold") return;
     const isJinhsiUltimate = fighter.template.ultimateType === "jinhsiDragon";
     const isVerinaUltimate = fighter.template.ultimateType === "verinaBloom";
+    const isAeroUltimate = fighter.template.ultimateType === "aeroUnbound";
     if (isVerinaUltimate && fighter.hp < 160) return;
     if (isJinhsiUltimate) {
       if (!fighter.jinhsiUltimateUnlocked || fighter.jinhsiUltimatePhase !== "idle") return;
+    } else if (isAeroUltimate) {
+      if (
+        !fighter.aeroUltimateUnlocked
+        || fighter.aeroUltimateTimer > 0
+        || fighter.aeroPreLiftTimer > 0
+        || fighter.aeroAirTimer > 0
+        || fighter.aeroDashTimer > 0
+        || fighter.aeroSequenceActive
+      ) return;
     } else if (!isVerinaUltimate && fighter.energy < 100) {
       return;
     }
@@ -5063,7 +5640,7 @@
         return;
       }
     }
-    fighter.energy = 0;
+    if (!isAeroUltimate) fighter.energy = 0;
     fighter.fullEnergyTime = 0;
     fighter.abilityCooldown = fighter.template.ultimateCooldown ?? fighter.template.cooldown;
     fighter.flash = 1;
@@ -5074,6 +5651,8 @@
         ? `${fighter.template.name} 释放已解锁的「${fighter.template.ability}」！`
         : isVerinaUltimate
           ? `${fighter.template.name} 场上有藤，触发「${fighter.template.ability}」！`
+          : isAeroUltimate
+            ? `${fighter.template.name} 完成两次普攻，触发「${fighter.template.ability}」！`
         : `${fighter.template.name} 共鸣能量已满，触发「${fighter.template.ability}」！`,
       "ability"
     );
@@ -5081,6 +5660,8 @@
       ? `${fighter.template.name}释放${fighter.template.ability}`
       : isVerinaUltimate
         ? `${fighter.template.name}场上有藤，触发${fighter.template.ability}`
+        : isAeroUltimate
+          ? `${fighter.template.name}完成两次普攻，触发${fighter.template.ability}`
       : `${fighter.template.name}共鸣能量已满，触发${fighter.template.ability}`;
 
     if (fighter.template.ultimateType === "windCharge") {
@@ -5115,6 +5696,35 @@
       playSound("timeStop");
     } else if (fighter.template.ultimateType === "cantarellaMirage") {
       startCantarellaMirage(fighter);
+    } else if (isAeroUltimate) {
+      fighter.aeroUltimateTimer = fighter.template.ultimateDuration;
+      fighter.aeroEnhanced = true;
+      fighter.aeroUltimateUnlocked = false;
+      fighter.aeroWindGainLocked = true;
+      fighter.aeroUltimateReadyTimer = 0;
+      fighter.attackClock = Math.min(fighter.attackClock, 0.2);
+      refreshAeroAccess(fighter);
+      effects.push({
+        type: "aeroUltimateBurst",
+        fighter,
+        life: 0.85,
+        maxLife: 0.85,
+        color: "#72efb5"
+      });
+      effects.push({
+        type: "ring",
+        x: fighter.x,
+        y: fighter.y,
+        radius: fighter.r + 8,
+        growth: 760,
+        life: 0.72,
+        maxLife: 0.72,
+        color: "#a8ffdc",
+        width: 9
+      });
+      spawnBurst(fighter.x, fighter.y, "#72efb5", 54, 360);
+      screenShake = 12;
+      playSound("windup");
     } else if (isJinhsiUltimate) {
       beginJinhsiUltimate(fighter, opponent);
     } else if (fighter.template.ultimateType === "timeStop") {
@@ -5139,7 +5749,7 @@
 
   function applyDamage(target, amount, source, label, options = {}) {
     if (!target || target.hp <= 0 || state !== "playing") return;
-    if (target.jinhsiAirborne) return 0;
+    if (target.jinhsiAirborne || target.aeroAirTimer > 0) return 0;
     let finalAmount = Math.max(1, amount);
     const specialDamage = options.category === DAMAGE_CATEGORIES.SPECIAL;
     const meleeDamage = !specialDamage && (options.melee === true
@@ -5295,7 +5905,7 @@
 
   function dealRawDamage(target, amount, source, label, color) {
     if (!target || target.hp <= 0 || state !== "playing") return;
-    if (target.jinhsiAirborne) return 0;
+    if (target.jinhsiAirborne || target.aeroAirTimer > 0) return 0;
     target.hp = Math.max(0, target.hp - Math.max(1, amount));
     spawnDamageText(target.x, target.y - target.r, Math.round(amount), color);
     if (target.hp <= 0 && state === "playing") {
@@ -5589,6 +6199,11 @@
     for (let i = projectiles.length - 1; i >= 0; i -= 1) {
       const projectile = projectiles[i];
       if (!projectile.independent && projectile.owner?.vortexLockTimer > 0) continue;
+      if (projectile.kind === "aeroSword") {
+        updateAeroSwordProjectile(projectile, dt);
+        if (projectile.dead) projectiles.splice(i, 1);
+        continue;
+      }
       projectile.life -= dt;
       const target = projectile.target;
       if (target && target.hp > 0) {
@@ -5810,6 +6425,12 @@
         else if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") status = "腾空";
         else if (fighter.template.id === "07" && fighter.jinhsiUltimateUnlocked) status = "龙吟";
         else if (fighter.template.id === "07" && fighter.jinhsiEmpowered) status = "强化";
+        else if (fighter.template.id === "08" && fighter.aeroUltimateTimer > 0) status = `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`;
+        else if (fighter.template.id === "08" && fighter.aeroPreLiftTimer > 0) status = `蓄势 ${fighter.aeroPreLiftTimer.toFixed(1)}s`;
+        else if (fighter.template.id === "08" && fighter.aeroSequenceActive) status = "双刃斩击";
+        else if (fighter.template.id === "08" && fighter.aeroBasicUnlockTimer > 0) status = `风息解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
+        else if (fighter.template.id === "08" && fighter.aeroUltimateUnlocked) status = "共鸣解放就绪";
+        else if (fighter.template.id === "08") status = `风息 ${Math.round(fighter.aeroWind)}/100`;
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
         return {
@@ -5875,8 +6496,8 @@
     dom.enemyEnergyBar.style.width = `${enemyEnergy}%`;
     dom.playerEnergyText.textContent = `共鸣 ${Math.round(energy)}%${player.template.id === "06" ? ` · 芽愈 Lv.${player.verinaHealLevel}` : ""}`;
     dom.enemyEnergyText.textContent = `共鸣 ${Math.round(enemyEnergy)}%${enemy.template.id === "06" ? ` · 芽愈 Lv.${enemy.verinaHealLevel}` : ""}`;
-    const playerHasSpecial = ["kakarot-test", "01", "07"].includes(player.template.id);
-    const enemyHasSpecial = ["kakarot-test", "01", "07"].includes(enemy.template.id);
+    const playerHasSpecial = ["kakarot-test", "01", "07", "08"].includes(player.template.id);
+    const enemyHasSpecial = ["kakarot-test", "01", "07", "08"].includes(enemy.template.id);
     const playerHasAbyss = player.template.id === "02";
     const enemyHasAbyss = enemy.template.id === "02";
     const playerHasBrant = player.template.id === "04";
@@ -5885,6 +6506,8 @@
     dom.enemySpecialGauge.hidden = !enemyHasSpecial;
     dom.playerSpecialGauge.classList.toggle("is-jinhsi", player.template.id === "07");
     dom.enemySpecialGauge.classList.toggle("is-jinhsi", enemy.template.id === "07");
+    dom.playerSpecialGauge.classList.toggle("is-aero", player.template.id === "08");
+    dom.enemySpecialGauge.classList.toggle("is-aero", enemy.template.id === "08");
     dom.playerAbyssGauge.hidden = !playerHasAbyss;
     dom.enemyAbyssGauge.hidden = !enemyHasAbyss;
     dom.playerBrantGauge.hidden = !playerHasBrant;
@@ -5892,28 +6515,38 @@
     if (playerHasSpecial) {
       const isTime = player.template.id === "01";
       const isJinhsi = player.template.id === "07";
-      dom.playerSpecialLabel.textContent = isJinhsi ? "龙刃" : isTime ? "时序" : "死告";
-      updateSpecialGauge(
-        dom.playerSpecialGauge,
-        dom.playerSpecialText,
-        player.specialEnergy,
-        player.deathSentenceClock,
-        player.knifeCount,
-        isJinhsi ? 4 : 3
-      );
+      const isAero = player.template.id === "08";
+      dom.playerSpecialLabel.textContent = isJinhsi ? "龙刃" : isTime ? "时序" : isAero ? "风息" : "死告";
+      if (isAero) {
+        updateAeroGauge(player, dom.playerSpecialGauge, dom.playerSpecialText);
+      } else {
+        updateSpecialGauge(
+          dom.playerSpecialGauge,
+          dom.playerSpecialText,
+          player.specialEnergy,
+          player.deathSentenceClock,
+          player.knifeCount,
+          isJinhsi ? 4 : 3
+        );
+      }
     }
     if (enemyHasSpecial) {
       const isTime = enemy.template.id === "01";
       const isJinhsi = enemy.template.id === "07";
-      dom.enemySpecialLabel.textContent = isJinhsi ? "龙刃" : isTime ? "时序" : "死告";
-      updateSpecialGauge(
-        dom.enemySpecialGauge,
-        dom.enemySpecialText,
-        enemy.specialEnergy,
-        enemy.deathSentenceClock,
-        enemy.knifeCount,
-        isJinhsi ? 4 : 3
-      );
+      const isAero = enemy.template.id === "08";
+      dom.enemySpecialLabel.textContent = isJinhsi ? "龙刃" : isTime ? "时序" : isAero ? "风息" : "死告";
+      if (isAero) {
+        updateAeroGauge(enemy, dom.enemySpecialGauge, dom.enemySpecialText);
+      } else {
+        updateSpecialGauge(
+          dom.enemySpecialGauge,
+          dom.enemySpecialText,
+          enemy.specialEnergy,
+          enemy.deathSentenceClock,
+          enemy.knifeCount,
+          isJinhsi ? 4 : 3
+        );
+      }
     }
     if (playerHasAbyss) {
       dom.playerAbyssGauge.querySelector("i").style.width = `${clamp(player.abyssEnergy, 0, 100)}%`;
@@ -5939,6 +6572,15 @@
       || player.cantarellaJellyDeaths >= player.template.jellyDeathsToUnlock;
     const jinhsiUnlocked = player.template.ultimateType !== "jinhsiDragon"
       || (player.jinhsiUltimateUnlocked && player.jinhsiUltimatePhase === "idle");
+    const aeroUnlocked = player.template.ultimateType !== "aeroUnbound"
+      || (
+        player.aeroUltimateUnlocked
+        && player.aeroUltimateTimer <= 0
+        && player.aeroPreLiftTimer <= 0
+        && player.aeroAirTimer <= 0
+        && player.aeroDashTimer <= 0
+        && !player.aeroSequenceActive
+      );
     const verinaHealthReady = player.template.ultimateType !== "verinaBloom" || player.hp >= 160;
     const ultimateAvailable = !player.template.transformThreshold
       && player.template.ultimateType !== "autoThreshold"
@@ -5949,11 +6591,14 @@
       && verinaHealthReady
       && cantarellaUnlocked
       && jinhsiUnlocked
+      && aeroUnlocked
       && !(player.template.ultimateType === "overclock" && player.overclock > 0);
     const energyReady = player.template.ultimateType === "jinhsiDragon"
       ? jinhsiUnlocked
       : player.template.ultimateType === "verinaBloom"
         ? verinaUnlocked
+        : player.template.ultimateType === "aeroUnbound"
+          ? aeroUnlocked
         : energy >= 100;
     const ready = mode === "play" && energyReady && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
@@ -6007,6 +6652,20 @@
         dom.battleStatus.textContent = `强化普攻 · ${player.jinhsiAttackCount}/4`;
       } else if (player.template.id === "07") {
         dom.battleStatus.textContent = `初始普攻 · ${player.jinhsiAttackCount}/4`;
+      } else if (player.template.id === "08" && player.aeroUltimateTimer > 0) {
+        dom.battleStatus.textContent = `飘渺无相 ${player.aeroUltimateTimer.toFixed(1)}s · 飞剑追击`;
+      } else if (player.template.id === "08" && player.aeroPreLiftTimer > 0) {
+        dom.battleStatus.textContent = `风息充盈 · 停滞蓄势 ${player.aeroPreLiftTimer.toFixed(1)}s`;
+      } else if (player.template.id === "08" && player.aeroAirTimer > 0) {
+        dom.battleStatus.textContent = "双刃凌空 · 免疫伤害";
+      } else if (player.template.id === "08" && player.aeroDashTimer > 0) {
+        dom.battleStatus.textContent = "风迹突刺 · 20 格/秒";
+      } else if (player.template.id === "08" && player.aeroBasicUnlockTimer > 0) {
+        dom.battleStatus.textContent = `风息充盈 · ${player.aeroBasicUnlockTimer.toFixed(1)}s 后解锁普攻`;
+      } else if (player.template.id === "08" && player.aeroUltimateUnlocked) {
+        dom.battleStatus.textContent = "两次普攻完成 · 共鸣解放就绪";
+      } else if (player.template.id === "08") {
+        dom.battleStatus.textContent = `风息 ${Math.round(player.aeroWind)}/100`;
       } else if (player.timeForceTimer > 0) {
         dom.battleStatus.textContent = `时序加速 ${player.timeForceTimer.toFixed(1)}s`;
       } else if (player.horned) {
@@ -6032,6 +6691,23 @@
     if (knifeCount > 0) label.textContent = `飞刃 ×${knifeCount}`;
     else label.textContent = filled >= maxValue && countdown > 0 ? `${countdown.toFixed(1)}s` : `${filled}/${maxValue}`;
     gauge.setAttribute("aria-label", knifeCount > 0 ? `永久时序飞刃 ${knifeCount} 柄` : `特殊能量 ${filled}/${maxValue}`);
+  }
+
+  function updateAeroGauge(fighter, gauge, text) {
+    const wind = Math.round(clamp(fighter.aeroWind, 0, fighter.template.aeroWindMax));
+    const filled = Math.ceil(wind / 50);
+    gauge.querySelectorAll("i").forEach((pip, index) => {
+      pip.classList.toggle("is-unused", index >= 2);
+      pip.classList.toggle("is-filled", index < filled);
+    });
+    if (fighter.aeroUltimateTimer > 0) {
+      text.textContent = `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`;
+    } else if (fighter.aeroBasicUnlockTimer > 0) {
+      text.textContent = `${wind}/100 · ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
+    } else {
+      text.textContent = `${wind}/100`;
+    }
+    gauge.setAttribute("aria-label", `风息 ${wind}/100`);
   }
 
   function spawnBurst(x, y, color, count, speed) {
@@ -6204,6 +6880,20 @@
       const ultimate = fighter.jinhsiUltimateUnlocked ? " · 解放就绪" : "";
       return `龙刃层数 ${Math.round(fighter.specialEnergy)}/4 · ${modeText} ${fighter.jinhsiAttackCount}/4${ultimate}`;
     }
+    if (id === "08") {
+      const modeText = fighter.aeroUltimateTimer > 0
+        ? `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`
+        : fighter.aeroPreLiftTimer > 0
+          ? `蓄势 ${fighter.aeroPreLiftTimer.toFixed(1)}s`
+          : fighter.aeroSequenceActive
+            ? "双刃斩击"
+        : fighter.aeroBasicUnlockTimer > 0
+            ? `普攻解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`
+            : fighter.aeroUltimateUnlocked
+              ? "共鸣解放就绪"
+              : "风息积攒";
+      return `风息 ${Math.round(fighter.aeroWind)}/100 · ${modeText}`;
+    }
     return `特殊能量 ${Math.round(fighter.specialEnergy || 0)}`;
   }
 
@@ -6221,6 +6911,10 @@
     if (fighter.stunned > 0) states.push("眩晕");
     if (fighter.freeze > 0) states.push("冻结");
     if (fighter.cantarellaSlowTimer > 0) states.push("减速");
+    if (fighter.aeroUltimateTimer > 0) states.push("飘渺无相");
+    if (fighter.aeroPreLiftTimer > 0) states.push("定风蓄势");
+    if (fighter.aeroAirTimer > 0) states.push("升空免疫");
+    if (fighter.aeroDashTimer > 0) states.push("风迹突刺");
     return states.join(" · ") || "战斗中";
   }
 
@@ -6277,15 +6971,18 @@
 
     replayBar(paint, contentX, 39, contentRight - contentX, 9, hpRatio, hpColor, "rgba(255,255,255,0.1)");
     replayBar(paint, contentX, 52, contentRight - contentX, 4, fighter.energy / 100, "#ffd84d", "rgba(255,255,255,0.1)");
+    const hasSpecialBar = fighter.template.id === "07" || fighter.template.id === "08";
     if (fighter.template.id === "07") {
       replayBar(paint, contentX, 59, contentRight - contentX, 3, fighter.specialEnergy / 4, "#ffe39a", "rgba(255,255,255,0.08)");
+    } else if (fighter.template.id === "08") {
+      replayBar(paint, contentX, 59, contentRight - contentX, 3, fighter.aeroWind / 100, "#72efb5", "rgba(255,255,255,0.08)");
     }
     paint.textAlign = "left";
     paint.font = "700 8px 'Microsoft YaHei'";
     paint.fillStyle = "#aeb6c6";
-    paint.fillText(`共鸣 ${Math.round(fighter.energy)}% · ${replaySpecialReadout(fighter)}`, contentX, fighter.template.id === "07" ? 72 : 65);
+    paint.fillText(`共鸣 ${Math.round(fighter.energy)}% · ${replaySpecialReadout(fighter)}`, contentX, hasSpecialBar ? 72 : 65);
     paint.fillStyle = colorWithAlpha(fighter.template.color, 0.94);
-    paint.fillText(replayFighterStatus(fighter), contentX, fighter.template.id === "07" ? 84 : 80);
+    paint.fillText(replayFighterStatus(fighter), contentX, hasSpecialBar ? 84 : 80);
   }
 
   function drawReplayFighterCard(paint, fighter, x, y, width, height, compact = false) {
@@ -6613,8 +7310,34 @@
     ctx.save();
     getActiveFighters().forEach((fighter) => {
       if (!fighter) return;
+      if (
+        fighter.template.id === "08"
+        && (fighter.aeroAirTimer > 0 || fighter.aeroDashTimer > 0)
+        && fighter.trail.length > 1
+      ) {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = "rgba(114,239,181,0.34)";
+        ctx.lineWidth = fighter.r * 0.72;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        fighter.trail.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(230,255,242,0.22)";
+        ctx.lineWidth = fighter.r * 0.18;
+        ctx.stroke();
+        ctx.restore();
+      }
       fighter.trail.forEach((point) => {
-        const alpha = clamp(point.life / point.maxLife, 0, 1) * 0.15;
+        const specialTrail = fighter.template.id === "08" && (
+          fighter.aeroAirTimer > 0
+          || fighter.aeroDashTimer > 0
+          || fighter.aeroUltimateTimer > 0
+        );
+        const alpha = clamp(point.life / point.maxLife, 0, 1) * (specialTrail ? 0.3 : 0.15);
         ctx.fillStyle = colorWithAlpha(fighter.template.color, alpha);
         ctx.beginPath();
         ctx.arc(point.x, point.y, point.r * (point.life / point.maxLife), 0, Math.PI * 2);
@@ -7411,7 +8134,8 @@
     const wobble = state === "idle" ? Math.sin(t * 1.3) * 0.012 : Math.min(0.06, speed / 5000);
     const radius = fighter.r;
     ctx.save();
-    ctx.translate(fighter.x, fighter.y);
+    const aeroHover = fighter.template.id === "08" && fighter.aeroAirTimer > 0 ? 9 : 0;
+    ctx.translate(fighter.x, fighter.y - aeroHover);
     ctx.rotate(clamp(fighter.tilt, -0.13, 0.13));
     if (fighter.hp <= 0) ctx.globalAlpha = 0.55;
 
@@ -7556,6 +8280,9 @@
     } else if (fighter.template.id === "07") {
       if (jinhsiWeaponInFront) drawJinhsiWeapon(fighter, radius, t);
       if (fighter.jinhsiEmpowered) drawJinhsiDragonOrbit(fighter, radius, t);
+    } else if (fighter.template.id === "08") {
+      drawAeroUltimateAura(fighter, radius, t);
+      drawAeroWeapon(fighter, radius, t);
     }
 
     if (fighter.overclock > 0) {
@@ -7952,6 +8679,114 @@
     ctx.restore();
   }
 
+  function drawAeroWeapon(fighter, radius, t) {
+    const weapon = weaponPortraits.get("08");
+    if (!weapon?.complete || !weapon.naturalWidth) return;
+    const target = nearestOpponent(fighter);
+    const aimAngle = target
+      ? Math.atan2(target.y - fighter.y, target.x - fighter.x)
+      : Math.atan2(fighter.vy, fighter.vx);
+    const height = radius * (fighter.aeroUltimateTimer > 0 ? 3.45 : 3.15);
+    const width = height * (weapon.naturalWidth / weapon.naturalHeight);
+    const airProgress = fighter.aeroAirTimer > 0
+      ? 1 - fighter.aeroAirTimer / fighter.template.aeroAirDuration
+      : 0;
+    const secondSwing = fighter.aeroAirTimer > 0 && airProgress >= 0.44;
+    const localSwing = secondSwing ? (airProgress - 0.44) / 0.56 : airProgress / 0.44;
+    let angle = 0.48 + Math.sin(t * 1.7) * 0.025;
+    let offsetX = radius * 1.42;
+    let offsetY = radius * 0.13;
+    if (fighter.aeroAirTimer > 0) {
+      angle = aimAngle - Math.PI * 0.9 + localSwing * Math.PI * 1.72;
+      offsetX = Math.cos(aimAngle + Math.PI / 2) * radius * 0.34;
+      offsetY = Math.sin(aimAngle + Math.PI / 2) * radius * 0.34;
+    } else if (fighter.aeroDashTimer > 0) {
+      angle = fighter.aeroDashAngle - Math.PI / 2;
+      offsetX = Math.cos(fighter.aeroDashAngle) * radius * 0.45;
+      offsetY = Math.sin(fighter.aeroDashAngle) * radius * 0.45;
+    }
+    const drawBlade = (drawAngle, alpha, blur) => {
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.rotate(drawAngle);
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = fighter.aeroUltimateTimer > 0 ? "#baffdf" : "#72efb5";
+      ctx.shadowBlur = blur;
+      ctx.drawImage(weapon, -width / 2, -height * 0.66, width, height);
+      ctx.restore();
+    };
+    if (fighter.aeroAirTimer > 0) {
+      for (let ghost = 3; ghost >= 1; ghost -= 1) {
+        drawBlade(angle - localSwing * ghost * 0.22, 0.08 + (3 - ghost) * 0.06, 12);
+      }
+      drawBlade(angle, 1, 26);
+    } else {
+      drawBlade(angle, 1, fighter.aeroUltimateTimer > 0 ? 20 : 11);
+    }
+  }
+
+  function drawAeroUltimateAura(fighter, radius, t) {
+    if (fighter.aeroUltimateTimer <= 0 && fighter.aeroDashTimer <= 0 && fighter.aeroAirTimer <= 0) return;
+    const ultimateActive = fighter.aeroUltimateTimer > 0;
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    if (ultimateActive) {
+      const pulse = 1 + Math.sin(t * 5.3) * 0.06;
+      const aura = ctx.createRadialGradient(0, 0, radius * 0.65, 0, 0, radius + 24);
+      aura.addColorStop(0, "rgba(114,239,181,0)");
+      aura.addColorStop(0.68, "rgba(114,239,181,0.11)");
+      aura.addColorStop(1, "rgba(114,239,181,0)");
+      ctx.fillStyle = aura;
+      ctx.beginPath();
+      ctx.arc(0, 0, (radius + 24) * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(190,255,225,0.74)";
+      ctx.lineWidth = 2;
+      ctx.shadowColor = "#72efb5";
+      ctx.shadowBlur = 16;
+      ctx.setLineDash([9, 8]);
+      ctx.lineDashOffset = -visualTime * 28;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius + 13 + Math.sin(t * 4.5) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    if ((ultimateActive || fighter.aeroDashTimer > 0) && aeroEffectPortraits.get("dash")?.complete) {
+      const sword = aeroEffectPortraits.get("dash");
+      const swordCount = ultimateActive ? 2 : 1;
+      for (let index = 0; index < swordCount; index += 1) {
+        const orbitAngle = t * 2.8 + index * Math.PI;
+        const orbitRadius = radius + 18 + Math.sin(t * 3.4 + index) * 3;
+        const swordWidth = radius * 1.35;
+        const swordHeight = swordWidth * (sword.naturalHeight / sword.naturalWidth);
+        ctx.save();
+        ctx.translate(Math.cos(orbitAngle) * orbitRadius, Math.sin(orbitAngle) * orbitRadius);
+        ctx.rotate(orbitAngle + Math.PI);
+        ctx.globalAlpha = ultimateActive ? 0.9 : 0.58;
+        ctx.shadowColor = "#baffdf";
+        ctx.shadowBlur = ultimateActive ? 18 : 11;
+        ctx.drawImage(sword, -swordWidth / 2, -swordHeight / 2, swordWidth, swordHeight);
+        ctx.restore();
+      }
+    }
+    if (fighter.aeroDashTimer > 0) {
+      const trailLength = radius * 3.2;
+      ctx.translate(-Math.cos(fighter.aeroDashAngle) * trailLength * 0.5, -Math.sin(fighter.aeroDashAngle) * trailLength * 0.5);
+      ctx.rotate(fighter.aeroDashAngle);
+      const trail = ctx.createLinearGradient(-trailLength / 2, 0, trailLength / 2, 0);
+      trail.addColorStop(0, "rgba(114,239,181,0)");
+      trail.addColorStop(0.55, "rgba(114,239,181,0.28)");
+      trail.addColorStop(1, "rgba(230,255,242,0.72)");
+      ctx.strokeStyle = trail;
+      ctx.lineWidth = radius * 0.42;
+      ctx.beginPath();
+      ctx.moveTo(-trailLength / 2, 0);
+      ctx.lineTo(trailLength / 2, 0);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   function drawJinhsiDragonOrbit(fighter, radius, t) {
     const dragonCount = 3;
     for (let dragonIndex = 0; dragonIndex < dragonCount; dragonIndex += 1) {
@@ -8162,6 +8997,43 @@
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     projectiles.forEach((projectile) => {
+      if (projectile.kind === "aeroSword") {
+        const sword = aeroEffectPortraits.get("dash");
+        const angle = Math.atan2(projectile.vy, projectile.vx);
+        const width = projectile.r * 0.92;
+        const height = sword?.naturalWidth
+          ? width * (sword.naturalHeight / sword.naturalWidth)
+          : projectile.r * 0.72;
+        ctx.save();
+        ctx.translate(projectile.x, projectile.y);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.globalAlpha = 0.9;
+        ctx.shadowColor = "#5de5af";
+        ctx.shadowBlur = 7;
+        ctx.rotate(angle + Math.PI * 0.75);
+        if (sword?.complete && sword.naturalWidth > 0) {
+          ctx.drawImage(sword, -width / 2, -height / 2, width, height);
+        } else {
+          ctx.fillStyle = "#9df4d0";
+          ctx.beginPath();
+          ctx.ellipse(0, 0, width * 0.42, projectile.r * 0.13, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+        ctx.save();
+        ctx.translate(projectile.x, projectile.y);
+        ctx.rotate(angle);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = 0.12;
+        ctx.fillStyle = projectile.color;
+        ctx.shadowColor = projectile.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, projectile.r * 0.62, projectile.r * 0.18, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return;
+      }
       ctx.shadowColor = projectile.kind === "fireball" ? "#ff6b3d" : projectile.color;
       ctx.shadowBlur = projectile.kind === "fireball" ? 28 : 16;
       const gradient = ctx.createRadialGradient(
@@ -8347,6 +9219,151 @@
         ctx.beginPath();
         ctx.arc(effect.x, effect.y, 20 + expansion, 0, Math.PI * 2);
         ctx.stroke();
+      } else if (effect.type === "aeroSlash") {
+        if (!effect.fighter) return;
+        const progress = 1 - alpha;
+        const slashImage = aeroEffectPortraits.get("slash");
+        const sweep = Math.sin(progress * Math.PI);
+        ctx.translate(effect.x ?? ARENA_SIZE / 2, effect.y ?? ARENA_SIZE / 2);
+        ctx.rotate(effect.angle);
+        ctx.scale(1, effect.mirror ? -1 : 1);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.shadowColor = "#72efb5";
+        ctx.shadowBlur = 28;
+
+        const lineLength = ARENA_SIZE * 0.68;
+        const lineGradient = ctx.createLinearGradient(-lineLength, 0, lineLength, 0);
+        lineGradient.addColorStop(0, "rgba(114,239,181,0)");
+        lineGradient.addColorStop(0.16, `rgba(114,239,181,${alpha * 0.56})`);
+        lineGradient.addColorStop(0.5, `rgba(240,255,248,${alpha * 0.92})`);
+        lineGradient.addColorStop(0.84, `rgba(114,239,181,${alpha * 0.56})`);
+        lineGradient.addColorStop(1, "rgba(114,239,181,0)");
+        ctx.strokeStyle = lineGradient;
+        ctx.lineWidth = 5 + sweep * 18;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(-lineLength, 0);
+        ctx.lineTo(lineLength, 0);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.72})`;
+        ctx.lineWidth = 1.5 + sweep * 3;
+        ctx.stroke();
+
+        if (slashImage?.complete && slashImage.naturalWidth > 0) {
+          const imageWidth = ARENA_SIZE * 0.92;
+          const imageHeight = imageWidth * (slashImage.naturalHeight / slashImage.naturalWidth);
+          ctx.globalAlpha = alpha * 0.82;
+          ctx.translate(0, effect.mirror ? -36 : 36);
+          ctx.rotate((effect.mirror ? -1 : 1) * progress * 0.13);
+          ctx.drawImage(slashImage, -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
+        }
+      } else if (effect.type === "aeroHit") {
+        const progress = 1 - alpha;
+        const slashImage = aeroEffectPortraits.get("slash");
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(effect.angle + 0.8 + progress * 0.55);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 12;
+        if (slashImage?.complete && slashImage.naturalWidth > 0) {
+          const size = 44 + progress * 28;
+          const height = size * (slashImage.naturalHeight / slashImage.naturalWidth);
+          ctx.globalAlpha = alpha * 0.76;
+          ctx.drawImage(slashImage, -size / 2, -height / 2, size, height);
+        }
+        ctx.strokeStyle = colorWithAlpha("#eafff5", alpha * 0.72);
+        ctx.lineWidth = 2;
+        for (let ray = 0; ray < 6; ray += 1) {
+          const angle = ray / 6 * Math.PI * 2 + progress * 0.5;
+          const inner = 7 + progress * 10;
+          const outer = 22 + progress * 28;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+          ctx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+          ctx.stroke();
+        }
+      } else if (effect.type === "aeroDashBurst") {
+        if (!effect.fighter) return;
+        const progress = 1 - alpha;
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 22;
+        const trail = ctx.createLinearGradient(-190, 0, 20, 0);
+        trail.addColorStop(0, "rgba(114,239,181,0)");
+        trail.addColorStop(0.62, colorWithAlpha(effect.color, alpha * 0.42));
+        trail.addColorStop(1, colorWithAlpha("#f0fff8", alpha * 0.9));
+        ctx.strokeStyle = trail;
+        ctx.lineWidth = 18 * alpha + 3;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(-190 - progress * 40, 0);
+        ctx.lineTo(18, 0);
+        ctx.stroke();
+        ctx.fillStyle = colorWithAlpha("#dcfff0", alpha * 0.76);
+        ctx.beginPath();
+        ctx.moveTo(50, 0);
+        ctx.lineTo(10, -12);
+        ctx.lineTo(18, 0);
+        ctx.lineTo(10, 12);
+        ctx.closePath();
+        ctx.fill();
+      } else if (effect.type === "aeroLandingImpact") {
+        const impact = aeroEffectPortraits.get("impact");
+        const progress = 1 - alpha;
+        const diameter = effect.radius * 2.1 * (0.82 + progress * 0.18);
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(visualTime * 0.28);
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = alpha * 0.9;
+        if (impact?.complete && impact.naturalWidth > 0) {
+          ctx.shadowColor = "#8fffd1";
+          ctx.shadowBlur = 14;
+          ctx.drawImage(impact, -diameter / 2, -diameter / 2, diameter, diameter);
+        } else {
+          const fallback = ctx.createRadialGradient(0, 0, 3, 0, 0, diameter / 2);
+          fallback.addColorStop(0, colorWithAlpha("#effff8", alpha * 0.75));
+          fallback.addColorStop(0.46, colorWithAlpha("#72efb5", alpha * 0.32));
+          fallback.addColorStop(1, colorWithAlpha("#2b8868", 0));
+          ctx.fillStyle = fallback;
+          ctx.beginPath();
+          ctx.arc(0, 0, diameter / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = colorWithAlpha("#caffea", alpha * 0.62);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radius * (0.74 + progress * 0.22), 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (effect.type === "aeroUltimateBurst") {
+        if (!effect.fighter) return;
+        const progress = 1 - alpha;
+        const radius = effect.fighter.r + 20 + progress * 110;
+        ctx.globalCompositeOperation = "lighter";
+        const burst = ctx.createRadialGradient(
+          effect.fighter.x,
+          effect.fighter.y,
+          3,
+          effect.fighter.x,
+          effect.fighter.y,
+          radius
+        );
+        burst.addColorStop(0, colorWithAlpha("#f4fff8", alpha * 0.86));
+        burst.addColorStop(0.24, colorWithAlpha("#72efb5", alpha * 0.5));
+        burst.addColorStop(1, "rgba(27,101,75,0)");
+        ctx.fillStyle = burst;
+        ctx.beginPath();
+        ctx.arc(effect.fighter.x, effect.fighter.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = colorWithAlpha("#c9ffe4", alpha * 0.9);
+        ctx.lineWidth = 5 * alpha + 1;
+        for (let ring = 0; ring < 3; ring += 1) {
+          ctx.beginPath();
+          ctx.arc(effect.fighter.x, effect.fighter.y, radius * (0.42 + ring * 0.22), 0, Math.PI * 2);
+          ctx.stroke();
+        }
       } else if (effect.type === "abyssSlash") {
         const fighter = effect.fighter;
         const progress = 1 - alpha;
@@ -9819,14 +10836,14 @@
     const portrait = new Image();
     portrait.src = canvasImageSource(fighter.image);
     fighterPortraits.set(fighter.id, portrait);
-    if (fighter.id === "01" || fighter.id === "02") {
+    if (WANDERER_FORM_IDS.has(fighter.id)) {
       fighterPortraits.set(`${fighter.id}:male`, portrait);
     }
     if (fighter.altImage) {
       const alternate = new Image();
       alternate.src = canvasImageSource(fighter.altImage);
       fighterPortraits.set(`${fighter.id}:alt`, alternate);
-      if (fighter.id === "01" || fighter.id === "02") {
+      if (WANDERER_FORM_IDS.has(fighter.id)) {
         fighterPortraits.set(`${fighter.id}:male:alt`, alternate);
       }
     }
@@ -9845,6 +10862,15 @@
     const image = new Image();
     image.src = canvasImageSource(`assets/${name}.png`);
     summonPortraits.set(name, image);
+  });
+  [
+    ["slash", "assets/wanderer-aero-slash.png"],
+    ["dash", "assets/wanderer-aero-dash.png"],
+    ["impact", "assets/wanderer-aero-impact.png"]
+  ].forEach(([name, source]) => {
+    const image = new Image();
+    image.src = canvasImageSource(source);
+    aeroEffectPortraits.set(name, image);
   });
   FIGHTERS.filter((fighter) => fighter.weaponImage).forEach((fighter) => {
     const weapon = new Image();

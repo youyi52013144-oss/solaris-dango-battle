@@ -1221,6 +1221,19 @@ h2 {
   box-shadow: 0 0 7px rgba(255, 216, 77, 0.55);
 }
 
+.special-gauge.is-aero {
+  color: #72efb5;
+}
+
+.special-gauge.is-aero i {
+  background: rgba(114, 239, 181, 0.16);
+}
+
+.special-gauge.is-aero i.is-filled {
+  background: #72efb5;
+  box-shadow: 0 0 7px rgba(114, 239, 181, 0.58);
+}
+
 .special-gauge b {
   margin-left: 2px;
   color: var(--muted);
