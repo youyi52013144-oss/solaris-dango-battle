@@ -5,6 +5,7 @@
   const MAP_PADDING = 45;
   const BOUNDARY = MAP_PADDING;
   let MAP_SIZE = 20;
+  let ARENA_THEME = "duel";
   let CELL_SIZE = (ARENA_SIZE - MAP_PADDING * 2) / MAP_SIZE;
   const DEFAULT_ROUND_SECONDS = 300;
   const WINNING_SCORE = 2;
@@ -124,7 +125,7 @@
       ultimateCooldown: 15,
       ability: "时序停界",
       abilityIcon: "◷",
-      abilityDesc: "共鸣能量满后冻结全图时间 5 秒，期间只有漂泊者可以移动与攻击；冷却 15 秒。",
+      abilityDesc: "共鸣能量满后冻结全图时间至少 5 秒；吸收场上全部时间乱流，每个额外延长 3 秒。冻结期间普攻不积累时序能量，自身每 1 秒随机瞬移并朝随机方向移动，穿越其他单位时不会碰撞；冷却 15 秒。",
       cooldown: 15
     },
     {
@@ -205,14 +206,14 @@
       aeroSwordCooldown: 3,
       aeroSwordSpeed: 40,
       aeroSwordRadius: 2,
-      aeroSwordDamage: 60,
+      aeroSwordDamage: 80,
       aeroSwordLife: 4,
       ultimateType: "aeroUnbound",
       ultimateDuration: 15,
       ultimateCooldown: 40,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "首场倒计时结束后自动开启一次；后续需完成两次风息斩击解锁。开启后持续 15 秒并锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑，每把对路径敌人各造成一次 60 点伤害；普攻改为相对最近敌人方向左转 90°突刺。冷却 40 秒。",
+      abilityDesc: "首场倒计时结束后自动开启一次；后续需完成两次风息斩击解锁。开启后持续 15 秒并锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑，每把对路径敌人各造成一次 80 点伤害；普攻改为朝距离自身最远的墙边突刺。冷却 40 秒。",
       cooldown: 40
     },
     {
@@ -410,7 +411,7 @@
       attackRange: 2.5,
       jinhsiEmpoweredRange: 6,
       jinhsiEmpoweredDamage: 65,
-      jinhsiEmpoweredWindup: 0.65,
+      jinhsiEmpoweredWindup: 0.8,
       jinhsiHitsToEmpower: 4,
       jinhsiHitsToUltimate: 4,
       jinhsiArcAngle: Math.PI * 0.9,
@@ -618,20 +619,18 @@
       ]
     },
     "01": {
-      role: "近战突刺 / 全图时停",
-      range: "突刺半径 2 格；飞刀伤害半径 5 格",
+      role: "近战成长 / 时序回溯 / 全图时停",
+      range: "突刺初始半径 2 格；每轮第一格时序能量使半径 +0.5 格",
       interval: "1 秒",
       mechanics: [
         "前刺造成 30 点伤害，近战命中恢复 20% 共鸣能量。",
-        "普攻命中积累 1 格时序能量。",
-        "首次达到 1 格时永久召唤一柄飞刀，3 秒环绕一圈，伤害不增加时序能量。",
-        "此后每轮时序能量首次达到第 1 格时，都会额外增加一柄永久飞刀；第 2、3 格不会增加飞刀。飞刀沿半径 3 格轨道均匀环绕。",
-        "飞刀经过敌人时造成 25 点特殊伤害。",
-        "达到 2 格时释放时序之力，自身移动与攻击速度提高 30%，对手降低 30%，持续 5 秒。",
+        "普攻命中积累 1 格时序能量；每轮能量首次达到第 1 格时，永久增加 0.5 格普攻半径与 20 点普攻伤害。",
+        "达到 2 格时回到 1 秒前的位置，并将生命值恢复为 1 秒前的数值。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
-        "其他团子进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击。",
+        "其他团子及白咩、水母、芽/藤等召唤物进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 15 秒内不会再次受到任何乱流影响。",
         "场上最多同时存在 3 个时间乱流。",
-        "共鸣能量满后可释放时序停界，冻结全图 5 秒；期间只有漂泊者可以移动与攻击。",
+        "共鸣能量满后可释放时序停界，基础冻结 5 秒。若场上存在时间乱流则全部吸收，每个额外延长 3 秒。",
+        "冻结期间只有漂泊者可以移动与攻击，普攻不会增加时序能量；自身每 1 秒随机瞬移并以随机方向移动，穿越其他单位时不会发生碰撞。",
         "时序停界冷却 15 秒。"
       ]
     },
@@ -645,7 +644,7 @@
         "镰刀形态移速提升至 10 格/秒。",
         "镰刀横扫半径 3 格，造成 50 点伤害，冷却 1 秒。",
         "镰刀形态每秒消耗 10 暗涌；生命高于 200 时每秒额外损失 50 生命，生命降至 200 或以下后停止扣血。",
-        "触碰地图边缘后自动追踪敌人，命中一次后恢复原来的直线移动方向。",
+        "触碰地图边缘后进入追击状态，每 1.2 秒重新调整一次行动方向追击敌方单位；命中一次后恢复原来的直线移动方向。",
         "形态内造成伤害时恢复伤害量 50% 的生命值，大招伤害同样生效。",
         "共鸣能量满且处于镰刀形态时，索敌最近敌人；敌人进入半径 5 格后自动释放湮灭万律。",
         "湮灭万律以该敌人为中心造成半径 5 格的 300 点特殊伤害，自身不会位移。",
@@ -665,8 +664,8 @@
         "每刀消耗 50 风息并造成 50 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
         "首场倒计时结束后直接开启一次共鸣解放；后续冷却 40 秒，完成两次风息斩击解锁后自动开启 15 秒。",
         "大招期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的独立飞剑。",
-        "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 60 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
-        "大招期间普攻突刺方向改为相对最近敌人方向左转 90°。大招结束后恢复风息获取，飞剑攻击移除。"
+        "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 80 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
+        "大招期间普攻改为朝距离自身最远的墙边突刺。大招结束后恢复风息获取，飞剑攻击移除。"
       ]
     },
     "03": {
@@ -750,7 +749,7 @@
         "生命 900、移动速度 6 格/秒。",
         "初始普攻冷却 2 秒，以自身为中心对半径 2.5 格内所有敌人进行 360° 圆形横扫，造成 5 点伤害。",
         "普攻每次成功命中获得 1 格龙刃层数，最多显示 4 格；逐光定界释放时清空层数。",
-        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.65 秒前摇并造成 65 点伤害。",
+        "成功命中 4 次后切换为强化普攻：索敌半径 6 格，身边出现三条错速环绕金龙，每次弧形斩击有 0.8 秒前摇并造成 65 点伤害。",
         "强化普攻成功命中 4 次后解锁大招，并直接进入可使用状态。",
         "每次切换普攻形态时解锁技能；自身停滞 1 秒，在最近敌人脚下生成半径 6 格光圈，恢复移动。",
         "1.5 秒后光柱覆盖光圈，造成 100 点特殊伤害并眩晕 2 秒，随后技能重新锁定。",
@@ -1131,6 +1130,10 @@
       knifeCount: 0,
       knifeAngle: 0,
       knifeHitLocks: [],
+      wandererDamageBonus: 0,
+      wandererRangeBonus: 0,
+      wandererHistoryClock: 0,
+      wandererHistory: [],
       timeForceTimer: 0,
       timeSlowTimer: 0,
       abyssForm: false,
@@ -1139,6 +1142,7 @@
       abyssHoming: false,
       abyssSavedVx: 0,
       abyssSavedVy: 0,
+      abyssRetargetClock: 0,
       abyssScytheSwing: 0,
       aeroWind: 0,
       aeroBasicUnlockTimer: 0,
@@ -1166,6 +1170,8 @@
       vortexLockTimer: 0,
       vortexLockId: null,
       vortexImmunity: new Map(),
+      vortexImmunityTimer: 0,
+      timeStopTeleportClock: 0,
       trail: [],
       trailClock: 0,
       aiClock: 0,
@@ -2126,16 +2132,18 @@
       timeStopTimer = 0;
       return;
     }
-    const frozenFighters = getActiveFighters().filter((fighter) => fighter !== caster && fighter.hp > 0);
     const target = nearestOpponent(caster);
     timeStopTimer = Math.max(0, timeStopTimer - dt);
     addResonanceEnergy(caster, 3 * dt);
-    updateFighter(caster, target, dt, caster === player);
+    updateFighter(caster, target, dt, false);
     updateStatuses(caster, dt);
+    caster.timeStopTeleportClock = Math.max(0, caster.timeStopTeleportClock - dt);
+    if (caster.timeStopTeleportClock === 0 && timeStopTimer > 0) {
+      teleportTimeStopCaster(caster);
+    }
     if (voicePauseActive) return;
     if (target) {
       updateWandererCombatState(caster, target, dt);
-      frozenFighters.forEach((fighter) => keepCasterOutsideFrozenTarget(caster, fighter));
       updateCombatSingle(caster, target, dt);
     }
     updateTrails(dt);
@@ -2147,9 +2155,25 @@
       addLog("时序停界结束，全图时间恢复流动。", "ability");
       announce("时间恢复流动", "#9ddfe5", 1);
       timeStopOwner = null;
+      caster.timeStopTeleportClock = 0;
       playSound("timeEnd");
     }
     updateHud();
+  }
+
+  function teleportTimeStopCaster(caster) {
+    const previousX = caster.x;
+    const previousY = caster.y;
+    caster.x = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
+    caster.y = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
+    const angle = random(0, Math.PI * 2);
+    const speed = getEffectiveMoveSpeed(caster);
+    caster.vx = Math.cos(angle) * speed;
+    caster.vy = Math.sin(angle) * speed;
+    caster.timeStopTeleportClock = 1;
+    effects.push({ type: "ring", x: previousX, y: previousY, radius: 8, growth: 520, life: 0.45, maxLife: 0.45, color: "#ffe58f", width: 6 });
+    effects.push({ type: "ring", x: caster.x, y: caster.y, radius: 8, growth: 520, life: 0.45, maxLife: 0.45, color: "#fff5c0", width: 6 });
+    spawnBurst(caster.x, caster.y, "#ffe58f", 22, 220);
   }
 
   function keepCasterOutsideFrozenTarget(caster, frozen) {
@@ -2267,10 +2291,14 @@
     if (fighter.freeze > 0 || fighter.stunned > 0) return;
 
     if (fighter.template.id === "02" && fighter.abyssForm && fighter.abyssHoming && opponent) {
-      const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
-      const speed = getEffectiveMoveSpeed(fighter);
-      fighter.vx = Math.cos(angle) * speed;
-      fighter.vy = Math.sin(angle) * speed;
+      fighter.abyssRetargetClock = Math.max(0, fighter.abyssRetargetClock - dt);
+      if (fighter.abyssRetargetClock === 0) {
+        const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+        const speed = getEffectiveMoveSpeed(fighter);
+        fighter.vx = Math.cos(angle) * speed;
+        fighter.vy = Math.sin(angle) * speed;
+        fighter.abyssRetargetClock = 1.2;
+      }
     }
     if (fighter.template.id === "04") {
       const facingTarget = nearestOpponent(fighter) || opponent;
@@ -2362,6 +2390,7 @@
     fighter.timeSlowTimer = Math.max(0, fighter.timeSlowTimer - dt);
     fighter.verinaSlowTimer = Math.max(0, fighter.verinaSlowTimer - dt);
     fighter.blackSlamClock = Math.max(0, fighter.blackSlamClock - dt);
+    updateWandererHistory(fighter, dt);
     if (fighter.cantarellaMirageTimer > 0) {
       fighter.cantarellaMirageTimer = Math.max(0, fighter.cantarellaMirageTimer - dt);
       if (fighter.cantarellaMirageTimer === 0) finishCantarellaMirage(fighter);
@@ -2952,7 +2981,7 @@
     const target = nearestOpponent(fighter);
     if (!target) return;
     const targetAngle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-    const angle = fighter.aeroUltimateTimer > 0 ? targetAngle - Math.PI / 2 : targetAngle;
+    const angle = fighter.aeroUltimateTimer > 0 ? getFarthestAeroWallAngle(fighter) : targetAngle;
     fighter.aeroDashAngle = angle;
     fighter.aeroDashSpeed = fighter.template.aeroSkillSpeed * CELL_SIZE;
     fighter.aeroDashDuration = fighter.template.aeroSkillDistance / fighter.template.aeroSkillSpeed;
@@ -2972,6 +3001,21 @@
     });
     announce(`${fighter.template.name} · 风迹突刺`, fighter.template.color, 0.75);
     playSound("blade");
+  }
+
+  function getFarthestAeroWallAngle(fighter) {
+    const minX = BOUNDARY + fighter.r;
+    const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
+    const minY = BOUNDARY + fighter.r;
+    const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
+    return [
+      { distance: fighter.x - minX, angle: Math.PI },
+      { distance: maxX - fighter.x, angle: 0 },
+      { distance: fighter.y - minY, angle: -Math.PI / 2 },
+      { distance: maxY - fighter.y, angle: Math.PI / 2 }
+    ].reduce((farthest, wall) => (
+      wall.distance > farthest.distance ? wall : farthest
+    )).angle;
   }
 
   function findAeroDashContact(fighter, startX, startY, endX, endY) {
@@ -3273,9 +3317,10 @@
   }
 
   function updateTimeVortices(dt) {
-    getActiveFighters().forEach((fighter) => {
-      if (fighter.hp <= 0 || fighter.jinhsiAirborne) return;
-      for (const [vortexId, remaining] of fighter.vortexImmunity.entries()) {
+    const targets = getTimeVortexTargets();
+    targets.forEach((fighter) => {
+      fighter.vortexImmunityTimer = Math.max(0, (fighter.vortexImmunityTimer || 0) - dt);
+      for (const [vortexId, remaining] of (fighter.vortexImmunity || new Map()).entries()) {
         const next = remaining - dt;
         if (next <= 0) fighter.vortexImmunity.delete(vortexId);
         else fighter.vortexImmunity.set(vortexId, next);
@@ -3294,30 +3339,41 @@
       const vortex = timeVortices[i];
       vortex.life -= dt;
       if (vortex.life > 0) continue;
-      getActiveFighters().forEach((fighter) => {
+      targets.forEach((fighter) => {
         if (fighter.vortexLockId === vortex.id) {
           fighter.vortexLockId = null;
           fighter.vortexLockTimer = 0;
-          fighter.vortexImmunity.delete(vortex.id);
+          fighter.vortexImmunityTimer = 15;
+          fighter.vortexImmunity.set(vortex.id, 15);
         }
       });
       timeVortices.splice(i, 1);
     }
 
-    getActiveFighters().forEach((fighter) => {
+    targets.forEach((fighter) => {
       if (fighter.vortexLockId) return;
       const entered = timeVortices.find((vortex) => (
         vortex.owner !== fighter
-        && !(fighter.vortexImmunity.get(vortex.id) > 0)
+        && !(fighter.vortexImmunityTimer > 0)
         && Math.hypot(fighter.x - vortex.x, fighter.y - vortex.y) <= vortex.radius
       ));
       if (entered) {
         fighter.vortexLockId = entered.id;
         fighter.vortexLockTimer = entered.life;
-        announce(`${fighter.template.name} 被时间乱流定格`, "#ffd76b", 0.8);
-        addLog(`${fighter.template.name} 进入时间乱流，暂时停止行动。`, "ability");
+        const unitName = fighter.template?.name || fighter.displayName || "召唤物";
+        announce(`${unitName} 被时间乱流定格`, "#ffd76b", 0.8);
+        addLog(`${unitName} 进入时间乱流，暂时停止行动。`, "ability");
       }
     });
+  }
+
+  function getTimeVortexTargets() {
+    return [
+      ...getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne),
+      ...summonUnits.filter((unit) => unit.owner?.hp > 0),
+      ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0),
+      ...verinaPlants.filter((plant) => plant.owner?.hp > 0)
+    ];
   }
 
   function addShield(fighter, amount, color = "#9bdc82") {
@@ -3680,11 +3736,12 @@
     }
     if (timeVortices.length >= 3) {
       const removed = timeVortices.shift();
-      getActiveFighters().forEach((fighter) => {
+      getTimeVortexTargets().forEach((fighter) => {
         if (fighter.vortexLockId === removed.id) {
           fighter.vortexLockId = null;
           fighter.vortexLockTimer = 0;
-          fighter.vortexImmunity.delete(removed.id);
+          fighter.vortexImmunityTimer = 15;
+          fighter.vortexImmunity.set(removed.id, 15);
         }
       });
     }
@@ -3709,8 +3766,9 @@
     target.vortexLockId = null;
     target.vortexLockTimer = 0;
     if (attacked) {
-      target.vortexImmunity.set(vortexId, 3);
-      announce(`${target.template.name} 脱离时间乱流`, "#ffe49a", 0.7);
+      target.vortexImmunityTimer = 15;
+      target.vortexImmunity.set(vortexId, 15);
+      announce(`${target.template?.name || "单位"} 脱离时间乱流`, "#ffe49a", 0.7);
     }
   }
 
@@ -3739,18 +3797,64 @@
     playSound("blade");
   }
 
+  function updateWandererHistory(fighter, dt) {
+    if (fighter.template.id !== "01" || fighter.hp <= 0) return;
+    fighter.wandererHistoryClock += dt;
+    const last = fighter.wandererHistory[fighter.wandererHistory.length - 1];
+    if (!last || fighter.wandererHistoryClock - last.clock >= 0.05) {
+      fighter.wandererHistory.push({
+        clock: fighter.wandererHistoryClock,
+        x: fighter.x,
+        y: fighter.y,
+        hp: fighter.hp
+      });
+    }
+    fighter.wandererHistory = fighter.wandererHistory.filter((snapshot) => (
+      fighter.wandererHistoryClock - snapshot.clock <= 1.5
+    ));
+  }
+
+  function rewindWandererOneSecond(fighter) {
+    let snapshot = fighter.wandererHistory[0] || null;
+    for (let index = fighter.wandererHistory.length - 1; index >= 0; index -= 1) {
+      const candidate = fighter.wandererHistory[index];
+      if (fighter.wandererHistoryClock - candidate.clock >= 1) {
+        snapshot = candidate;
+        break;
+      }
+    }
+    if (!snapshot) return;
+    const oldX = fighter.x;
+    const oldY = fighter.y;
+    fighter.x = clamp(snapshot.x, BOUNDARY + fighter.r, ARENA_SIZE - BOUNDARY - fighter.r);
+    fighter.y = clamp(snapshot.y, BOUNDARY + fighter.r, ARENA_SIZE - BOUNDARY - fighter.r);
+    fighter.hp = clamp(snapshot.hp, 1, fighter.maxHp);
+    fighter.knockback = null;
+    fighter.flash = Math.max(fighter.flash, 0.8);
+    effects.push({ type: "ring", x: oldX, y: oldY, radius: 9, growth: 520, life: 0.55, maxLife: 0.55, color: "#ffe5a0", width: 7 });
+    effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 9, growth: 680, life: 0.65, maxLife: 0.65, color: "#fff6cc", width: 9 });
+    spawnBurst(fighter.x, fighter.y, "#ffe9a8", 34, 260);
+    announce(`${fighter.template.name} · 时序回溯`, "#ffe5a0", 1.1);
+    addLog(`${fighter.template.name} 回到 1 秒前的位置并恢复至当时的生命值。`, "ability");
+    playSound("timeStop");
+  }
+
   function gainWandererSpecialEnergy(fighter, opponent) {
+    if (timeStopOwner === fighter) return;
     const previous = fighter.specialEnergy;
     fighter.specialEnergy = Math.min(3, fighter.specialEnergy + 1);
-    if (previous < 1 && fighter.specialEnergy >= 1) addWandererKnife(fighter, opponent);
+    if (previous < 1 && fighter.specialEnergy >= 1) {
+      fighter.wandererRangeBonus += 0.5;
+      fighter.wandererDamageBonus += 20;
+      effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 8, growth: 420, life: 0.48, maxLife: 0.48, color: "#ffd76b", width: 5 });
+      spawnBurst(fighter.x, fighter.y, "#ffe7a0", 20, 190);
+      spawnDamageText(fighter.x, fighter.y - fighter.r, "普攻强化", "#ffd76b", true);
+      announce(`${fighter.template.name} · 时序强化`, "#ffd76b", 0.9);
+      addLog(`${fighter.template.name} 永久提升 0.5 格普攻范围与 20 点普攻伤害。`, "ability");
+      playSound("blade");
+    }
     if (previous < 2 && fighter.specialEnergy >= 2) {
-      fighter.timeForceTimer = 5;
-      opponent.timeSlowTimer = 5;
-      effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 10, growth: 660, life: 0.65, maxLife: 0.65, color: "#ffd76b", width: 9 });
-      spawnBurst(fighter.x, fighter.y, "#ffe7a0", 30, 240);
-      announce(`${fighter.template.name} · 时序之力`, "#ffd76b", 1.1);
-      addLog(`${fighter.template.name} 加速自身 30%，减缓对手 30%。`, "ability");
-      playSound("lightning");
+      rewindWandererOneSecond(fighter);
     }
     if (previous < 3 && fighter.specialEnergy >= 3) {
       fighter.specialEnergy = 0;
@@ -3794,6 +3898,7 @@
   function restoreAbyssTrajectory(fighter) {
     if (!fighter.abyssHoming) return;
     fighter.abyssHoming = false;
+    fighter.abyssRetargetClock = 0;
     const savedSpeed = Math.hypot(fighter.abyssSavedVx, fighter.abyssSavedVy);
     if (savedSpeed > 0.01) {
       const speed = getEffectiveMoveSpeed(fighter);
@@ -3803,10 +3908,13 @@
   }
 
   function activateAbyssHoming(fighter) {
-    if (!fighter.abyssForm || fighter.abyssHoming) return;
-    fighter.abyssHoming = true;
-    fighter.abyssSavedVx = fighter.vx;
-    fighter.abyssSavedVy = fighter.vy;
+    if (!fighter.abyssForm) return;
+    if (!fighter.abyssHoming) {
+      fighter.abyssHoming = true;
+      fighter.abyssSavedVx = fighter.vx;
+      fighter.abyssSavedVy = fighter.vy;
+    }
+    fighter.abyssRetargetClock = 0;
   }
 
   function healAbyssDamage(fighter, damage) {
@@ -3840,6 +3948,7 @@
 
   function updateSummons(dt) {
     summonUnits.forEach((unit) => {
+      if (unit.vortexLockTimer > 0) return;
       unit.fireClock -= dt;
       unit.x += unit.vx * dt;
       unit.y += unit.vy * dt;
@@ -3922,7 +4031,12 @@
       displayClock: 0,
       atCenter,
       isVine: false,
-      phase: random(0, Math.PI * 2)
+      phase: random(0, Math.PI * 2),
+      displayName: "芽",
+      vortexLockTimer: 0,
+      vortexLockId: null,
+      vortexImmunity: new Map(),
+      vortexImmunityTimer: 0
     };
     verinaPlants.push(plant);
     effects.push({
@@ -3950,6 +4064,7 @@
     const centerPlant = verinaPlants.find((plant) => plant.owner === owner && plant.atCenter && !plant.isVine);
     if (!centerPlant) return;
     centerPlant.isVine = true;
+    centerPlant.displayName = "藤";
     centerPlant.tickClock = owner.template.vineTickInterval;
     effects.push({
       type: "vineBloom",
@@ -3979,6 +4094,7 @@
         verinaPlants.splice(i, 1);
         continue;
       }
+      if (plant.vortexLockTimer > 0) continue;
       plant.displayClock += dt;
       plant.tickClock -= dt;
       if (plant.tickClock > 0 || state !== "playing") continue;
@@ -4282,6 +4398,9 @@
       freeze: 0,
       paralyzed: 0,
       vortexLockTimer: 0,
+      vortexLockId: null,
+      vortexImmunity: new Map(),
+      vortexImmunityTimer: 0,
       knockback: null,
       cantarellaSlowTimer: activeMirage?.cantarellaMirageTimer || 0,
       cantarellaDreamed: Boolean(activeMirage && activeMirage.side !== owner.side),
@@ -4367,6 +4486,7 @@
         cantarellaJellies.splice(i, 1);
         continue;
       }
+      if (unit.vortexLockTimer > 0) continue;
       unit.flash = Math.max(0, unit.flash - dt * 5);
       unit.stunned = Math.max(0, unit.stunned - dt);
       unit.freeze = Math.max(0, unit.freeze - dt);
@@ -4417,7 +4537,7 @@
   function resolveCantarellaJellyCollisions() {
     const fighters = getActiveFighters().filter((fighter) => fighter.hp > 0);
     cantarellaJellies.forEach((unit) => {
-      if (!unit.owner || unit.owner.hp <= 0 || unit.hp <= 0) return;
+      if (!unit.owner || unit.owner.hp <= 0 || unit.hp <= 0 || unit.vortexLockTimer > 0) return;
       fighters.forEach((fighter) => {
         const dx = unit.x - fighter.x;
         const dy = unit.y - fighter.y;
@@ -4430,10 +4550,10 @@
     });
     for (let i = 0; i < cantarellaJellies.length; i += 1) {
       const first = cantarellaJellies[i];
-      if (first.hp <= 0) continue;
+      if (first.hp <= 0 || first.vortexLockTimer > 0) continue;
       for (let j = i + 1; j < cantarellaJellies.length; j += 1) {
         const second = cantarellaJellies[j];
-        if (second.hp <= 0) continue;
+        if (second.hp <= 0 || second.vortexLockTimer > 0) continue;
         const dx = second.x - first.x;
         const dy = second.y - first.y;
         const dist = Math.hypot(dx, dy) || 0.001;
@@ -5021,7 +5141,16 @@
       vy: Math.sin(angle + Math.PI * 0.48) * speed,
       speed,
       fireClock: owner.template.summonInterval,
-      phase: random(0, Math.PI * 2)
+      phase: random(0, Math.PI * 2),
+      vortexLockTimer: 0,
+      vortexLockId: null,
+      vortexImmunity: new Map(),
+      vortexImmunityTimer: 0,
+      template: {
+        name: "白咩",
+        color: "#f3e5ef",
+        dark: "#8c617a"
+      }
     });
   }
 
@@ -5139,6 +5268,9 @@
   }
 
   function getAttackRangeCells(fighter) {
+    if (fighter.template.id === "01") {
+      return fighter.template.attackRange + fighter.wandererRangeBonus;
+    }
     if (fighter.template.id === "07") {
       return fighter.jinhsiEmpowered ? fighter.template.jinhsiEmpoweredRange : fighter.template.attackRange;
     }
@@ -5300,18 +5432,21 @@
   function performThrust(fighter, opponent) {
     playAttackVoice(fighter);
     const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    const rangeCells = getAttackRangeCells(fighter);
+    const damage = fighter.template.attackDamage
+      + (fighter.template.id === "01" ? fighter.wandererDamageBonus : 0);
     fighter.thrustTime = 0.34;
     fighter.thrustAngle = angle;
     effects.push({
       type: "thrust",
       fighter,
       angle,
-      range: fighter.template.attackRange * CELL_SIZE,
+      range: rangeCells * CELL_SIZE,
       life: 0.34,
       maxLife: 0.34,
       color: fighter.template.color
     });
-    const dealt = applyDamage(opponent, fighter.template.attackDamage, fighter, "前刺", {
+    const dealt = applyDamage(opponent, damage, fighter, "前刺", {
       color: fighter.template.color
     }) || 0;
     releaseVortexLock(opponent, true);
@@ -5325,7 +5460,7 @@
       16,
       210
     );
-    addLog(`${fighter.template.name} 使用武器前刺，造成 ${fighter.template.attackDamage} 点伤害。`, "ability");
+    addLog(`${fighter.template.name} 使用武器前刺，造成 ${damage} 点伤害。`, "ability");
     playSound("thrust");
   }
 
@@ -5754,10 +5889,41 @@
     } else if (isJinhsiUltimate) {
       beginJinhsiUltimate(fighter, opponent);
     } else if (fighter.template.ultimateType === "timeStop") {
+      const absorbedVortices = timeVortices.length;
+      const vortexTargets = getTimeVortexTargets();
+      timeVortices.forEach((vortex) => {
+        effects.push({
+          type: "ring",
+          x: vortex.x,
+          y: vortex.y,
+          radius: 12,
+          growth: 520,
+          life: 0.55,
+          maxLife: 0.55,
+          color: "#ffe48d",
+          width: 7
+        });
+        spawnBurst(vortex.x, vortex.y, "#ffe9a0", 22, 230);
+      });
+      vortexTargets.forEach((target) => {
+        if (target.vortexLockId) {
+          target.vortexLockId = null;
+          target.vortexLockTimer = 0;
+          target.vortexImmunityTimer = 15;
+        }
+      });
+      timeVortices = [];
       timeStopOwner = fighter;
-      timeStopTimer = fighter.template.ultimateDuration;
+      timeStopTimer = fighter.template.ultimateDuration + absorbedVortices * 3;
+      fighter.timeStopTeleportClock = 1;
       effects.push({ type: "timeFlash", x: fighter.x, y: fighter.y, life: 0.8, maxLife: 0.8, color: "#ffd76b" });
       spawnBurst(fighter.x, fighter.y, "#ffe89c", 32, 300);
+      addLog(
+        absorbedVortices > 0
+          ? `${fighter.template.name} 吸收 ${absorbedVortices} 个时间乱流，时序停界延长至 ${timeStopTimer} 秒。`
+          : `${fighter.template.name} 开启时序停界，持续 ${timeStopTimer} 秒。`,
+        "ability"
+      );
       playSound("timeStop");
     } else if (fighter.template.ultimateType === "overclock") {
       fighter.overclock = fighter.template.overclockDuration;
@@ -5860,6 +6026,8 @@
       source.cantarellaMirageDamageDealt = true;
     }
     target.hp = Math.max(0, target.hp - finalAmount);
+    // Shield absorption still counts as a landed hit for energy and on-hit effects.
+    const totalEffectiveDamage = absorbed + finalAmount;
     target.flash = options.noText ? Math.max(target.flash, 0.16) : (finalAmount > 0 ? 1 : 0.45);
     if (target.template.id === "02" && !target.abyssForm && !options.selfDrain) gainAbyssEnergy(target, 20);
     if (source?.template.id === "04" && options.brantAttack) {
@@ -5905,7 +6073,7 @@
     if (target.hp <= 0 && state === "playing") {
       if (target.isJellyfish) {
         defeatCantarellaJelly(target);
-        return finalAmount;
+        return totalEffectiveDamage;
       }
       if (mode === "multi") {
         target.vx = 0;
@@ -5919,7 +6087,7 @@
         finishRound(target.side === 0 ? 1 : 0, "KO");
       }
     }
-    return finalAmount;
+    return totalEffectiveDamage;
   }
 
   function applySpecialDamage(target, amount, source, label, options = {}) {
@@ -6697,6 +6865,8 @@
           : "两次风息斩击完成 · 共鸣解放就绪";
       } else if (player.template.id === "08") {
         dom.battleStatus.textContent = `风息 ${Math.round(player.aeroWind)}/100`;
+      } else if (player.template.id === "01") {
+        dom.battleStatus.textContent = `时序 ${Math.round(player.specialEnergy)}/3 · 普攻范围 +${player.wandererRangeBonus.toFixed(1)} · 伤害 +${player.wandererDamageBonus}`;
       } else if (player.timeForceTimer > 0) {
         dom.battleStatus.textContent = `时序加速 ${player.timeForceTimer.toFixed(1)}s`;
       } else if (player.horned) {
@@ -6887,7 +7057,9 @@
       return `死告 ${Math.round(fighter.specialEnergy)}/3${fighter.overclock > 0 ? ` · 超频 ${fighter.overclock.toFixed(1)}s` : ""}`;
     }
     if (id === "anko-test") return `形态 ${fighter.horned ? "羊角" : "常态"} · 黑咩${fighter.horned ? "就绪" : "待命"}`;
-    if (id === "01") return `时序 ${Math.round(fighter.specialEnergy)}/3 · 飞刃 ×${fighter.knifeCount}`;
+    if (id === "01") {
+      return `时序 ${Math.round(fighter.specialEnergy)}/3 · 范围 +${fighter.wandererRangeBonus.toFixed(1)} · 伤害 +${fighter.wandererDamageBonus}`;
+    }
     if (id === "02") return `暗涌 ${Math.round(fighter.abyssEnergy)}/100${fighter.abyssForm ? " · 镰刀人" : ""}`;
     if (id === "03") {
       const field = windFields.find((item) => item.owner === fighter);
@@ -7273,6 +7445,10 @@
   }
 
   function drawArena(paint = ctx) {
+    if (ARENA_THEME === "duel") {
+      drawDuelArena(paint);
+      return;
+    }
     const { background, glow, border: borderGradient } = createArenaGradients(paint);
     paint.fillStyle = background;
     paint.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
@@ -7321,6 +7497,206 @@
     drawCornerMark(ARENA_SIZE - BOUNDARY - 16, BOUNDARY + 16, -1, 1, "#5ce8e5", paint);
     drawCornerMark(BOUNDARY + 16, ARENA_SIZE - BOUNDARY - 16, 1, -1, "#5ce8e5", paint);
     drawCornerMark(ARENA_SIZE - BOUNDARY - 16, ARENA_SIZE - BOUNDARY - 16, -1, -1, "#ffd84d", paint);
+  }
+
+  function drawDuelArena(paint) {
+    const center = ARENA_SIZE / 2;
+    const min = BOUNDARY;
+    const max = ARENA_SIZE - BOUNDARY;
+    const interior = max - min;
+    paint.save();
+    const backdrop = paint.createRadialGradient(center, center - 24, 60, center, center, ARENA_SIZE * 0.72);
+    backdrop.addColorStop(0, "#201c16");
+    backdrop.addColorStop(0.58, "#111116");
+    backdrop.addColorStop(1, "#080a10");
+    paint.fillStyle = backdrop;
+    paint.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+
+    paint.save();
+    paint.beginPath();
+    paint.rect(min, min, interior, interior);
+    paint.clip();
+
+    const stoneBase = paint.createRadialGradient(center, center - 30, 30, center, center, interior * 0.66);
+    stoneBase.addColorStop(0, "#d5bc83");
+    stoneBase.addColorStop(0.54, "#aa8c5d");
+    stoneBase.addColorStop(0.78, "#5c4b36");
+    stoneBase.addColorStop(1, "#1d2029");
+    paint.fillStyle = stoneBase;
+    paint.fillRect(min, min, interior, interior);
+
+    for (let ring = 0; ring < 13; ring += 1) {
+      const radius = 306 - ring * 12;
+      paint.strokeStyle = ring % 2 ? "rgba(228,205,151,0.25)" : "rgba(65,50,38,0.48)";
+      paint.lineWidth = ring % 2 ? 2.2 : 5.5;
+      paint.beginPath();
+      paint.arc(center, center, radius, 0, Math.PI * 2);
+      paint.stroke();
+    }
+
+    paint.save();
+    paint.globalCompositeOperation = "lighter";
+    const arenaGlow = paint.createRadialGradient(center, center, 80, center, center, 292);
+    arenaGlow.addColorStop(0, "rgba(255,230,160,0.2)");
+    arenaGlow.addColorStop(0.58, "rgba(196,139,102,0.07)");
+    arenaGlow.addColorStop(1, "rgba(104,82,160,0.03)");
+    paint.fillStyle = arenaGlow;
+    paint.beginPath();
+    paint.arc(center, center, 300, 0, Math.PI * 2);
+    paint.fill();
+    paint.restore();
+
+    const pathAngles = [Math.PI / 2, Math.PI, Math.PI * 3 / 2, 0];
+    pathAngles.forEach((angle, index) => {
+      paint.save();
+      paint.translate(center, center);
+      paint.rotate(angle);
+      paint.fillStyle = index % 2
+        ? "rgba(216,171,100,0.22)"
+        : "rgba(102,222,228,0.13)";
+      paint.beginPath();
+      paint.moveTo(92, -27);
+      paint.lineTo(294, -48);
+      paint.lineTo(294, 48);
+      paint.lineTo(92, 27);
+      paint.closePath();
+      paint.fill();
+      paint.strokeStyle = index % 2 ? "rgba(255,128,211,0.56)" : "rgba(106,237,239,0.6)";
+      paint.lineWidth = 2.2;
+      paint.shadowColor = paint.strokeStyle;
+      paint.shadowBlur = 13;
+      paint.beginPath();
+      paint.moveTo(100, -22);
+      paint.lineTo(292, -42);
+      paint.moveTo(100, 22);
+      paint.lineTo(292, 42);
+      paint.stroke();
+      paint.shadowBlur = 0;
+      paint.restore();
+    });
+
+    const outerRail = paint.createLinearGradient(center - 284, center, center + 284, center);
+    outerRail.addColorStop(0, "rgba(89,229,237,0.78)");
+    outerRail.addColorStop(0.48, "rgba(238,219,169,0.3)");
+    outerRail.addColorStop(1, "rgba(255,109,203,0.76)");
+    paint.strokeStyle = outerRail;
+    paint.lineWidth = 4;
+    paint.shadowColor = "#d5e8ff";
+    paint.shadowBlur = 16;
+    paint.beginPath();
+    paint.arc(center, center, 272, 0, Math.PI * 2);
+    paint.stroke();
+    paint.shadowBlur = 0;
+
+    const floor = paint.createRadialGradient(center - 36, center - 44, 12, center, center, 208);
+    floor.addColorStop(0, "#ead6a1");
+    floor.addColorStop(0.54, "#c9ad75");
+    floor.addColorStop(1, "#8e7350");
+    paint.fillStyle = floor;
+    paint.beginPath();
+    paint.arc(center, center, 207, 0, Math.PI * 2);
+    paint.fill();
+    paint.strokeStyle = "rgba(255,245,207,0.52)";
+    paint.lineWidth = 2;
+    paint.beginPath();
+    paint.arc(center, center, 203, 0, Math.PI * 2);
+    paint.stroke();
+
+    paint.save();
+    paint.translate(center, center);
+    paint.strokeStyle = "rgba(108,76,33,0.55)";
+    paint.lineWidth = 2;
+    for (let ray = 0; ray < 16; ray += 1) {
+      const angle = ray / 16 * Math.PI * 2;
+      const inner = ray % 2 ? 54 : 72;
+      const outer = 172;
+      paint.beginPath();
+      paint.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+      paint.lineTo(Math.cos(angle + 0.09) * outer, Math.sin(angle + 0.09) * outer);
+      paint.lineTo(Math.cos(angle - 0.09) * outer, Math.sin(angle - 0.09) * outer);
+      paint.closePath();
+      paint.stroke();
+    }
+    paint.strokeStyle = "rgba(107,78,40,0.72)";
+    paint.lineWidth = 3;
+    [72, 112, 146, 181].forEach((radius) => {
+      paint.beginPath();
+      paint.arc(0, 0, radius, 0, Math.PI * 2);
+      paint.stroke();
+    });
+    paint.fillStyle = "rgba(116,84,42,0.72)";
+    paint.beginPath();
+    paint.arc(0, 0, 52, 0, Math.PI * 2);
+    paint.fill();
+    paint.strokeStyle = "rgba(255,238,189,0.72)";
+    paint.lineWidth = 2;
+    paint.beginPath();
+    paint.arc(0, 0, 57, 0, Math.PI * 2);
+    paint.stroke();
+    paint.fillStyle = "rgba(91,50,126,0.9)";
+    paint.beginPath();
+    paint.arc(0, 0, 10, 0, Math.PI * 2);
+    paint.fill();
+    paint.restore();
+
+    for (let side = 0; side < 8; side += 1) {
+      const angle = side * Math.PI / 4 + Math.PI / 8;
+      paint.fillStyle = side % 2 ? "rgba(241,204,128,0.16)" : "rgba(110,209,215,0.1)";
+      paint.beginPath();
+      paint.ellipse(
+        center + Math.cos(angle) * 238,
+        center + Math.sin(angle) * 238,
+        38,
+        13,
+        angle + Math.PI / 2,
+        0,
+        Math.PI * 2
+      );
+      paint.fill();
+    }
+
+    paint.fillStyle = "rgba(9,10,16,0.7)";
+    paint.strokeStyle = "rgba(255,219,139,0.58)";
+    paint.lineWidth = 2;
+    paint.fillRect(center - 94, min + 10, 188, 24);
+    paint.strokeRect(center - 94, min + 10, 188, 24);
+    paint.fillStyle = "rgba(255,226,161,0.8)";
+    paint.font = "800 9px 'Microsoft YaHei'";
+    paint.textAlign = "center";
+    paint.textBaseline = "middle";
+    paint.fillText("20 × 20 星穹决斗场", center, min + 22);
+
+    paint.strokeStyle = "rgba(255,228,170,0.045)";
+    paint.lineWidth = 1;
+    for (let cell = 0; cell <= MAP_SIZE; cell += 1) {
+      const point = BOUNDARY + cell * CELL_SIZE;
+      const major = cell % 5 === 0;
+      paint.strokeStyle = major ? "rgba(255,235,190,0.09)" : "rgba(255,235,190,0.025)";
+      paint.beginPath();
+      paint.moveTo(point, min);
+      paint.lineTo(point, max);
+      paint.moveTo(min, point);
+      paint.lineTo(max, point);
+      paint.stroke();
+    }
+    paint.restore();
+
+    const frame = paint.createLinearGradient(min, min, max, max);
+    frame.addColorStop(0, "rgba(255,220,139,0.78)");
+    frame.addColorStop(0.32, "rgba(92,232,222,0.44)");
+    frame.addColorStop(0.68, "rgba(255,122,213,0.44)");
+    frame.addColorStop(1, "rgba(255,237,180,0.78)");
+    paint.strokeStyle = frame;
+    paint.lineWidth = 3;
+    paint.strokeRect(min, min, interior, interior);
+    paint.strokeStyle = "rgba(255,239,199,0.11)";
+    paint.lineWidth = 1;
+    paint.strokeRect(min + 7, min + 7, interior - 14, interior - 14);
+    drawCornerMark(min + 16, min + 16, 1, 1, "#ffd88a", paint);
+    drawCornerMark(max - 16, min + 16, -1, 1, "#6ce5e2", paint);
+    drawCornerMark(min + 16, max - 16, 1, -1, "#6ce5e2", paint);
+    drawCornerMark(max - 16, max - 16, -1, -1, "#ffd88a", paint);
+    paint.restore();
   }
 
   function drawCornerMark(x, y, sx, sy, color, paint = ctx) {
@@ -10219,11 +10595,18 @@
   }
 
   function setMapSize(value) {
-    const nextSize = Number(value) === 30 ? 30 : 20;
-    const needsRestart = state === "playing" || state === "countdown" || state === "roundEnd";
+    const selectedValue = String(value);
+    const nextSize = selectedValue === "30" ? 30 : 20;
+    const nextTheme = selectedValue === "duel20" ? "duel" : "grid";
+    const needsRestart = state === "playing"
+      || state === "countdown"
+      || state === "roundEnd"
+      || nextTheme !== ARENA_THEME
+      || nextSize !== MAP_SIZE;
+    ARENA_THEME = nextTheme;
     MAP_SIZE = nextSize;
     CELL_SIZE = (ARENA_SIZE - MAP_PADDING * 2) / MAP_SIZE;
-    dom.mapSelect.value = String(MAP_SIZE);
+    dom.mapSelect.value = selectedValue;
     resizeCanvas();
     if (needsRestart && player && enemy) {
       startMatch();
