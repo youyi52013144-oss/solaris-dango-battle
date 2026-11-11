@@ -1146,6 +1146,7 @@
       aeroSkillClock: 0,
       aeroSkillUnlocked: false,
       aeroUltimateTimer: 0,
+      aeroUltimateCooldown: 0,
       aeroSwordClock: 0,
       aeroEnhanced: false,
       aeroUltimateUnlocked: template.id === "08",
@@ -2881,6 +2882,7 @@
 
   function updateWandererAeroState(fighter, dt) {
     if (!fighter || fighter.template.id !== "08" || fighter.hp <= 0) return;
+    fighter.aeroUltimateCooldown = Math.max(0, fighter.aeroUltimateCooldown - dt);
     fighter.aeroSkillClock = Math.max(0, fighter.aeroSkillClock - dt);
     if (fighter.aeroBasicUnlockTimer > 0) {
       fighter.aeroBasicUnlockTimer = Math.max(0, fighter.aeroBasicUnlockTimer - dt);
@@ -5566,7 +5568,7 @@
     if (fighter.template.ultimateType === "aeroUnbound") {
       if (
         fighter.aeroUltimateUnlocked
-        && fighter.abilityCooldown <= 0
+        && fighter.aeroUltimateCooldown <= 0
         && fighter.aeroUltimateTimer <= 0
         && fighter.aeroPreLiftTimer <= 0
         && fighter.aeroAirTimer <= 0
@@ -5634,7 +5636,7 @@
     } else if (!isVerinaUltimate && fighter.energy < 100) {
       return;
     }
-    if (fighter.abilityCooldown > 0) return;
+    if (isAeroUltimate ? fighter.aeroUltimateCooldown > 0 : fighter.abilityCooldown > 0) return;
     if (fighter.template.ultimateType === "abyssBurst" && !fighter.abyssForm) return;
     if (
       fighter.template.ultimateType === "abyssBurst"
@@ -5720,6 +5722,7 @@
       startCantarellaMirage(fighter);
     } else if (isAeroUltimate) {
       fighter.aeroUltimateTimer = fighter.template.ultimateDuration;
+      fighter.aeroUltimateCooldown = fighter.template.ultimateCooldown;
       fighter.aeroSwordClock = 0;
       fighter.aeroEnhanced = true;
       fighter.aeroUltimateUnlocked = false;
@@ -6451,7 +6454,11 @@
         else if (fighter.template.id === "08" && fighter.aeroUltimateTimer > 0) status = `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`;
         else if (fighter.template.id === "08" && fighter.aeroSequenceActive) status = "双刃斩击";
         else if (fighter.template.id === "08" && fighter.aeroBasicUnlockTimer > 0) status = `技能解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
-        else if (fighter.template.id === "08" && fighter.aeroUltimateUnlocked) status = "共鸣解放就绪";
+        else if (fighter.template.id === "08" && fighter.aeroUltimateUnlocked) {
+          status = fighter.aeroUltimateCooldown > 0
+            ? `解放冷却 ${fighter.aeroUltimateCooldown.toFixed(1)}s`
+            : "共鸣解放就绪";
+        }
         else if (fighter.template.id === "08") status = `风息 ${Math.round(fighter.aeroWind)}/100`;
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
@@ -6621,7 +6628,10 @@
         : player.template.ultimateType === "aeroUnbound"
           ? aeroUnlocked
         : energy >= 100;
-    const ready = mode === "play" && energyReady && player.abilityCooldown <= 0 && ultimateAvailable && state === "playing" && !manualPaused;
+    const playerCooldownReady = player.template.ultimateType === "aeroUnbound"
+      ? player.aeroUltimateCooldown <= 0
+      : player.abilityCooldown <= 0;
+    const ready = mode === "play" && energyReady && playerCooldownReady && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
     dom.abilityButton.classList.toggle("is-ready", ready);
     if (state === "playing" && !voicePauseActive) {
@@ -6682,7 +6692,9 @@
       } else if (player.template.id === "08" && player.aeroBasicUnlockTimer > 0) {
         dom.battleStatus.textContent = `风息充盈 · ${player.aeroBasicUnlockTimer.toFixed(1)}s 后解锁技能`;
       } else if (player.template.id === "08" && player.aeroUltimateUnlocked) {
-        dom.battleStatus.textContent = "两次普攻完成 · 共鸣解放就绪";
+        dom.battleStatus.textContent = player.aeroUltimateCooldown > 0
+          ? `两次风息斩击完成 · 共鸣解放冷却 ${player.aeroUltimateCooldown.toFixed(1)}s`
+          : "两次风息斩击完成 · 共鸣解放就绪";
       } else if (player.template.id === "08") {
         dom.battleStatus.textContent = `风息 ${Math.round(player.aeroWind)}/100`;
       } else if (player.timeForceTimer > 0) {
@@ -6907,7 +6919,9 @@
         : fighter.aeroBasicUnlockTimer > 0
             ? `技能解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`
             : fighter.aeroUltimateUnlocked
-              ? "共鸣解放就绪"
+              ? fighter.aeroUltimateCooldown > 0
+                ? `解放冷却 ${fighter.aeroUltimateCooldown.toFixed(1)}s`
+                : "共鸣解放就绪"
               : "风息积攒";
       return `风息 ${Math.round(fighter.aeroWind)}/100 · ${modeText}`;
     }
