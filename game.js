@@ -97,7 +97,7 @@
     {
       id: "01",
       voiceOrder: 3,
-      name: "漂泊者团子",
+      name: "漂泊者·衍射团子",
       element: "衍射 · 时序型",
       tagline: "一刃刺穿时间。",
       color: "#ffd66b",
@@ -130,7 +130,7 @@
     {
       id: "02",
       voiceOrder: 4,
-      name: "漂泊者（湮灭）",
+      name: "漂泊者·湮灭团子",
       element: "暗 · 双形态",
       tagline: "暗涌苏醒，万律俱灭。",
       color: "#a868ff",
@@ -172,7 +172,7 @@
     {
       id: "08",
       voiceOrder: 10,
-      name: "漂泊者·气动",
+      name: "漂泊者·气动团子",
       element: "气动 · 风息型",
       tagline: "双刃破风，无相而行。",
       color: "#72efb5",
@@ -194,7 +194,7 @@
       aeroWindMax: 100,
       aeroWindAttackCost: 50,
       aeroWindUnlockDelay: 2,
-      aeroAirDuration: 0.72,
+      aeroAirDuration: 1.42,
       aeroSkillCooldown: 5,
       aeroSkillSpeed: 20,
       aeroSkillDistance: 20,
@@ -202,7 +202,7 @@
       aeroSkillDamage: 15,
       aeroSkillWindGain: 50,
       aeroSwordCooldown: 2,
-      aeroSwordSpeed: 15,
+      aeroSwordSpeed: 25,
       aeroSwordRadius: 2,
       aeroSwordDamage: 80,
       aeroSwordLife: 4,
@@ -211,7 +211,7 @@
       ultimateCooldown: 40,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "完成两次普通斩击后解锁；开启后锁定风息获取并解锁强化普攻 15 秒。强化普攻每 2 秒从身体两侧发射两柄自动追击的高速飞剑，每柄造成 80 点伤害并命中即消失；大招期间技能改为朝最近敌人的反方向突刺。冷却 40 秒。",
+      abilityDesc: "开局可直接释放一次；后续需完成两次普通斩击解锁。开启后锁定风息获取并解锁强化普攻 15 秒。强化普攻每 2 秒朝最近敌人发射两柄 25 格/秒的穿透飞剑，每柄对同一目标造成一次 80 点伤害，继续飞行直到触碰地图边缘；大招期间技能改为朝最近敌人的反方向突刺。冷却 40 秒。",
       cooldown: 40
     },
     {
@@ -663,7 +663,8 @@
         "两刀完成后普通攻击锁定，技能与共鸣解放解锁。",
         "技能朝最近敌人以 20 格/秒突刺约 20 格，对落点半径 5 格内敌人造成 15 点伤害并恢复 50 风息，冷却 5 秒；冲刺途中接触敌人会立即停止并提前结算落点伤害。",
         "共鸣解放持续 15 秒，期间锁定风息获取并解锁强化普攻；技能突刺方向改为最近敌人的反方向。",
-        "强化普攻每 2 秒从身体两侧发射两柄速度 15 格/秒、命中半径 2 格的追踪飞剑，每柄造成 80 点伤害；剑头朝向目标，命中后立即消失。",
+        "强化普攻每 2 秒从身体两侧朝最近敌人发射两柄 25 格/秒的直线飞剑，每柄穿透目标并造成 80 点伤害，直到触碰地图边缘才消失。",
+        "飞剑不会转向追踪，飞行路径留下绿色轨迹；轨迹完整存在 1 秒后缓慢消散。",
         "大招结束后强化普攻锁定，风息获取恢复。"
       ]
     },
@@ -1145,7 +1146,7 @@
       aeroSkillUnlocked: template.id === "08",
       aeroUltimateTimer: 0,
       aeroEnhanced: false,
-      aeroUltimateUnlocked: false,
+      aeroUltimateUnlocked: template.id === "08",
       aeroWindGainLocked: false,
       aeroUltimateReadyTimer: 0,
       aeroSequenceActive: false,
@@ -1401,7 +1402,7 @@
     if (fighter.id === "08") {
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "飘渺无相";
-      dom.abilityButton.title = "完成两次普通斩击后解锁；开启后持续 15 秒并解锁强力飞剑";
+      dom.abilityButton.title = "开局可直接释放一次；后续完成两次普通斩击后解锁";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -3089,7 +3090,7 @@
   function launchAeroAerialAttack(fighter) {
     if (!fighter || fighter.hp <= 0 || state !== "playing") return;
     fighter.aeroAirTimer = fighter.template.aeroAirDuration;
-    fighter.aeroAirSecondClock = 0.32;
+    fighter.aeroAirSecondClock = 1;
     fighter.aeroAirSecondDone = false;
     performAeroLineSlash(fighter, Math.PI * 0.25, false);
     playAttackVoice(fighter);
@@ -3161,21 +3162,32 @@
     const speed = fighter.template.aeroSwordSpeed * CELL_SIZE;
     playAttackVoice(fighter);
     [-1, 1].forEach((side) => {
-      const swordAngle = angle + side * 0.12;
+      const startX = fighter.x + sideX * side;
+      const startY = fighter.y + sideY * side;
+      const swordAngle = Math.atan2(target.y - startY, target.x - startX);
+      const trailEffect = {
+        type: "aeroSwordTrail",
+        points: [{ x: startX, y: startY }],
+        active: true,
+        life: 2,
+        maxLife: 2,
+        color: "#72efb5"
+      };
+      effects.push(trailEffect);
       projectiles.push({
         owner: fighter,
-        target,
         kind: "aeroSword",
         category: DAMAGE_CATEGORIES.SPECIAL,
-        x: fighter.x + sideX * side,
-        y: fighter.y + sideY * side,
+        x: startX,
+        y: startY,
         vx: Math.cos(swordAngle) * speed,
         vy: Math.sin(swordAngle) * speed,
         r: fighter.template.aeroSwordRadius * CELL_SIZE,
         damage: fighter.template.aeroSwordDamage,
         life: fighter.template.aeroSwordLife,
         color: "#72efb5",
-        homing: 0.9
+        hitIds: new Set(),
+        trailEffect
       });
     });
     effects.push({
@@ -3189,48 +3201,47 @@
       color: "#72efb5",
       width: 4
     });
-    addLog(`${fighter.template.name} 从身体两侧射出两柄追踪飞剑。`, "ability");
+    addLog(`${fighter.template.name} 朝最近敌人方向射出两柄直线飞剑。`, "ability");
     playSound("windup");
   }
 
   function updateAeroSwordProjectile(projectile, dt) {
     const owner = projectile.owner;
-    const target = nearestOpponent(owner) || projectile.target;
-    if (target && target.hp > 0) {
-      projectile.target = target;
-      const desired = Math.atan2(target.y - projectile.y, target.x - projectile.x);
-      let current = Math.atan2(projectile.vy, projectile.vx);
-      const difference = Math.atan2(Math.sin(desired - current), Math.cos(desired - current));
-      current += clamp(difference, -5.5 * dt, 5.5 * dt);
-      const speed = owner.template.aeroSwordSpeed * CELL_SIZE;
-      projectile.vx = Math.cos(current) * speed;
-      projectile.vy = Math.sin(current) * speed;
-    }
     projectile.x += projectile.vx * dt;
     projectile.y += projectile.vy * dt;
     projectile.life -= dt;
-    const hitUnit = getDamageableUnits().find((unit) => (
-      unit.side !== owner.side
-      && unit.hp > 0
-      && Math.hypot(unit.x - projectile.x, unit.y - projectile.y) <= projectile.r + unit.r
-    ));
-    if (hitUnit) {
-      applySpecialDamage(hitUnit, projectile.damage, owner, "气动飞剑", {
-        color: projectile.color,
-        noEnergy: true
-      });
-      effects.push({
-        type: "aeroHit",
-        x: hitUnit.x,
-        y: hitUnit.y,
-        angle: Math.atan2(projectile.vy, projectile.vx),
-        life: 0.34,
-        maxLife: 0.34,
-        color: projectile.color
-      });
-      spawnBurst(hitUnit.x, hitUnit.y, projectile.color, 12, 180);
-      projectile.dead = true;
+    const trail = projectile.trailEffect;
+    if (trail) {
+      const lastPoint = trail.points[trail.points.length - 1];
+      if (!lastPoint || Math.hypot(projectile.x - lastPoint.x, projectile.y - lastPoint.y) >= 2) {
+        trail.points.push({ x: projectile.x, y: projectile.y });
+      }
+      trail.life = trail.maxLife;
     }
+    getDamageableUnits()
+      .filter((unit) => (
+        unit.side !== owner.side
+        && unit.hp > 0
+        && !projectile.hitIds.has(unit)
+        && Math.hypot(unit.x - projectile.x, unit.y - projectile.y) <= projectile.r + unit.r
+      ))
+      .forEach((hitUnit) => {
+        projectile.hitIds.add(hitUnit);
+        applySpecialDamage(hitUnit, projectile.damage, owner, "气动飞剑", {
+          color: projectile.color,
+          noEnergy: true
+        });
+        effects.push({
+          type: "aeroHit",
+          x: hitUnit.x,
+          y: hitUnit.y,
+          angle: Math.atan2(projectile.vy, projectile.vx),
+          life: 0.34,
+          maxLife: 0.34,
+          color: projectile.color
+        });
+        spawnBurst(hitUnit.x, hitUnit.y, projectile.color, 12, 180);
+      });
     if (
       projectile.life <= 0
       || projectile.x < BOUNDARY
@@ -3239,6 +3250,7 @@
       || projectile.y > ARENA_SIZE - BOUNDARY
     ) {
       projectile.dead = true;
+      if (trail) trail.active = false;
     }
   }
 
@@ -5652,7 +5664,7 @@
         : isVerinaUltimate
           ? `${fighter.template.name} 场上有藤，触发「${fighter.template.ability}」！`
           : isAeroUltimate
-            ? `${fighter.template.name} 完成两次普攻，触发「${fighter.template.ability}」！`
+            ? `${fighter.template.name} 触发「${fighter.template.ability}」！`
         : `${fighter.template.name} 共鸣能量已满，触发「${fighter.template.ability}」！`,
       "ability"
     );
@@ -5661,7 +5673,7 @@
       : isVerinaUltimate
         ? `${fighter.template.name}场上有藤，触发${fighter.template.ability}`
         : isAeroUltimate
-          ? `${fighter.template.name}完成两次普攻，触发${fighter.template.ability}`
+          ? `${fighter.template.name}触发${fighter.template.ability}`
       : `${fighter.template.name}共鸣能量已满，触发${fighter.template.ability}`;
 
     if (fighter.template.ultimateType === "windCharge") {
@@ -9280,6 +9292,30 @@
           ctx.beginPath();
           ctx.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
           ctx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+          ctx.stroke();
+        }
+      } else if (effect.type === "aeroSwordTrail") {
+        const fade = effect.life >= 1 ? 1 : clamp(effect.life, 0, 1);
+        const points = effect.points || [];
+        if (points.length >= 2) {
+          ctx.globalCompositeOperation = "lighter";
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.shadowColor = effect.color;
+          ctx.shadowBlur = 10;
+          ctx.globalAlpha = fade * 0.58;
+          ctx.strokeStyle = "rgba(89,231,169,0.82)";
+          ctx.lineWidth = 5.5;
+          ctx.beginPath();
+          points.forEach((point, index) => {
+            if (index === 0) ctx.moveTo(point.x, point.y);
+            else ctx.lineTo(point.x, point.y);
+          });
+          ctx.stroke();
+          ctx.globalAlpha = fade * 0.55;
+          ctx.strokeStyle = "rgba(224,255,240,0.88)";
+          ctx.lineWidth = 1.4;
+          ctx.shadowBlur = 4;
           ctx.stroke();
         }
       } else if (effect.type === "aeroDashBurst") {
