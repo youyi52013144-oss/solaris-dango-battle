@@ -201,17 +201,18 @@
       aeroSkillRadius: 5,
       aeroSkillDamage: 15,
       aeroSkillWindGain: 50,
-      aeroSwordCooldown: 2,
+      aeroSlashDamage: 50,
+      aeroSwordCooldown: 3,
       aeroSwordSpeed: 40,
       aeroSwordRadius: 2,
-      aeroSwordDamage: 80,
+      aeroSwordDamage: 60,
       aeroSwordLife: 4,
       ultimateType: "aeroUnbound",
       ultimateDuration: 15,
       ultimateCooldown: 40,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "两次风息斩击完成后解锁，冷却结束后自动开启 15 秒。期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑；飞剑按实际飞行轨迹判定，对路径上每个敌人各造成一次 80 点伤害，触碰地图边缘后消失；普攻突刺方向改为远离最近敌人。冷却 40 秒。",
+      abilityDesc: "首场倒计时结束后自动开启一次；后续需完成两次风息斩击解锁。开启后持续 15 秒并锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑，每把对路径敌人各造成一次 60 点伤害；普攻改为相对最近敌人方向左转 90°突刺。冷却 40 秒。",
       cooldown: 40
     },
     {
@@ -661,10 +662,11 @@
         "普攻朝最近敌人以 25 格/秒突刺约 20 格，冷却 5 秒；对落点半径 5 格内敌人造成 15 点伤害，冲刺途中接触敌人会立即停止并提前结算。",
         "普攻仅在实际命中敌人时恢复 50 风息。",
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
-        "每刀消耗 50 风息并造成 60 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
-        "共鸣解放冷却 40 秒，倒计时结束后自动开启 15 秒；期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的独立飞剑。",
-        "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 80 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
-        "大招期间普攻突刺方向改为远离最近敌人。大招结束后恢复风息获取。"
+        "每刀消耗 50 风息并造成 50 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
+        "首场倒计时结束后直接开启一次共鸣解放；后续冷却 40 秒，完成两次风息斩击解锁后自动开启 15 秒。",
+        "大招期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的独立飞剑。",
+        "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 60 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
+        "大招期间普攻突刺方向改为相对最近敌人方向左转 90°。大招结束后恢复风息获取，飞剑攻击移除。"
       ]
     },
     "03": {
@@ -1146,7 +1148,7 @@
       aeroUltimateTimer: 0,
       aeroSwordClock: 0,
       aeroEnhanced: false,
-      aeroUltimateUnlocked: false,
+      aeroUltimateUnlocked: template.id === "08",
       aeroWindGainLocked: false,
       aeroUltimateReadyTimer: 0,
       aeroSequenceActive: false,
@@ -1402,7 +1404,7 @@
     if (fighter.id === "08") {
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "飘渺无相";
-      dom.abilityButton.title = "完成两次风息斩击后解锁，冷却结束后自动释放";
+      dom.abilityButton.title = "首场倒计时后自动释放；后续完成两次风息斩击解锁";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -2948,7 +2950,7 @@
     const target = nearestOpponent(fighter);
     if (!target) return;
     const targetAngle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-    const angle = fighter.aeroUltimateTimer > 0 ? targetAngle + Math.PI : targetAngle;
+    const angle = fighter.aeroUltimateTimer > 0 ? targetAngle - Math.PI / 2 : targetAngle;
     fighter.aeroDashAngle = angle;
     fighter.aeroDashSpeed = fighter.template.aeroSkillSpeed * CELL_SIZE;
     fighter.aeroDashDuration = fighter.template.aeroSkillDistance / fighter.template.aeroSkillSpeed;
@@ -3102,7 +3104,7 @@
         const dy = target.y - slashY;
         const lateral = -dx * sin + dy * cos;
         if (Math.abs(lateral) > CELL_SIZE * 1.05 + target.r * 0.28) return;
-        applyDamage(target, fighter.template.attackDamage, fighter, "双刃斩风", {
+        applyDamage(target, fighter.template.aeroSlashDamage, fighter, "双刃斩风", {
           color: "#72efb5",
           melee: true
         });
