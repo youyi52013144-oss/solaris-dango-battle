@@ -113,20 +113,20 @@
       speed: 8,
       radius: 27,
       stats: { power: 84, speed: 100, hp: 100 },
-      display: { attack: "30", speed: "8.0格/s", hp: "1000" },
+      display: { attack: "20", speed: "8.0格/s", hp: "1000" },
       attackType: "thrust",
-      attackDamage: 30,
+      attackDamage: 20,
       attackCooldown: 1,
       attackRange: 2,
       knifeOrbitRadius: 3,
       knifeDamage: 25,
       ultimateType: "timeStop",
       ultimateDuration: 5,
-      ultimateCooldown: 15,
+      ultimateCooldown: 20,
       ability: "时序停界",
       abilityIcon: "◷",
-      abilityDesc: "共鸣能量满后冻结全图时间至少 5 秒；吸收场上全部时间乱流，每个额外延长 3 秒。冻结期间普攻不积累时序能量，自身每 1 秒随机瞬移并朝随机方向移动，穿越其他单位时不会碰撞；冷却 15 秒。",
-      cooldown: 15
+      abilityDesc: "共鸣能量满后冻结全图时间至少 5 秒；吸收场上全部时间乱流，每个额外延长 3 秒。冻结期间普攻不积累时序能量，自身每 1 秒随机瞬移并朝随机方向移动，穿越其他单位时不会碰撞；冷却 20 秒。",
+      cooldown: 20
     },
     {
       id: "02",
@@ -187,9 +187,9 @@
       speed: 8,
       radius: 27,
       stats: { power: 92, speed: 100, hp: 100 },
-      display: { attack: "60×2", speed: "8.0格/s", hp: "1000" },
+      display: { attack: "100×2", speed: "8.0格/s", hp: "1000" },
       attackType: "aeroBlade",
-      attackDamage: 60,
+      attackDamage: 100,
       attackCooldown: 1.2,
       attackRange: 6,
       aeroWindMax: 100,
@@ -202,7 +202,7 @@
       aeroSkillRadius: 5,
       aeroSkillDamage: 15,
       aeroSkillWindGain: 50,
-      aeroSlashDamage: 50,
+      aeroSlashDamage: 100,
       aeroSwordCooldown: 3,
       aeroSwordSpeed: 40,
       aeroSwordRadius: 2,
@@ -435,6 +435,32 @@
     }
   ];
 
+  const TRAINING_DUMMY_TEMPLATE = Object.freeze({
+    id: "training-dummy",
+    name: "共鸣木桩",
+    element: "训练目标 · 无限生命",
+    tagline: "承受伤害，不会倒下。",
+    color: "#d9a55e",
+    dark: "#5e3a20",
+    symbol: "桩",
+    hp: Number.POSITIVE_INFINITY,
+    power: 0,
+    speed: 0,
+    radius: 34,
+    stats: { power: 0, speed: 0, hp: 100 },
+    display: { attack: "无", speed: "0.0格/s", hp: "∞" },
+    attackType: "none",
+    attackDamage: 0,
+    attackCooldown: 0,
+    attackRange: 0,
+    ultimateType: "none",
+    ultimateCooldown: 0,
+    ability: "无限承伤",
+    abilityIcon: "∞",
+    abilityDesc: "固定在场中央，不移动、不攻击，记录演示期间受到的总伤害。",
+    cooldown: 0
+  });
+
   const VOICE_LIBRARY = {
     "kakarot-test": {
       intro: ["assets/voices/kakarot/intro.mp3"],
@@ -623,15 +649,15 @@
       range: "突刺初始半径 2 格；每轮第一格时序能量使半径 +0.5 格",
       interval: "1 秒",
       mechanics: [
-        "前刺造成 30 点伤害，近战命中恢复 20% 共鸣能量。",
-        "普攻命中积累 1 格时序能量；每轮能量首次达到第 1 格时，永久增加 0.5 格普攻半径与 20 点普攻伤害。",
+        "前刺造成 20 点伤害，近战命中恢复 20% 共鸣能量。",
+        "普攻命中积累 1 格时序能量；只有达到第 1 格时永久增加 0.5 格普攻半径与 10 点普攻伤害，第 2、3 格不再增加属性。",
         "达到 2 格时回到 1 秒前的位置，并将生命值恢复为 1 秒前的数值。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
         "其他团子及白咩、水母、芽/藤等召唤物进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 15 秒内不会再次受到任何乱流影响。",
         "场上最多同时存在 3 个时间乱流。",
         "共鸣能量满后可释放时序停界，基础冻结 5 秒。若场上存在时间乱流则全部吸收，每个额外延长 3 秒。",
         "冻结期间只有漂泊者可以移动与攻击，普攻不会增加时序能量；自身每 1 秒随机瞬移并以随机方向移动，穿越其他单位时不会发生碰撞。",
-        "时序停界冷却 15 秒。"
+        "时序停界冷却 20 秒。"
       ]
     },
     "02": {
@@ -661,7 +687,7 @@
         "普攻朝最近敌人以 25 格/秒突刺约 20 格，冷却 5 秒；对落点半径 5 格内敌人造成 15 点伤害，冲刺途中接触敌人会立即停止并提前结算。",
         "普攻仅在实际命中敌人时恢复 50 风息。",
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
-        "每刀消耗 50 风息并造成 50 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
+        "每刀消耗 50 风息并造成 100 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
         "首场倒计时结束后直接开启一次共鸣解放；后续冷却 40 秒，完成两次风息斩击解锁后自动开启 15 秒。",
         "大招期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的独立飞剑。",
         "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 80 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
@@ -863,6 +889,20 @@
     archiveClose: document.getElementById("archiveClose"),
     archiveList: document.getElementById("archiveList"),
     archiveDetail: document.getElementById("archiveDetail"),
+    showcaseButton: document.getElementById("showcaseButton"),
+    fighterShowcase: document.getElementById("fighterShowcase"),
+    showcaseClose: document.getElementById("showcaseClose"),
+    showcasePrev: document.getElementById("showcasePrev"),
+    showcaseNext: document.getElementById("showcaseNext"),
+    showcaseIndex: document.getElementById("showcaseIndex"),
+    showcaseStage: document.getElementById("showcaseStage"),
+    showcaseProfile: document.getElementById("showcaseProfile"),
+    showcaseRoster: document.getElementById("showcaseRoster"),
+    showcaseTrainingConsole: document.getElementById("showcaseTrainingConsole"),
+    showcaseTrainingName: document.getElementById("showcaseTrainingName"),
+    showcaseTrainingReadout: document.getElementById("showcaseTrainingReadout"),
+    showcaseTrainingHint: document.getElementById("showcaseTrainingHint"),
+    showcaseTrainingSpeed: document.getElementById("showcaseTrainingSpeed"),
     chosenFighter: document.getElementById("chosenFighter"),
     chosenOrb: document.getElementById("chosenOrb"),
     chosenElement: document.getElementById("chosenElement"),
@@ -894,6 +934,7 @@
   let enemyId = "anko-test";
   let configSide = "left";
   let archiveSelectedId = "kakarot-test";
+  let showcaseSelectedId = "kakarot-test";
   const WANDERER_FORM_IDS = new Set(["01", "02", "08"]);
   let wandererForms = { "01": "male", "02": "male", "08": "male" };
   try {
@@ -918,6 +959,16 @@
   let countdownBeat = 4;
   let replayCountdownText = "";
   let replayCountdownUntil = 0;
+  let showcaseTrainingActive = false;
+  let showcaseTrainingAuto = true;
+  let showcaseTrainingClock = 0;
+  let showcaseTrainingAutoStep = 0;
+  let showcaseTrainingReadoutClock = 0;
+  let showcaseTrainingDamage = 0;
+  let showcaseTrainingFighterId = "kakarot-test";
+  let showcaseTrainingSavedSpeed = 1;
+  let showcaseTrainingSavedMode = "watch";
+  let showcaseTrainingManualInput = false;
   let roundEndTimer = 0;
   let pickupTimer = 3;
   let ambientTimer = 0;
@@ -1132,6 +1183,7 @@
       knifeHitLocks: [],
       wandererDamageBonus: 0,
       wandererRangeBonus: 0,
+      wandererFirstPipBuffAwarded: false,
       wandererHistoryClock: 0,
       wandererHistory: [],
       timeForceTimer: 0,
@@ -1251,7 +1303,11 @@
       const archiveButton = dom.archiveList.querySelector(`[data-fighter-id="${fighterId}"]`);
       const archivePortrait = archiveButton?.querySelector("img");
       if (archivePortrait && archivePortrait.getAttribute("src") !== fighter.image) archivePortrait.src = fighter.image;
+      const showcaseCard = dom.showcaseRoster?.querySelector(`[data-showcase-id="${fighterId}"]`);
+      const showcasePortrait = showcaseCard?.querySelector("img");
+      if (showcasePortrait && showcasePortrait.getAttribute("src") !== fighter.image) showcasePortrait.src = fighter.image;
     });
+    if (dom.fighterShowcase?.open) renderShowcase(false);
   }
 
   function setWandererForm(fighterId, gender) {
@@ -1449,6 +1505,7 @@
   }
 
   function setMode(nextMode) {
+    if (showcaseTrainingActive) finishShowcaseTraining(false);
     mode = nextMode;
     if (mode === "play" || mode === "multi") configSide = "left";
     document.querySelectorAll(".mode-button").forEach((button) => {
@@ -1543,6 +1600,7 @@
   }
 
   function voiceEntriesFor(fighters, type) {
+    if (showcaseTrainingActive) return [];
     return sortFightersByVoiceOrder(fighters)
       .filter((fighter) => fighter && voiceClipsFor(fighter, type).length > 0)
       .map((fighter) => ({ fighter, type }));
@@ -1758,6 +1816,7 @@
   }
 
   function startMatch() {
+    if (showcaseTrainingActive) finishShowcaseTraining(false);
     manualPaused = false;
     roundResultVoicePending = false;
     multiResultVoicePending = false;
@@ -1943,14 +2002,14 @@
       updateMultiBattle(dt);
       return;
     }
-    battleTimer = Math.max(0, battleTimer - dt);
+    if (!showcaseTrainingActive) battleTimer = Math.max(0, battleTimer - dt);
     collisionLock = Math.max(0, collisionLock - dt);
-    if (arenaItemsEnabled) pickupTimer -= dt;
+    if (arenaItemsEnabled && !showcaseTrainingActive) pickupTimer -= dt;
     ambientTimer -= dt;
     addResonanceEnergy(player, 3 * dt);
-    addResonanceEnergy(enemy, 3 * dt);
+    if (!enemy.trainingDummy) addResonanceEnergy(enemy, 3 * dt);
 
-    if (arenaItemsEnabled && pickupTimer <= 0) {
+    if (arenaItemsEnabled && !showcaseTrainingActive && pickupTimer <= 0) {
       spawnPickup();
       pickupTimer = random(4.8, 7.2);
     }
@@ -2027,7 +2086,7 @@
     updatePickups();
     updateTrails(dt);
 
-    if (battleTimer <= 0 && state === "playing") {
+    if (battleTimer <= 0 && state === "playing" && !showcaseTrainingActive) {
       const winner = player.hp === enemy.hp
         ? (player.energy >= enemy.energy ? 0 : 1)
         : (player.hp > enemy.hp ? 0 : 1);
@@ -2308,7 +2367,7 @@
       }
     }
 
-    if (isPlayer && mode === "play") {
+    if (isPlayer && (mode === "play" || showcaseTrainingActive)) {
       const inputX = (keys.ArrowRight || keys.KeyD || touchDirection.right ? 1 : 0)
         - (keys.ArrowLeft || keys.KeyA || touchDirection.left ? 1 : 0);
       const inputY = (keys.ArrowDown || keys.KeyS || touchDirection.down ? 1 : 0)
@@ -2318,6 +2377,9 @@
         const targetSpeed = getEffectiveMoveSpeed(fighter);
         fighter.vx = (inputX / magnitude) * targetSpeed;
         fighter.vy = (inputY / magnitude) * targetSpeed;
+      } else if (showcaseTrainingActive && showcaseTrainingManualInput) {
+        fighter.vx = 0;
+        fighter.vy = 0;
       }
     }
 
@@ -3843,14 +3905,18 @@
     if (timeStopOwner === fighter) return;
     const previous = fighter.specialEnergy;
     fighter.specialEnergy = Math.min(3, fighter.specialEnergy + 1);
-    if (previous < 1 && fighter.specialEnergy >= 1) {
+    const firstPipReached = previous < 1
+      && fighter.specialEnergy >= 1
+      && !fighter.wandererFirstPipBuffAwarded;
+    if (firstPipReached) {
+      fighter.wandererFirstPipBuffAwarded = true;
       fighter.wandererRangeBonus += 0.5;
-      fighter.wandererDamageBonus += 20;
+      fighter.wandererDamageBonus += 10;
       effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 8, growth: 420, life: 0.48, maxLife: 0.48, color: "#ffd76b", width: 5 });
       spawnBurst(fighter.x, fighter.y, "#ffe7a0", 20, 190);
       spawnDamageText(fighter.x, fighter.y - fighter.r, "普攻强化", "#ffd76b", true);
       announce(`${fighter.template.name} · 时序强化`, "#ffd76b", 0.9);
-      addLog(`${fighter.template.name} 永久提升 0.5 格普攻范围与 20 点普攻伤害。`, "ability");
+      addLog(`${fighter.template.name} 永久提升 0.5 格普攻范围与 10 点普攻伤害。`, "ability");
       playSound("blade");
     }
     if (previous < 2 && fighter.specialEnergy >= 2) {
@@ -3858,6 +3924,7 @@
     }
     if (previous < 3 && fighter.specialEnergy >= 3) {
       fighter.specialEnergy = 0;
+      fighter.wandererFirstPipBuffAwarded = false;
       spawnTimeVortex(fighter);
     }
   }
@@ -5696,6 +5763,7 @@
   }
 
   function handleAbility(fighter, opponent, dt) {
+    if (fighter.trainingDummy) return;
     if (fighter.template.transformThreshold) return;
     if (fighter.template.ultimateType === "autoThreshold") return;
     if (fighter.stunned > 0 || fighter.freeze > 0 || fighter.vortexLockTimer > 0) return;
@@ -6025,7 +6093,10 @@
     ) {
       source.cantarellaMirageDamageDealt = true;
     }
-    target.hp = Math.max(0, target.hp - finalAmount);
+    if (target.trainingDummy) showcaseTrainingDamage += finalAmount;
+    target.hp = target.trainingInvulnerable
+      ? Math.max(1, target.hp)
+      : Math.max(0, target.hp - finalAmount);
     // Shield absorption still counts as a landed hit for energy and on-hit effects.
     const totalEffectiveDamage = absorbed + finalAmount;
     target.flash = options.noText ? Math.max(target.flash, 0.16) : (finalAmount > 0 ? 1 : 0.45);
@@ -6100,7 +6171,10 @@
   function dealRawDamage(target, amount, source, label, color) {
     if (!target || target.hp <= 0 || state !== "playing") return;
     if (target.jinhsiAirborne || target.aeroAirTimer > 0) return 0;
-    target.hp = Math.max(0, target.hp - Math.max(1, amount));
+    if (target.trainingDummy) showcaseTrainingDamage += Math.max(1, amount);
+    target.hp = target.trainingInvulnerable
+      ? Math.max(1, target.hp)
+      : Math.max(0, target.hp - Math.max(1, amount));
     spawnDamageText(target.x, target.y - target.r, Math.round(amount), color);
     if (target.hp <= 0 && state === "playing") {
       if (target.isJellyfish) {
@@ -6160,6 +6234,7 @@
   }
 
   function finishRound(winnerSide, reason) {
+    if (showcaseTrainingActive) return;
     if (state !== "playing") return;
     if (roundResultVoicePending) return;
     roundResultVoicePending = true;
@@ -6658,11 +6733,11 @@
     }
     if (!player || !enemy) return;
     const playerPercent = clamp(player.hp / player.maxHp, 0, 1) * 100;
-    const enemyPercent = clamp(enemy.hp / enemy.maxHp, 0, 1) * 100;
+    const enemyPercent = enemy.infiniteHealth ? 100 : clamp(enemy.hp / enemy.maxHp, 0, 1) * 100;
     dom.playerHpBar.style.width = `${playerPercent}%`;
     dom.enemyHpBar.style.width = `${enemyPercent}%`;
     dom.playerHpText.textContent = formatNumber(player.hp);
-    dom.enemyHpText.textContent = formatNumber(enemy.hp);
+    dom.enemyHpText.textContent = enemy.infiniteHealth ? "∞" : formatNumber(enemy.hp);
     const playerHasShield = player.shield > 0;
     const enemyHasShield = enemy.shield > 0;
     dom.playerShield.hidden = !playerHasShield;
@@ -6679,6 +6754,22 @@
     }
     dom.playerName.textContent = player.template.name;
     dom.enemyName.textContent = enemy.template.name;
+    const playerPortraitImage = player.horned || player.abyssForm
+      ? (player.template.altImage || player.template.image)
+      : player.template.image;
+    const enemyPortraitImage = enemy.horned || enemy.abyssForm
+      ? (enemy.template.altImage || enemy.template.image)
+      : enemy.template.image;
+    dom.playerMini.style.setProperty("--avatar-color", player.template.color);
+    dom.enemyMini.style.setProperty("--avatar-color", enemy.template.color);
+    dom.playerMini.classList.toggle("has-image", Boolean(playerPortraitImage));
+    dom.enemyMini.classList.toggle("has-image", Boolean(enemyPortraitImage));
+    dom.playerMini.querySelector("span").textContent = playerPortraitImage ? "" : player.template.symbol;
+    dom.enemyMini.querySelector("span").textContent = enemyPortraitImage ? "" : enemy.template.symbol;
+    if (playerPortraitImage) dom.playerMini.style.setProperty("--portrait", `url("${playerPortraitImage}")`);
+    else dom.playerMini.style.removeProperty("--portrait");
+    if (enemyPortraitImage) dom.enemyMini.style.setProperty("--portrait", `url("${enemyPortraitImage}")`);
+    else dom.enemyMini.style.removeProperty("--portrait");
     if (player.template.altImage) {
       dom.playerMini.style.setProperty("--portrait", `url("${player.horned || player.abyssForm ? player.template.altImage : player.template.image}")`);
     }
@@ -6692,7 +6783,9 @@
     dom.playerEnergyBar.style.width = `${energy}%`;
     dom.enemyEnergyBar.style.width = `${enemyEnergy}%`;
     dom.playerEnergyText.textContent = `共鸣 ${Math.round(energy)}%${player.template.id === "06" ? ` · 芽愈 Lv.${player.verinaHealLevel}` : ""}`;
-    dom.enemyEnergyText.textContent = `共鸣 ${Math.round(enemyEnergy)}%${enemy.template.id === "06" ? ` · 芽愈 Lv.${enemy.verinaHealLevel}` : ""}`;
+    dom.enemyEnergyText.textContent = enemy.infiniteHealth
+      ? "无限承伤"
+      : `共鸣 ${Math.round(enemyEnergy)}%${enemy.template.id === "06" ? ` · 芽愈 Lv.${enemy.verinaHealLevel}` : ""}`;
     const playerHasSpecial = ["kakarot-test", "01", "07", "08"].includes(player.template.id);
     const enemyHasSpecial = ["kakarot-test", "01", "07", "08"].includes(enemy.template.id);
     const playerHasAbyss = player.template.id === "02";
@@ -6880,6 +6973,14 @@
       } else if (!player.inContact) {
         dom.battleStatus.textContent = "激战中";
       }
+    }
+    if (showcaseTrainingActive) {
+      dom.timerText.textContent = "∞";
+      dom.timerOrb.classList.remove("is-low");
+      dom.roundLabel.textContent = "实机演示";
+      dom.matchState.textContent = "无限木桩";
+      dom.enemyHpText.textContent = "∞";
+      dom.enemyEnergyText.textContent = "无限承伤";
     }
   }
 
@@ -8533,8 +8634,122 @@
     });
   }
 
+  function drawTrainingDummy(fighter, t) {
+    const radius = fighter.r;
+    const pulse = 1 + Math.sin(t * 2.8) * 0.025;
+    ctx.save();
+    ctx.translate(fighter.x, fighter.y);
+
+    ctx.save();
+    ctx.globalAlpha = 0.32;
+    ctx.fillStyle = "#020308";
+    ctx.beginPath();
+    ctx.ellipse(0, radius * 0.94, radius * 1.12, radius * 0.44, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    const floorGlow = ctx.createRadialGradient(0, 0, radius * 0.35, 0, 0, radius * 1.9);
+    floorGlow.addColorStop(0, "rgba(255, 208, 120, 0.12)");
+    floorGlow.addColorStop(0.55, "rgba(217, 165, 94, 0.08)");
+    floorGlow.addColorStop(1, "rgba(217, 165, 94, 0)");
+    ctx.fillStyle = floorGlow;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 1.9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255, 218, 158, 0.24)";
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([5, 7]);
+    ctx.lineDashOffset = -t * 12;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius + 12, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    ctx.save();
+    ctx.scale(pulse, pulse);
+    ctx.fillStyle = "#6d4324";
+    ctx.strokeStyle = "#2b1b10";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let index = 0; index < 12; index += 1) {
+      const angle = -Math.PI / 2 + index * Math.PI / 6;
+      const grain = index % 2 ? 0.94 : 1;
+      const x = Math.cos(angle) * radius * grain;
+      const y = Math.sin(angle) * radius * grain;
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    const wood = ctx.createRadialGradient(-radius * 0.3, -radius * 0.36, 2, 0, 0, radius);
+    wood.addColorStop(0, "#d5a264");
+    wood.addColorStop(0.48, "#a86d38");
+    wood.addColorStop(0.82, "#704522");
+    wood.addColorStop(1, "#3b2415");
+    ctx.fillStyle = wood;
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.save();
+    ctx.globalAlpha = 0.34;
+    ctx.strokeStyle = "#3e2515";
+    ctx.lineWidth = 1.2;
+    for (let index = -2; index <= 2; index += 1) {
+      const offset = index * 7;
+      ctx.beginPath();
+      ctx.moveTo(-radius * 0.8, offset);
+      ctx.bezierCurveTo(-radius * 0.3, offset - 5, radius * 0.3, offset + 5, radius * 0.8, offset - 1);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    for (const ring of [0.72, 0.46]) {
+      ctx.strokeStyle = "rgba(255, 224, 169, 0.72)";
+      ctx.lineWidth = ring === 0.72 ? 3 : 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * ring, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(255, 239, 202, 0.7)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-radius * 0.76, 0);
+    ctx.lineTo(radius * 0.76, 0);
+    ctx.moveTo(0, -radius * 0.76);
+    ctx.lineTo(0, radius * 0.76);
+    ctx.stroke();
+
+    ctx.fillStyle = "#1d130c";
+    ctx.font = "900 24px 'Trebuchet MS'";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("∞", 0, 1);
+
+    if (fighter.flash > 0) {
+      ctx.globalCompositeOperation = "screen";
+      ctx.fillStyle = `rgba(255, 244, 210, ${fighter.flash * 0.45})`;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.fillStyle = "rgba(255, 236, 197, 0.9)";
+    ctx.font = "800 8px 'Microsoft YaHei'";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("无限生命木桩", 0, radius + 20);
+    ctx.restore();
+  }
+
   function drawFighter(fighter, t) {
     if (!fighter) return;
+    if (fighter.trainingDummy) {
+      drawTrainingDummy(fighter, t);
+      return;
+    }
     if (fighter.jinhsiAirborne) return;
     const speed = Math.hypot(fighter.vx, fighter.vy);
     const wobble = state === "idle" ? Math.sin(t * 1.3) * 0.012 : Math.min(0.06, speed / 5000);
@@ -10579,6 +10794,7 @@
     dom.gameSpeedText.textContent = `${gameSpeed}×`;
     dom.slowButton.disabled = gameSpeedIndex === 0;
     dom.fastButton.disabled = gameSpeedIndex === GAME_SPEEDS.length - 1;
+    updateShowcaseTrainingSpeedUI();
     if (player && enemy && direction !== 0) announce(`播放速度 ${gameSpeed}×`, "#ffd84d", 0.7);
     if (direction !== 0) playSound("select");
   }
@@ -10686,6 +10902,490 @@
     archiveSelectedId = getConfigId();
     renderArchive();
     if (!dom.fighterArchive.open) dom.fighterArchive.showModal();
+  }
+
+  function buildShowcaseRoster() {
+    dom.showcaseRoster.innerHTML = FIGHTERS.map((fighter, index) => {
+      const visual = templateById(fighter.id);
+      return `
+        <button class="showcase-roster-card" type="button" data-showcase-id="${fighter.id}" style="--showcase-color:${fighter.color}">
+          <span class="showcase-roster-number">${String(index + 1).padStart(2, "0")}</span>
+          <span class="showcase-roster-avatar" aria-hidden="true">
+            ${visual.image ? `<img src="${visual.image}" alt="">` : visual.symbol}
+          </span>
+          <span class="showcase-roster-copy">
+            <strong>${fighter.name}</strong>
+            <small>${fighter.element.split(" · ")[0]}</small>
+          </span>
+        </button>
+      `;
+    }).join("");
+  }
+
+  function setShowcaseSelection(id) {
+    if (!FIGHTERS.some((fighter) => fighter.id === id)) return;
+    showcaseSelectedId = id;
+    renderShowcase();
+  }
+
+  function stepShowcase(direction) {
+    const currentIndex = Math.max(0, FIGHTERS.findIndex((fighter) => fighter.id === showcaseSelectedId));
+    const nextIndex = (currentIndex + direction + FIGHTERS.length) % FIGHTERS.length;
+    setShowcaseSelection(FIGHTERS[nextIndex].id);
+  }
+
+  function renderShowcase(animate = true) {
+    const fighter = templateById(showcaseSelectedId);
+    const detail = FIGHTER_DETAILS[fighter.id];
+    const index = Math.max(0, FIGHTERS.findIndex((item) => item.id === fighter.id));
+    const formLocked = state !== "idle" && state !== "matchEnd";
+    const formButtons = WANDERER_FORM_IDS.has(fighter.id)
+      ? `
+        <div class="showcase-form-toggle" role="group" aria-label="${fighter.name}外观">
+          <span>外观</span>
+          <button type="button" data-showcase-gender="male" aria-pressed="${wandererForms[fighter.id] === "male"}" ${formLocked ? "disabled" : ""}>男</button>
+          <button type="button" data-showcase-gender="female" aria-pressed="${wandererForms[fighter.id] === "female"}" ${formLocked ? "disabled" : ""}>女</button>
+        </div>
+      `
+      : "";
+
+    dom.showcaseIndex.textContent = `${String(index + 1).padStart(2, "0")} / ${String(FIGHTERS.length).padStart(2, "0")}`;
+    dom.showcaseStage.style.setProperty("--showcase-color", fighter.color);
+    dom.showcaseProfile.style.setProperty("--showcase-color", fighter.color);
+    dom.showcaseStage.classList.remove("is-entering");
+    dom.showcaseProfile.classList.remove("is-entering");
+    if (animate) {
+      void dom.showcaseStage.offsetWidth;
+      dom.showcaseStage.classList.add("is-entering");
+      dom.showcaseProfile.classList.add("is-entering");
+    }
+    dom.showcaseStage.innerHTML = `
+      <span class="showcase-identity">ID ${fighter.id}</span>
+      <div class="showcase-orbit showcase-orbit-a" aria-hidden="true"></div>
+      <div class="showcase-orbit showcase-orbit-b" aria-hidden="true"></div>
+      <div class="showcase-portrait">
+        ${fighter.image ? `<img src="${fighter.image}" alt="${fighter.name}">` : `<span>${fighter.symbol}</span>`}
+      </div>
+      <div class="showcase-stage-copy">
+        <span class="element-tag">${fighter.element}</span>
+        <h3>${fighter.name}</h3>
+        <p>${fighter.tagline}</p>
+        ${formButtons}
+        <button class="showcase-demo-launch" type="button" data-showcase-action="demo" ${formLocked ? "disabled" : ""}>
+          <span aria-hidden="true">▶</span>
+          <b>实机演示</b>
+          <small>${formLocked ? "请先结束当前对局" : "无限生命木桩 · 动作实战"}</small>
+        </button>
+      </div>
+    `;
+    dom.showcaseProfile.innerHTML = `
+      <div class="showcase-profile-head">
+        <div>
+          <span class="showcase-role">${detail.role}</span>
+          <h4>${fighter.ability}</h4>
+          <p>${fighter.abilityDesc}</p>
+        </div>
+        <span class="showcase-symbol" aria-hidden="true">${fighter.symbol}</span>
+      </div>
+      <div class="showcase-stat-grid">
+        <div><span>生命</span><strong>${fighter.display.hp}</strong></div>
+        <div><span>普通攻击</span><strong>${fighter.display.attack}</strong></div>
+        <div><span>移动速度</span><strong>${fighter.display.speed}</strong></div>
+        <div><span>攻击间隔</span><strong>${detail.interval}</strong></div>
+      </div>
+      <div class="showcase-range">
+        <span>攻击范围</span>
+        <strong>${detail.range}</strong>
+      </div>
+      <div class="showcase-mechanics">
+        <h5>核心机制</h5>
+        <ul>${detail.mechanics.map((mechanic) => `<li>${mechanic}</li>`).join("")}</ul>
+      </div>
+      <button class="showcase-archive-link" type="button" data-showcase-action="archive">
+        查看完整角色档案 <span aria-hidden="true">→</span>
+      </button>
+    `;
+    dom.showcaseRoster.querySelectorAll("[data-showcase-id]").forEach((button) => {
+      const active = button.dataset.showcaseId === fighter.id;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  function openShowcase(fighterId = getConfigId()) {
+    if (showcaseTrainingActive) finishShowcaseTraining(false);
+    showcaseSelectedId = FIGHTERS.some((fighter) => fighter.id === fighterId) ? fighterId : getConfigId();
+    buildShowcaseRoster();
+    renderShowcase();
+    if (dom.fighterArchive.open) dom.fighterArchive.close();
+    if (!dom.fighterShowcase.open) dom.fighterShowcase.showModal();
+  }
+
+  function updateShowcaseTrainingAutoUI() {
+    const button = dom.showcaseTrainingConsole.querySelector("[data-training-action='auto']");
+    if (!button) return;
+    button.classList.toggle("is-active", showcaseTrainingAuto);
+    button.setAttribute("aria-pressed", String(showcaseTrainingAuto));
+    button.querySelector("small").textContent = showcaseTrainingAuto ? "开" : "关";
+  }
+
+  function updateShowcaseTrainingSpeedUI() {
+    if (!dom.showcaseTrainingSpeed) return;
+    dom.showcaseTrainingSpeed.textContent = `${gameSpeed}×`;
+    const slow = dom.showcaseTrainingConsole.querySelector("[data-training-action='slow']");
+    const fast = dom.showcaseTrainingConsole.querySelector("[data-training-action='fast']");
+    if (slow) slow.disabled = gameSpeedIndex === 0;
+    if (fast) fast.disabled = gameSpeedIndex === GAME_SPEEDS.length - 1;
+  }
+
+  function updateShowcaseTrainingReadout(force = false) {
+    if (!showcaseTrainingActive || !player) return;
+    if (!force && showcaseTrainingReadoutClock < 0.12) return;
+    showcaseTrainingReadoutClock = 0;
+    const stateText = replayFighterStatus(player);
+    dom.showcaseTrainingReadout.textContent = `木桩累计承伤 ${Math.round(showcaseTrainingDamage).toLocaleString("zh-CN")} · ${replaySpecialReadout(player)} · ${stateText}`;
+  }
+
+  function prepareShowcaseTrainingFighter() {
+    const template = templateById(showcaseTrainingFighterId);
+    resetBattleTransient();
+    player = makeFighter(template, 0, {
+      x: ARENA_SIZE / 2 - CELL_SIZE * 5.2,
+      y: ARENA_SIZE / 2,
+      vx: CELL_SIZE * Math.max(1, template.speed),
+      vy: 0,
+      attackClock: 0.2,
+      abilityCooldown: 0,
+      ultimateCooldown: 0,
+      trainingInvulnerable: true
+    });
+    enemy = makeFighter(TRAINING_DUMMY_TEMPLATE, 1, {
+      x: ARENA_SIZE / 2,
+      y: ARENA_SIZE / 2,
+      vx: 0,
+      vy: 0,
+      hp: Number.POSITIVE_INFINITY,
+      maxHp: Number.POSITIVE_INFINITY,
+      infiniteHealth: true,
+      trainingDummy: true,
+      attackClock: Number.POSITIVE_INFINITY
+    });
+    [player, enemy].forEach(spawnWhiteSheep);
+    setupVerinaPlants();
+    setupCantarellaJellies();
+    showcaseTrainingClock = 0;
+    showcaseTrainingAutoStep = 0;
+    showcaseTrainingReadoutClock = 0;
+    showcaseTrainingManualInput = false;
+    Object.keys(touchDirection).forEach((direction) => {
+      touchDirection[direction] = false;
+    });
+    state = "playing";
+    manualPaused = false;
+    battleTimer = roundSeconds;
+    dom.gameOverlay.classList.add("is-hidden");
+    dom.pauseOverlay.hidden = true;
+    dom.liveBadge.classList.add("is-live");
+    dom.statusDot.classList.add("live");
+    dom.matchHead.hidden = false;
+    dom.multiBoard.hidden = true;
+    dom.battleStatus.textContent = "实机演示中";
+    dom.showcaseTrainingName.textContent = `${template.name} · 实机演示`;
+    dom.showcaseTrainingHint.textContent = window.matchMedia("(pointer: coarse)").matches
+      ? "按住方向盘可接管移动，使用按钮演示攻击、技能与共鸣解放。"
+      : "按住方向盘或使用方向键 / WASD 接管移动。木桩与演示团子都不会被击败。";
+    dom.battleLog.innerHTML = "";
+    addLog(`${template.name} 进入实机演示训练场。`, "system");
+    addLog("共鸣木桩拥有无限生命，不会移动或反击。", "system");
+    updateShowcaseTrainingReadout(true);
+    updateHud(true);
+  }
+
+  function startShowcaseTraining() {
+    if (showcaseTrainingActive) return;
+    if (state !== "idle" && state !== "matchEnd") return;
+    showcaseTrainingFighterId = showcaseSelectedId;
+    showcaseTrainingActive = true;
+    showcaseTrainingAuto = true;
+    showcaseTrainingManualInput = false;
+    showcaseTrainingDamage = 0;
+    showcaseTrainingSavedSpeed = gameSpeed;
+    showcaseTrainingSavedMode = mode;
+    mode = "watch";
+    gameSpeedIndex = 3;
+    gameSpeed = 1;
+    dom.gameSpeedText.textContent = "1×";
+    document.body.classList.add("showcase-training-active");
+    dom.showcaseTrainingConsole.hidden = false;
+    dom.fighterShowcase.close();
+    prepareShowcaseTrainingFighter();
+    updateShowcaseTrainingAutoUI();
+    updateShowcaseTrainingSpeedUI();
+    announce(`${templateById(showcaseTrainingFighterId).name} · 实机演示`, templateById(showcaseTrainingFighterId).color, 1.2);
+    playSound("round");
+  }
+
+  function finishShowcaseTraining(reopenShowcase = true) {
+    if (!showcaseTrainingActive) return;
+    const returnId = showcaseTrainingFighterId;
+    showcaseTrainingActive = false;
+    manualPaused = false;
+    timeStopOwner = null;
+    timeStopTimer = 0;
+    state = "idle";
+    Object.keys(keys).forEach((key) => {
+      keys[key] = false;
+    });
+    Object.keys(touchDirection).forEach((direction) => {
+      touchDirection[direction] = false;
+    });
+    showcaseTrainingManualInput = false;
+    document.body.classList.remove("showcase-training-active");
+    dom.showcaseTrainingConsole.hidden = true;
+    dom.pauseOverlay.hidden = true;
+    const restoredIndex = GAME_SPEEDS.indexOf(showcaseTrainingSavedSpeed);
+    gameSpeedIndex = restoredIndex >= 0 ? restoredIndex : 3;
+    gameSpeed = GAME_SPEEDS[gameSpeedIndex];
+    mode = showcaseTrainingSavedMode;
+    dom.gameSpeedText.textContent = `${gameSpeed}×`;
+    dom.slowButton.disabled = gameSpeedIndex === 0;
+    dom.fastButton.disabled = gameSpeedIndex === GAME_SPEEDS.length - 1;
+    updateShowcaseTrainingSpeedUI();
+    resetBattleTransient();
+    preparePreview();
+    dom.matchHead.hidden = mode === "multi";
+    dom.multiBoard.hidden = mode !== "multi";
+    showSelectOverlay();
+    if (reopenShowcase) openShowcase(returnId);
+  }
+
+  function positionShowcaseTrainingTarget(rangeCells = 2.4) {
+    if (!player || !enemy) return;
+    const desiredDistance = clamp(rangeCells * CELL_SIZE, enemy.r + player.r + 12, CELL_SIZE * 8);
+    const side = player.x <= enemy.x ? -1 : 1;
+    player.x = clamp(enemy.x + side * desiredDistance, BOUNDARY + player.r, ARENA_SIZE - BOUNDARY - player.r);
+    player.y = clamp(enemy.y + Math.sin(visualTime * 1.4) * CELL_SIZE * 0.8, BOUNDARY + player.r, ARENA_SIZE - BOUNDARY - player.r);
+    player.vx = -side * getEffectiveMoveSpeed(player);
+    player.vy = 0;
+    player.knockback = null;
+  }
+
+  function triggerShowcaseTrainingBasic() {
+    if (!showcaseTrainingActive || state !== "playing" || !player || !enemy) return;
+    showcaseTrainingAutoStep = Math.max(showcaseTrainingAutoStep, 1);
+    showcaseTrainingClock = Math.max(showcaseTrainingClock, 1.2);
+    player.attackClock = 0;
+    player.stunned = 0;
+    player.freeze = 0;
+    player.vortexLockTimer = 0;
+    if (player.template.attackType === "none") {
+      dom.showcaseTrainingHint.textContent = `${player.template.name}没有普通攻击，已改用技能演示。`;
+      triggerShowcaseTrainingSkill();
+      return;
+    }
+    if (player.template.attackType === "summoner") {
+      const sheep = summonUnits.find((unit) => unit.owner === player);
+      if (sheep) launchWhiteSheepFireball(sheep, enemy);
+      dom.showcaseTrainingHint.textContent = "白咩正在向木桩发射火球。";
+      updateShowcaseTrainingReadout(true);
+      return;
+    }
+    const meleeLike = ["melee", "thrust", "hybrid", "jinhsiSlash", "cantarellaUmbrella"].includes(player.template.attackType)
+      || player.abyssForm;
+    if (meleeLike && distance(player, enemy) > Math.max(CELL_SIZE * 1.8, getAttackRangeCells(player) * CELL_SIZE * 0.82)) {
+      positionShowcaseTrainingTarget(Math.max(1.65, getAttackRangeCells(player) * 0.78));
+    }
+    tryBasicAttack(player, enemy);
+    dom.showcaseTrainingHint.textContent = `正在演示${player.template.name}的普通攻击。`;
+    updateShowcaseTrainingReadout(true);
+  }
+
+  function ensureShowcaseTrainingVine() {
+    if (!player || player.template.id !== "06") return;
+    while (verinaPlants.filter((plant) => plant.owner === player).length < player.template.verinaSproutsForVine) {
+      const index = verinaPlants.filter((plant) => plant.owner === player).length;
+      spawnVerinaPlant(
+        player,
+        ARENA_SIZE / 2 + Math.cos(index * 1.7) * CELL_SIZE * 3.4,
+        ARENA_SIZE / 2 + Math.sin(index * 1.7) * CELL_SIZE * 3.4,
+        false
+      );
+    }
+  }
+
+  function triggerShowcaseTrainingSkill() {
+    if (!showcaseTrainingActive || state !== "playing" || !player || !enemy) return;
+    showcaseTrainingAutoStep = Math.max(showcaseTrainingAutoStep, 2);
+    showcaseTrainingClock = Math.max(showcaseTrainingClock, 4.6);
+    player.stunned = 0;
+    player.freeze = 0;
+    player.vortexLockTimer = 0;
+    let description = `正在演示${player.template.name}的核心技能。`;
+    switch (player.template.id) {
+      case "kakarot-test":
+        player.specialEnergy = 2;
+        gainKakarotSpecialEnergy(player, enemy);
+        player.deathSentenceClock = 0;
+        triggerDeathSentence(player, enemy);
+        description = "死告能量充满，锁定木桩并演示瞬身重击。";
+        break;
+      case "anko-test":
+        if (!player.horned) {
+          player.horned = true;
+          player.flash = 1;
+          announce(`${player.template.name} · 羊角形态`, "#ff9fc8", 1);
+        }
+        positionShowcaseTrainingTarget(1.65);
+        tryStartBlackSheepSlam(player);
+        description = "白咩持续火球压制，安可召唤黑咩砸击木桩。";
+        break;
+      case "01":
+        gainWandererSpecialEnergy(player, enemy);
+        gainWandererSpecialEnergy(player, enemy);
+        gainWandererSpecialEnergy(player, enemy);
+        description = "时序能量推进：强化普攻、回溯并生成时间乱流。";
+        break;
+      case "02":
+        enterAbyssForm(player);
+        player.abyssEnergy = 100;
+        description = "暗涌拉满，切换为恐怖镰刀人形态。";
+        break;
+      case "03":
+        spawnWindField(player);
+        description = "在脚下展开半径 8 格的牵引风场。";
+        break;
+      case "04":
+        gainBrantSpecialEnergy(player, player.template.brantSpecialMax);
+        description = "船锚能量充满，布兰特进入绳索巡航状态。";
+        break;
+      case "05":
+        spawnCantarellaJelly(player);
+        launchCantarellaUmbrella(player, enemy);
+        description = "召唤水母，同时向木桩丢出旋转雨伞。";
+        break;
+      case "06":
+        spawnVerinaPlant(player, player.x, player.y, false);
+        description = "在演示团子脚下种下一颗治疗芽。";
+        break;
+      case "07":
+        player.jinhsiSkillUnlocked = true;
+        player.jinhsiEmpowered = true;
+        beginJinhsiSkill(player);
+        description = "逐光定界锁定木桩，光柱正在落下。";
+        break;
+      case "08":
+        player.aeroWind = player.template.aeroWindMax;
+        player.aeroSequenceActive = false;
+        player.aeroAirTimer = 0;
+        player.aeroPreLiftTimer = 0;
+        player.aeroBasicUnlocked = false;
+        player.aeroSkillUnlocked = true;
+        beginAeroAerialAttack(player);
+        description = "风息充满，漂泊者升空演示两段全场斩击。";
+        break;
+      default:
+        player.specialEnergy = Math.max(3, player.specialEnergy);
+        break;
+    }
+    dom.showcaseTrainingHint.textContent = description;
+    updateShowcaseTrainingReadout(true);
+  }
+
+  function triggerShowcaseTrainingUltimate() {
+    if (!showcaseTrainingActive || state !== "playing" || !player || !enemy) return;
+    showcaseTrainingAutoStep = Math.max(showcaseTrainingAutoStep, 3);
+    showcaseTrainingClock = Math.max(showcaseTrainingClock, 8.2);
+    player.stunned = 0;
+    player.freeze = 0;
+    player.vortexLockTimer = 0;
+    player.abilityCooldown = 0;
+    player.ultimateCooldown = 0;
+    let description = `正在演示${player.template.name}的共鸣解放。`;
+    if (player.template.id === "kakarot-test") {
+      player.overclock = 0;
+      player.hp = Math.min(player.hp, player.template.ultimateThreshold - 1);
+      description = "生命压低至阈值，低血共鸣将在下一帧自动开启。";
+    } else if (player.template.id === "anko-test") {
+      player.hp = Math.min(player.hp, player.template.transformThreshold - 1);
+      description = "生命压低至阈值，安可正在触发羊角觉醒。";
+    } else {
+      if (player.template.id === "02") {
+        positionShowcaseTrainingTarget(3.8);
+        if (!player.abyssForm) enterAbyssForm(player);
+      }
+      if (player.template.id === "03") {
+        player.hp = Math.max(player.hp, 600);
+        player.shield = Math.max(player.shield, 300);
+      }
+      if (player.template.id === "05") {
+        player.cantarellaJellyDeaths = Math.max(
+          player.cantarellaJellyDeaths,
+          player.template.jellyDeathsToUnlock
+        );
+      }
+      if (player.template.id === "06") {
+        player.hp = Math.max(player.hp, player.maxHp * 0.55);
+        ensureShowcaseTrainingVine();
+      }
+      if (player.template.id === "07") {
+        player.jinhsiUltimateUnlocked = true;
+        player.jinhsiUltimatePhase = "idle";
+        player.jinhsiAirborne = false;
+      }
+      if (player.template.id === "08") {
+        player.aeroUltimateUnlocked = true;
+        player.aeroUltimateTimer = 0;
+        player.aeroPreLiftTimer = 0;
+        player.aeroAirTimer = 0;
+        player.aeroDashTimer = 0;
+        player.aeroSequenceActive = false;
+      }
+      player.energy = 100;
+      player.fullEnergyTime = 1.1;
+      useAbility(player, enemy, { voicePlayed: true });
+      if (player.template.id === "08") {
+        player.aeroUltimateTimer = Math.max(player.aeroUltimateTimer, player.template.ultimateDuration);
+        player.aeroEnhanced = true;
+        player.aeroUltimateUnlocked = false;
+        player.aeroSwordClock = Math.min(player.aeroSwordClock, 0.08);
+      }
+    }
+    dom.showcaseTrainingHint.textContent = description;
+    updateShowcaseTrainingReadout(true);
+  }
+
+  function updateShowcaseTraining(dt) {
+    if (!showcaseTrainingActive || !player || !enemy || state !== "playing") return;
+    if (enemy.trainingDummy) {
+      enemy.x = ARENA_SIZE / 2;
+      enemy.y = ARENA_SIZE / 2;
+      enemy.vx = 0;
+      enemy.vy = 0;
+      enemy.knockback = null;
+      enemy.hp = Number.POSITIVE_INFINITY;
+      enemy.maxHp = Number.POSITIVE_INFINITY;
+    }
+    if (player.hp <= 0) player.hp = 1;
+    battleTimer = roundSeconds;
+    showcaseTrainingClock += dt;
+    showcaseTrainingReadoutClock += dt;
+    if (showcaseTrainingAuto) {
+      if (showcaseTrainingAutoStep === 0 && showcaseTrainingClock >= 1.2) {
+        showcaseTrainingAutoStep = 1;
+        triggerShowcaseTrainingBasic();
+      } else if (showcaseTrainingAutoStep === 1 && showcaseTrainingClock >= 4.6) {
+        showcaseTrainingAutoStep = 2;
+        triggerShowcaseTrainingSkill();
+      } else if (showcaseTrainingAutoStep === 2 && showcaseTrainingClock >= 8.2) {
+        showcaseTrainingAutoStep = 3;
+        triggerShowcaseTrainingUltimate();
+      } else if (showcaseTrainingAutoStep === 3 && showcaseTrainingClock >= 14) {
+        showcaseTrainingClock = 0;
+        showcaseTrainingAutoStep = 0;
+        if (player.hp < player.maxHp * 0.3) player.hp = player.maxHp;
+      }
+    }
+    updateShowcaseTrainingReadout();
   }
 
   const REPLAY_MIME_TYPES = [
@@ -11156,6 +11856,7 @@
         updateTrails(dt);
       } else if (state === "playing") {
         updateBattle(dt);
+        if (showcaseTrainingActive) updateShowcaseTraining(dt);
       } else if (state === "roundEnd") {
         updateRoundEnd(dt);
       }
@@ -11167,8 +11868,49 @@
 
   window.addEventListener("resize", resizeCanvas);
   window.addEventListener("keydown", (event) => {
+    if (dom.fighterShowcase.open) {
+      if (event.code === "ArrowLeft" || event.code === "ArrowRight") {
+        event.preventDefault();
+        stepShowcase(event.code === "ArrowLeft" ? -1 : 1);
+      } else if (event.code === "Escape") {
+        event.preventDefault();
+        dom.fighterShowcase.close();
+      }
+      return;
+    }
+    if (showcaseTrainingActive) {
+      if (event.code === "Escape") {
+        event.preventDefault();
+        finishShowcaseTraining(true);
+        return;
+      }
+      if (event.code === "KeyJ" && !event.repeat) {
+        triggerShowcaseTrainingBasic();
+        return;
+      }
+      if (event.code === "KeyK" && !event.repeat) {
+        triggerShowcaseTrainingSkill();
+        return;
+      }
+      if (event.code === "KeyL" && !event.repeat) {
+        triggerShowcaseTrainingUltimate();
+        return;
+      }
+      if (event.code === "KeyR" && !event.repeat) {
+        showcaseTrainingDamage = 0;
+        prepareShowcaseTrainingFighter();
+        updateShowcaseTrainingAutoUI();
+        return;
+      }
+    }
     if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) return;
     keys[event.code] = true;
+    if (
+      showcaseTrainingActive
+      && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)
+    ) {
+      showcaseTrainingManualInput = true;
+    }
     if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(event.code)) {
       event.preventDefault();
     }
@@ -11194,11 +11936,17 @@
     Object.keys(keys).forEach((key) => {
       keys[key] = false;
     });
+    Object.keys(touchDirection).forEach((direction) => {
+      touchDirection[direction] = false;
+    });
   });
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       Object.keys(keys).forEach((key) => {
         keys[key] = false;
+      });
+      Object.keys(touchDirection).forEach((direction) => {
+        touchDirection[direction] = false;
       });
     }
   });
@@ -11227,6 +11975,85 @@
     setSound(!soundEnabled);
   });
   dom.shuffleButton.addEventListener("click", shuffleEnemy);
+  dom.showcaseButton.addEventListener("click", () => {
+    openShowcase(showcaseTrainingActive ? showcaseTrainingFighterId : getConfigId());
+  });
+  dom.showcaseClose.addEventListener("click", () => dom.fighterShowcase.close());
+  dom.showcasePrev.addEventListener("click", () => stepShowcase(-1));
+  dom.showcaseNext.addEventListener("click", () => stepShowcase(1));
+  dom.showcaseRoster.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-showcase-id]");
+    if (button) setShowcaseSelection(button.dataset.showcaseId);
+  });
+  dom.showcaseStage.addEventListener("click", (event) => {
+    const genderButton = event.target.closest("[data-showcase-gender]");
+    if (genderButton) setWandererForm(showcaseSelectedId, genderButton.dataset.showcaseGender);
+    const demoButton = event.target.closest("[data-showcase-action='demo']");
+    if (demoButton && !demoButton.disabled) startShowcaseTraining();
+  });
+  dom.showcaseProfile.addEventListener("click", (event) => {
+    const archiveLink = event.target.closest("[data-showcase-action='archive']");
+    if (archiveLink) {
+      archiveSelectedId = showcaseSelectedId;
+      dom.fighterShowcase.close();
+      renderArchive();
+      dom.fighterArchive.showModal();
+    }
+  });
+  dom.fighterShowcase.addEventListener("click", (event) => {
+    if (event.target === dom.fighterShowcase) dom.fighterShowcase.close();
+  });
+  dom.showcaseTrainingConsole.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-training-action]");
+    if (!button) return;
+    const action = button.dataset.trainingAction;
+    if (action === "attack") triggerShowcaseTrainingBasic();
+    else if (action === "skill") triggerShowcaseTrainingSkill();
+    else if (action === "ultimate") triggerShowcaseTrainingUltimate();
+    else if (action === "slow") changeGameSpeed(-1);
+    else if (action === "fast") changeGameSpeed(1);
+    else if (action === "auto") {
+      showcaseTrainingAuto = !showcaseTrainingAuto;
+      if (showcaseTrainingAuto && player && enemy) {
+        showcaseTrainingManualInput = false;
+        const angle = Math.atan2(enemy.y - player.y, enemy.x - player.x);
+        const speed = getEffectiveMoveSpeed(player);
+        player.vx = Math.cos(angle) * speed;
+        player.vy = Math.sin(angle) * speed;
+      }
+      updateShowcaseTrainingAutoUI();
+      dom.showcaseTrainingHint.textContent = showcaseTrainingAuto
+        ? "自动连招已开启：将依次演示普攻、技能与共鸣解放。"
+        : "自动连招已关闭，可手动触发动作；团子仍会继续普通战斗行为。";
+    } else if (action === "reset") {
+      showcaseTrainingDamage = 0;
+      prepareShowcaseTrainingFighter();
+      updateShowcaseTrainingAutoUI();
+    } else if (action === "exit") {
+      finishShowcaseTraining(true);
+    }
+  });
+  dom.showcaseTrainingConsole.querySelectorAll("[data-training-move]").forEach((button) => {
+    const direction = button.dataset.trainingMove;
+    const release = () => {
+      touchDirection[direction] = false;
+      button.classList.remove("is-held");
+    };
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      showcaseTrainingManualInput = true;
+      touchDirection[direction] = true;
+      button.classList.add("is-held");
+      try {
+        button.setPointerCapture(event.pointerId);
+      } catch {
+        // Synthetic pointer events may not have an active pointer to capture.
+      }
+    });
+    button.addEventListener("pointerup", release);
+    button.addEventListener("pointercancel", release);
+    button.addEventListener("lostpointercapture", release);
+  });
   dom.archiveButton.addEventListener("click", openArchive);
   dom.archiveClose.addEventListener("click", () => dom.fighterArchive.close());
   dom.fighterArchive.addEventListener("click", (event) => {

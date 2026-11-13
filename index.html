@@ -51,6 +51,10 @@
           <input id="durationInput" type="number" min="10" max="300" step="5" value="300" inputmode="numeric" aria-label="对局时长，单位秒">
           <span>秒</span>
         </label>
+        <button id="showcaseButton" class="showcase-launch" type="button" aria-label="打开团子展示厅" title="团子展示厅">
+          <span aria-hidden="true">✦</span>
+          <b>团子展示</b>
+        </button>
         <button id="replayButton" class="icon-button replay-button" type="button" aria-label="对局回放" title="对局回放">
           <span aria-hidden="true">▷</span>
           <b id="replayCount" class="replay-count">0</b>
@@ -240,6 +244,51 @@
           </div>
         </div>
 
+        <section id="showcaseTrainingConsole" class="showcase-training-console" aria-label="角色实机演示控制台" hidden>
+          <div class="showcase-training-summary">
+            <span class="eyebrow">TRAINING SIMULATION</span>
+            <strong id="showcaseTrainingName">实机演示</strong>
+            <span id="showcaseTrainingReadout">无限木桩 · 准备中</span>
+          </div>
+          <div class="showcase-training-manual">
+            <div class="showcase-training-dpad" role="group" aria-label="演示团子移动控制">
+              <span>移动</span>
+              <button type="button" data-training-move="up" aria-label="向上移动">▲</button>
+              <button type="button" data-training-move="left" aria-label="向左移动">◀</button>
+              <i aria-hidden="true"></i>
+              <button type="button" data-training-move="right" aria-label="向右移动">▶</button>
+              <button type="button" data-training-move="down" aria-label="向下移动">▼</button>
+            </div>
+            <div class="showcase-training-speed" role="group" aria-label="演示播放速度">
+              <span>速度</span>
+              <button type="button" data-training-action="slow" aria-label="减速">−</button>
+              <b id="showcaseTrainingSpeed" aria-live="polite">1×</b>
+              <button type="button" data-training-action="fast" aria-label="加速">＋</button>
+            </div>
+          </div>
+          <div class="showcase-training-actions" role="group" aria-label="演示动作">
+            <button type="button" data-training-action="attack">
+              <span>普攻</span><small>J</small>
+            </button>
+            <button type="button" data-training-action="skill">
+              <span>技能</span><small>K</small>
+            </button>
+            <button type="button" data-training-action="ultimate">
+              <span>共鸣解放</span><small>L</small>
+            </button>
+            <button class="is-active" type="button" data-training-action="auto" aria-pressed="true">
+              <span>自动连招</span><small>开</small>
+            </button>
+            <button type="button" data-training-action="reset">
+              <span>重置训练</span><small>↻</small>
+            </button>
+            <button class="showcase-training-exit" type="button" data-training-action="exit">
+              <span>返回展示</span><small>Esc</small>
+            </button>
+          </div>
+          <p id="showcaseTrainingHint">方向键 / WASD 可接管移动。木桩与演示团子都不会被击败。</p>
+        </section>
+
         <div class="battle-toolbar">
           <div class="status-chip">
             <i id="statusDot" aria-hidden="true"></i>
@@ -380,6 +429,27 @@
     <div class="archive-body">
       <nav id="archiveList" class="archive-list" aria-label="角色列表"></nav>
       <article id="archiveDetail" class="archive-detail" aria-live="polite"></article>
+    </div>
+  </dialog>
+
+  <dialog id="fighterShowcase" class="showcase-dialog" aria-labelledby="showcaseTitle">
+    <div class="showcase-header">
+      <div>
+        <span class="eyebrow">SOLARIS SHOWCASE</span>
+        <h2 id="showcaseTitle">团子展示厅</h2>
+        <p>浏览角色外观、战斗定位与核心机制</p>
+      </div>
+      <div class="showcase-header-actions">
+        <span id="showcaseIndex" class="showcase-index">01 / 10</span>
+        <button id="showcasePrev" class="showcase-nav" type="button" aria-label="上一个团子">‹</button>
+        <button id="showcaseNext" class="showcase-nav" type="button" aria-label="下一个团子">›</button>
+        <button id="showcaseClose" class="archive-close" type="button" aria-label="关闭团子展示厅">×</button>
+      </div>
+    </div>
+    <div class="showcase-body">
+      <section id="showcaseStage" class="showcase-stage" aria-live="polite"></section>
+      <article id="showcaseProfile" class="showcase-profile" aria-live="polite"></article>
+      <nav id="showcaseRoster" class="showcase-roster" aria-label="全部团子"></nav>
     </div>
   </dialog>
 
