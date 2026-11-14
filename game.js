@@ -653,7 +653,7 @@
         "普攻命中积累 1 格时序能量；只有达到第 1 格时永久增加 0.5 格普攻半径与 10 点普攻伤害，第 2、3 格不再增加属性。",
         "达到 2 格时回到 1 秒前的位置，并将生命值恢复为 1 秒前的数值。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
-        "其他团子及白咩、水母、芽/藤等召唤物进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 15 秒内不会再次受到任何乱流影响。",
+        "其他团子与坎特蕾拉的水母进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 15 秒内不会再次受到任何乱流影响。白咩、芽/藤等其他召唤物不受时间乱流影响。",
         "场上最多同时存在 3 个时间乱流。",
         "共鸣能量满后可释放时序停界，基础冻结 5 秒。若场上存在时间乱流则全部吸收，每个额外延长 3 秒。",
         "冻结期间只有漂泊者可以移动与攻击，普攻不会增加时序能量；自身每 1 秒随机瞬移并以随机方向移动，穿越其他单位时不会发生碰撞。",
@@ -3430,11 +3430,11 @@
   }
 
   function getTimeVortexTargets() {
+    // Time vortices affect combatants and Cantarella's independent jellyfish only.
+    // White Sheep, sprouts/vines, and other summons continue to act normally.
     return [
       ...getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne),
-      ...summonUnits.filter((unit) => unit.owner?.hp > 0),
-      ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0),
-      ...verinaPlants.filter((plant) => plant.owner?.hp > 0)
+      ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0)
     ];
   }
 
