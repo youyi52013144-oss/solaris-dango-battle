@@ -432,6 +432,54 @@
       abilityIcon: "龙",
       abilityDesc: "强化普攻命中 4 次后解锁，无需共鸣能量。停滞 2 秒后伴随金龙飞升腾空 3 秒；追踪敌人的半径 10 格光圈以 2 格/秒跟随，随后金龙俯冲砸地并造成 600 点范围伤害。释放后大招重新锁定，强化普攻恢复为初始形态。",
       cooldown: 0
+    },
+    {
+      id: "09",
+      voiceOrder: 11,
+      name: "心团子",
+      element: "心 · 织阵型",
+      tagline: "心轮巡游，万象分界。",
+      color: "#ff697d",
+      dark: "#5d2639",
+      symbol: "心",
+      image: "assets/xin.png",
+      hp: 1100,
+      power: 1,
+      speed: 6,
+      radius: 27,
+      stats: { power: 72, speed: 75, hp: 100 },
+      display: { attack: "5×6", speed: "6.0格/s", hp: "1100" },
+      attackType: "heartWheel",
+      attackDamage: 5,
+      attackCooldown: 2,
+      attackRange: 20,
+      heartWheelCount: 6,
+      heartWheelSpeed: 20,
+      heartWheelHoming: 2.4,
+      heartWheelDelay: 0.2,
+      heartWheelLife: 2,
+      skillCooldown: 7,
+      heartBambooCount: 5,
+      heartBambooRadius: 3.4,
+      heartBambooHitRadius: 0.56,
+      heartBambooDamage: 15,
+      heartBlueRadius: 4,
+      heartBlueSpeed: 6,
+      heartBlueDuration: 5,
+      heartBlueDamage: 25,
+      heartLanternRadius: 6,
+      heartLanternSpeed: 6,
+      heartLanternLaps: 1,
+      heartLanternSlow: 0.35,
+      heartLanternDamage: 15,
+      heartLanternTick: 1,
+      ultimateType: "heartBarrier",
+      ultimateDuration: 25,
+      ultimateCooldown: 60,
+      ability: "心界分界",
+      abilityIcon: "界",
+      abilityDesc: "清除心团子释放的全部场地技能；1 秒后在地图中央生成纵向屏障，将所有场上实体单位随机传送至屏障左侧。屏障持续 25 秒，任何单位撞击时都会反弹，效果等同于地图边界。冷却 60 秒。",
+      cooldown: 60
     }
   ];
 
@@ -785,6 +833,23 @@
         "光圈锁定结束后金龙俯冲砸地，自身落在光圈中心，对范围内敌人造成 600 点特殊伤害。",
         "释放大招后重新进入锁定状态，并将强化普攻恢复为初始普攻，需要再次完成两轮四段攻击。"
       ]
+    },
+    "09": {
+      role: "追踪普攻 / 随机场地 / 地图分界",
+      range: "飞轮全图追踪；旋转细竹环半径 3.4 格；蓝色障碍半径 4 格；天灯影响半径 6 格",
+      interval: "普攻 2 秒 / 随机技能 7 秒 / 共鸣解放 60 秒",
+      mechanics: [
+        "生命 1100、移动速度 6 格/秒。",
+        "每 2 秒召唤 6 枚红色环形飞轮，原地悬停 0.2 秒后以 20 格/秒追踪最近敌人；每枚命中造成 5 点伤害，且最多在场 2 秒。",
+        "每 7 秒从绿、蓝、红三种场地效果中随机释放一种。",
+        "绿色·细竹：5 柄细竹围绕心团子旋转并跟随自身移动；敌方单位撞到后改变移动方向并受到 15 点特殊伤害，该细竹随后损毁。",
+        "蓝色·纵线：记录自身施放时的纵向轴线，持续 5 秒；每次施放只在上边界生成一个半径 4 格的蓝色障碍，以 6 格/秒向下移动。",
+        "敌方单位撞击蓝色障碍时改变移动方向并受到 25 点特殊伤害，障碍不会因碰撞消失；心团子自身无视蓝色障碍。",
+        "红色·天灯：在边界随机生成无实体天灯，以 6 格/秒绕当前有效地图边缘移动，绕完一整圈后消失。",
+        "天灯的半径 6 格领域内，敌方单位移速降低 35%，并每 1 秒受到 15 点特殊伤害。",
+        "共鸣解放「心界分界」会清除自身全部场地技能，停滞 1 秒后在地图中央生成贯穿上下边界的纵向屏障。屏障存在期间，心团子的场地技能会把左半图视为当前地图。",
+        "屏障生成时，所有团子、坎特蕾拉水母与白咩等场上实体单位会被随机传送至屏障左侧；屏障持续 25 秒，所有单位撞击屏障都会反弹，包括心团子自身。"
+      ]
     }
   };
 
@@ -950,7 +1015,7 @@
   let player = null;
   let enemy = null;
   let multiFighters = [];
-  let multiIds = ["kakarot-test", "anko-test", "01", "02", "08", "03", "06", "04", "05", "07"];
+  let multiIds = ["kakarot-test", "anko-test", "01", "02", "08", "03", "06", "04", "05", "07", "09"];
   let score = [0, 0];
   let round = 1;
   let roundSeconds = DEFAULT_ROUND_SECONDS;
@@ -1010,6 +1075,12 @@
   let jinhsiSkills = [];
   let jinhsiUltimates = [];
   let jinhsiSequence = 0;
+  let heartBamboos = [];
+  let heartBlueLines = [];
+  let heartBlueObstacles = [];
+  let heartLanterns = [];
+  let heartBarriers = [];
+  let heartSequence = 0;
   const jinhsiMatchRangeBonuses = new Map();
   let pickups = [];
   let floatingTexts = [];
@@ -1162,6 +1233,9 @@
       jinhsiSwingTime: 0,
       jinhsiSwingEmpowered: false,
       jinhsiSwingMode: "idle",
+      heartBarrierWindup: 0,
+      heartBarrierPending: false,
+      heartLanternSlowTimer: 0,
       voiceUltimatePending: false,
       voiceDeathSentencePending: false,
       deathVoicePlayed: false,
@@ -1857,6 +1931,12 @@
     jinhsiSkills = [];
     jinhsiUltimates = [];
     jinhsiSequence = 0;
+    heartBamboos = [];
+    heartBlueLines = [];
+    heartBlueObstacles = [];
+    heartLanterns = [];
+    heartBarriers = [];
+    heartSequence = 0;
     pickups = [];
     floatingTexts = [];
     timeStopOwner = null;
@@ -2073,6 +2153,7 @@
     }
     updateSummons(dt);
     updateCantarellaSystem(dt);
+    updateHeartSystem(dt);
     updateJinhsiSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
@@ -2146,6 +2227,7 @@
     }
     updateSummons(dt);
     updateCantarellaSystem(dt);
+    updateHeartSystem(dt);
     updateJinhsiSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
@@ -2261,6 +2343,12 @@
 
   function updateFighter(fighter, opponent, dt, isPlayer) {
     if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") {
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
+    if (fighter.template.id === "09" && fighter.heartBarrierWindup > 0) {
       fighter.vx = 0;
       fighter.vy = 0;
       fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
@@ -2509,6 +2597,18 @@
       if (fighter.skillClock === 0) {
         spawnVerinaPlant(fighter, fighter.x, fighter.y, false);
         fighter.skillClock = fighter.template.skillCooldown;
+      }
+    }
+    if (fighter.template.id === "09" && fighter.hp > 0) {
+      if (fighter.skillClock > 0) fighter.skillClock = Math.max(0, fighter.skillClock - dt);
+      if (
+        fighter.skillClock === 0
+        && fighter.heartBarrierWindup <= 0
+        && fighter.stunned <= 0
+        && fighter.freeze <= 0
+        && fighter.vortexLockTimer <= 0
+      ) {
+        triggerHeartSkill(fighter);
       }
     }
     if (fighter.template.id === "02" && fighter.abyssForm) {
@@ -2860,6 +2960,7 @@
     if (fighter.timeSlowTimer > 0) multiplier *= 0.7;
     if (fighter.verinaSlowTimer > 0) multiplier *= 0.5;
     if (fighter.cantarellaSlowTimer > 0) multiplier *= fighter.template.mirageSlowMultiplier || 0.2;
+    if (fighter.heartLanternSlowTimer > 0) multiplier *= 1 - (fighter.template.heartLanternSlow || 0.35);
     if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) multiplier *= 2;
     return baseSpeed * multiplier;
   }
@@ -4472,6 +4573,7 @@
       cantarellaSlowTimer: activeMirage?.cantarellaMirageTimer || 0,
       cantarellaDreamed: Boolean(activeMirage && activeMirage.side !== owner.side),
       cantarellaMirageOwner: activeMirage || null,
+      heartLanternSlowTimer: 0,
       defeated: false,
       phase: random(0, Math.PI * 2),
       template: {
@@ -4581,7 +4683,8 @@
         const dist = Math.hypot(dx, dy) || 1;
         const attackRange = unit.owner.template.jellyAttackRange * CELL_SIZE;
         const speed = unit.owner.template.jellySpeed * CELL_SIZE
-          * (unit.cantarellaSlowTimer > 0 ? unit.owner.template.mirageSlowMultiplier : 1);
+          * (unit.cantarellaSlowTimer > 0 ? unit.owner.template.mirageSlowMultiplier : 1)
+          * (unit.heartLanternSlowTimer > 0 ? 0.65 : 1);
         if (dist > attackRange * 0.82) {
           unit.vx = (dx / dist) * speed;
           unit.vy = (dy / dist) * speed;
@@ -5196,6 +5299,438 @@
     }
   }
 
+  function heartEnemyUnits(owner) {
+    return getDamageableUnits().filter((unit) => (
+      unit
+      && unit !== owner
+      && unit.hp > 0
+      && unit.side !== owner.side
+      && !unit.jinhsiAirborne
+    ));
+  }
+
+  function reflectHeartUnit(unit, x, y, color) {
+    const dx = unit.x - x;
+    const dy = unit.y - y;
+    const length = Math.hypot(dx, dy) || 1;
+    const speed = Math.hypot(unit.vx, unit.vy) || CELL_SIZE * 5;
+    unit.vx = (dx / length) * speed;
+    unit.vy = (dy / length) * speed;
+    if (unit.knockback) unit.knockback = null;
+    effects.push({
+      type: "ring",
+      x: unit.x,
+      y: unit.y,
+      radius: unit.r + 4,
+      growth: 220,
+      life: 0.32,
+      maxLife: 0.32,
+      color,
+      width: 4
+    });
+  }
+
+  function launchHeartWheels(fighter, opponent) {
+    if (!fighter || !opponent) return;
+    const target = nearestOpponent(fighter) || opponent;
+    if (!target) return;
+    const baseAngle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+    const speed = fighter.template.heartWheelSpeed * CELL_SIZE;
+    for (let index = 0; index < fighter.template.heartWheelCount; index += 1) {
+      const orbitAngle = baseAngle + index * Math.PI * 2 / fighter.template.heartWheelCount;
+      const spawnRadius = fighter.r + 13;
+      projectiles.push({
+        owner: fighter,
+        target,
+        kind: "heartWheel",
+        label: "心环飞轮",
+        independent: false,
+        x: fighter.x + Math.cos(orbitAngle) * spawnRadius,
+        y: fighter.y + Math.sin(orbitAngle) * spawnRadius,
+        vx: 0,
+        vy: 0,
+        r: 8,
+        life: fighter.template.heartWheelLife,
+        maxSpeed: speed,
+        delay: fighter.template.heartWheelDelay,
+        activated: false,
+        homing: fighter.template.heartWheelHoming,
+        damage: fighter.template.attackDamage,
+        color: "#ff5b73",
+        spin: orbitAngle,
+        phase: index / fighter.template.heartWheelCount * Math.PI * 2
+      });
+    }
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: fighter.r + 5,
+      growth: 310,
+      life: 0.36,
+      maxLife: 0.36,
+      color: "#ff9cad",
+      width: 4
+    });
+    addLog(`${fighter.template.name} 召唤 ${fighter.template.heartWheelCount} 枚心环飞轮追踪目标。`, "normal");
+    playSound("shot");
+  }
+
+  function clearHeartSkillEffects(owner) {
+    heartBamboos = heartBamboos.filter((item) => item.owner !== owner);
+    heartBlueLines = heartBlueLines.filter((item) => item.owner !== owner);
+    heartBlueObstacles = heartBlueObstacles.filter((item) => item.owner !== owner);
+    heartLanterns = heartLanterns.filter((item) => item.owner !== owner);
+  }
+
+  function spawnHeartBamboos(owner) {
+    const radius = owner.template.heartBambooRadius * CELL_SIZE;
+    for (let index = 0; index < owner.template.heartBambooCount; index += 1) {
+      const angle = index * Math.PI * 2 / owner.template.heartBambooCount;
+      heartBamboos.push({
+        id: ++heartSequence,
+        owner,
+        x: owner.x + Math.cos(angle) * radius,
+        y: owner.y + Math.sin(angle) * radius,
+        r: owner.template.heartBambooHitRadius * CELL_SIZE,
+        angle,
+        orbitRadius: radius,
+        rotationSpeed: 0.9,
+        phase: random(0, Math.PI * 2)
+      });
+    }
+    effects.push({
+      type: "ring",
+      x: owner.x,
+      y: owner.y,
+      radius: radius * 0.6,
+      growth: 420,
+      life: 0.6,
+      maxLife: 0.6,
+      color: "#88dd79",
+      width: 6
+    });
+  }
+
+  function startHeartBlueLine(owner) {
+    const bounds = heartSkillBounds(owner);
+    const line = {
+      id: ++heartSequence,
+      owner,
+      x: clamp(owner.x, bounds.minX, bounds.maxX),
+      life: owner.template.heartBlueDuration,
+      maxLife: owner.template.heartBlueDuration,
+      phase: random(0, Math.PI * 2)
+    };
+    heartBlueLines.push(line);
+    spawnHeartBlueObstacle(line);
+  }
+
+  function spawnHeartBlueObstacle(line) {
+    heartBlueObstacles.push({
+      id: ++heartSequence,
+      owner: line.owner,
+      lineId: line.id,
+      x: line.x,
+      y: BOUNDARY,
+      radius: line.owner.template.heartBlueRadius * CELL_SIZE,
+      speed: line.owner.template.heartBlueSpeed * CELL_SIZE,
+      hitCooldowns: new Map(),
+      phase: random(0, Math.PI * 2)
+    });
+  }
+
+  function heartSkillBounds(owner) {
+    const min = BOUNDARY;
+    const max = ARENA_SIZE - BOUNDARY;
+    const barrier = heartBarriers.find((item) => item.owner === owner);
+    return {
+      minX: min,
+      maxX: barrier ? barrier.x - barrier.halfWidth : max,
+      minY: min,
+      maxY: max
+    };
+  }
+
+  function heartBorderPoint(distanceAlongBorder, bounds) {
+    const { minX, maxX, minY, maxY } = bounds;
+    const width = maxX - minX;
+    const height = maxY - minY;
+    const perimeter = width * 2 + height * 2;
+    let distance = ((distanceAlongBorder % perimeter) + perimeter) % perimeter;
+    if (distance <= width) return { x: minX + distance, y: minY };
+    distance -= width;
+    if (distance <= height) return { x: maxX, y: minY + distance };
+    distance -= height;
+    if (distance <= width) return { x: maxX - distance, y: maxY };
+    distance -= width;
+    return { x: minX, y: maxY - distance };
+  }
+
+  function spawnHeartLantern(owner) {
+    const bounds = heartSkillBounds(owner);
+    const perimeter = (bounds.maxX - bounds.minX + bounds.maxY - bounds.minY) * 2;
+    const start = heartBorderPoint(random(0, perimeter), bounds);
+    heartLanterns.push({
+      id: ++heartSequence,
+      owner,
+      borderDistance: random(0, perimeter),
+      direction: Math.random() < 0.5 ? -1 : 1,
+      speed: owner.template.heartLanternSpeed * CELL_SIZE,
+      distanceTraveled: 0,
+      laps: owner.template.heartLanternLaps,
+      damageCooldowns: new Map(),
+      phase: random(0, Math.PI * 2),
+      x: start.x,
+      y: start.y
+    });
+  }
+
+  function triggerHeartSkill(owner, forcedType = null) {
+    if (!owner || owner.hp <= 0 || owner.template.id !== "09") return;
+    const types = ["green", "blue", "red"];
+    const type = forcedType && types.includes(forcedType)
+      ? forcedType
+      : types[Math.floor(random(0, types.length))];
+    if (type === "green") {
+      spawnHeartBamboos(owner);
+      announce(`${owner.template.name} · 翠竹环心`, "#9ee38a", 1);
+      addLog(`${owner.template.name} 在身边培育 5 柄环绕自身旋转的细竹。`, "ability");
+      playSound("windup");
+    } else if (type === "blue") {
+      startHeartBlueLine(owner);
+      announce(`${owner.template.name} · 纵线降临`, "#75bfff", 1);
+      addLog(`${owner.template.name} 记录当前纵向轴线，并生成一个半径 4 格的蓝色障碍。`, "ability");
+      playSound("timeStop");
+    } else {
+      spawnHeartLantern(owner);
+      announce(`${owner.template.name} · 赤灯巡界`, "#ff8e8e", 1);
+      addLog(`${owner.template.name} 在边界放出一盏绕场移动的天灯。`, "ability");
+      playSound("fire");
+    }
+    owner.skillClock = owner.template.skillCooldown;
+  }
+
+  function beginHeartBarrier(owner) {
+    if (!owner || owner.hp <= 0) return;
+    clearHeartSkillEffects(owner);
+    owner.heartBarrierPending = true;
+    owner.heartBarrierWindup = 1;
+    owner.vx = 0;
+    owner.vy = 0;
+    effects.push({
+      type: "ring",
+      x: owner.x,
+      y: owner.y,
+      radius: owner.r + 10,
+      growth: 720,
+      life: 0.9,
+      maxLife: 0.9,
+      color: "#ff8191",
+      width: 8
+    });
+    announce(`${owner.template.name} · 心界蓄势`, "#ff8a99", 1.2);
+    addLog(`${owner.template.name} 清除自身场地技能，1 秒后将在地图中央展开分界屏障。`, "ability");
+    playSound("timeStop");
+  }
+
+  function heartBarrierUnitRadius(unit) {
+    return Number.isFinite(unit?.r) ? unit.r : CELL_SIZE * 0.72;
+  }
+
+  function spawnHeartBarrier(owner) {
+    owner.heartBarrierPending = false;
+    owner.heartBarrierWindup = 0;
+    const centerX = ARENA_SIZE / 2;
+    const halfWidth = 12;
+    const barrier = {
+      id: ++heartSequence,
+      owner,
+      x: centerX,
+      halfWidth,
+      life: owner.template.ultimateDuration,
+      maxLife: owner.template.ultimateDuration
+    };
+    heartBarriers.push(barrier);
+    const units = [
+      ...getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne),
+      ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0),
+      ...summonUnits.filter((unit) => unit.owner?.hp > 0)
+    ];
+    units.forEach((unit) => {
+      const unitRadius = heartBarrierUnitRadius(unit);
+      const minX = BOUNDARY + unitRadius;
+      const maxX = Math.max(minX + 1, centerX - halfWidth - unitRadius - 8);
+      unit.x = random(minX, maxX);
+      unit.y = random(BOUNDARY + unitRadius, ARENA_SIZE - BOUNDARY - unitRadius);
+      const angle = random(0, Math.PI * 2);
+      const speed = unit.isJellyfish
+        ? CELL_SIZE * (unit.owner?.template.jellySpeed || 5)
+        : unit.side === undefined
+          ? Math.hypot(unit.vx, unit.vy) || CELL_SIZE * 3.3
+          : getEffectiveMoveSpeed(unit);
+      unit.vx = Math.cos(angle) * speed;
+      unit.vy = Math.sin(angle) * speed;
+      effects.push({
+        type: "ring",
+        x: unit.x,
+        y: unit.y,
+        radius: unitRadius + 5,
+        growth: 430,
+        life: 0.55,
+        maxLife: 0.55,
+        color: "#ff9aaa",
+        width: 5
+      });
+    });
+    effects.push({
+      type: "ring",
+      x: centerX,
+      y: ARENA_SIZE / 2,
+      radius: 18,
+      growth: 1200,
+      life: 1,
+      maxLife: 1,
+      color: "#ff6f84",
+      width: 12
+    });
+    screenShake = Math.max(screenShake, 12);
+    announce(`${owner.template.name} · 心界分界`, "#ff94a2", 1.35);
+    addLog(`${owner.template.name} 在中央展开持续 25 秒的分界屏障，所有单位被传送至左侧。`, "ability");
+    playSound("abyss");
+  }
+
+  function resolveHeartBarrierCollisions() {
+    if (!heartBarriers.length) return;
+    const units = [
+      ...getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne),
+      ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0 && unit.vortexLockTimer <= 0),
+      ...summonUnits.filter((unit) => unit.owner?.hp > 0)
+    ];
+    heartBarriers.forEach((barrier) => {
+      const leftEdge = barrier.x - barrier.halfWidth;
+      const rightEdge = barrier.x + barrier.halfWidth;
+      units.forEach((unit) => {
+        if (unit.vortexLockTimer > 0) return;
+        const unitRadius = heartBarrierUnitRadius(unit);
+        if (unit.x <= barrier.x) {
+          if (unit.x + unitRadius >= leftEdge) {
+            unit.x = leftEdge - unitRadius - 0.5;
+            if (unit.vx > 0) unit.vx = -Math.abs(unit.vx);
+            if (unit.knockback?.vx > 0) unit.knockback.vx = -Math.abs(unit.knockback.vx);
+          }
+        } else if (unit.x - unitRadius <= rightEdge) {
+          unit.x = rightEdge + unitRadius + 0.5;
+          if (unit.vx < 0) unit.vx = Math.abs(unit.vx);
+          if (unit.knockback?.vx < 0) unit.knockback.vx = Math.abs(unit.knockback.vx);
+        }
+      });
+    });
+  }
+
+  function updateHeartSystem(dt) {
+    const physicalUnits = [
+      ...getActiveFighters().filter((fighter) => fighter.hp > 0 && !fighter.jinhsiAirborne),
+      ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0)
+    ];
+    physicalUnits.forEach((unit) => {
+      unit.heartLanternSlowTimer = Math.max(0, (unit.heartLanternSlowTimer || 0) - dt);
+    });
+
+    getActiveFighters().forEach((fighter) => {
+      if (fighter.template.id !== "09" || !fighter.heartBarrierPending) return;
+      fighter.heartBarrierWindup = Math.max(0, fighter.heartBarrierWindup - dt);
+      fighter.vx = 0;
+      fighter.vy = 0;
+      if (fighter.heartBarrierWindup === 0) spawnHeartBarrier(fighter);
+    });
+
+    for (let index = heartBarriers.length - 1; index >= 0; index -= 1) {
+      heartBarriers[index].life -= dt;
+      if (heartBarriers[index].life <= 0) heartBarriers.splice(index, 1);
+    }
+    resolveHeartBarrierCollisions();
+
+    for (let index = heartBamboos.length - 1; index >= 0; index -= 1) {
+      const bamboo = heartBamboos[index];
+      if (bamboo.owner?.hp > 0) {
+        bamboo.angle += bamboo.rotationSpeed * dt;
+        bamboo.x = bamboo.owner.x + Math.cos(bamboo.angle) * bamboo.orbitRadius;
+        bamboo.y = bamboo.owner.y + Math.sin(bamboo.angle) * bamboo.orbitRadius;
+      }
+      const target = heartEnemyUnits(bamboo.owner).find((unit) => (
+        Math.hypot(unit.x - bamboo.x, unit.y - bamboo.y) <= bamboo.r + unit.r
+      ));
+      if (!target) continue;
+      reflectHeartUnit(target, bamboo.x, bamboo.y, "#8ee17e");
+      applySpecialDamage(target, bamboo.owner.template.heartBambooDamage, bamboo.owner, "心竹", {
+        color: "#8ee17e",
+        noEnergy: true,
+        quiet: true
+      });
+      spawnBurst(bamboo.x, bamboo.y, "#b8f3a6", 20, 220);
+      heartBamboos.splice(index, 1);
+      if (state !== "playing") break;
+    }
+
+    for (let index = heartBlueLines.length - 1; index >= 0; index -= 1) {
+      const line = heartBlueLines[index];
+      line.life -= dt;
+      if (line.life <= 0) heartBlueLines.splice(index, 1);
+    }
+
+    for (let index = heartBlueObstacles.length - 1; index >= 0; index -= 1) {
+      const obstacle = heartBlueObstacles[index];
+      obstacle.y += obstacle.speed * dt;
+      obstacle.hitCooldowns.forEach((remaining, unit) => {
+        obstacle.hitCooldowns.set(unit, Math.max(0, remaining - dt));
+      });
+      heartEnemyUnits(obstacle.owner).forEach((unit) => {
+        if ((obstacle.hitCooldowns.get(unit) || 0) > 0) return;
+        if (Math.hypot(unit.x - obstacle.x, unit.y - obstacle.y) > obstacle.radius + unit.r) return;
+        obstacle.hitCooldowns.set(unit, 1);
+        reflectHeartUnit(unit, obstacle.x, obstacle.y, "#75bfff");
+        applySpecialDamage(unit, obstacle.owner.template.heartBlueDamage, obstacle.owner, "心界障碍", {
+          color: "#75bfff",
+          noEnergy: true,
+          quiet: true
+        });
+        spawnBurst(unit.x, unit.y, "#9bcfff", 18, 210);
+      });
+      if (obstacle.y > ARENA_SIZE - BOUNDARY) heartBlueObstacles.splice(index, 1);
+      if (state !== "playing") break;
+    }
+
+    for (let index = heartLanterns.length - 1; index >= 0; index -= 1) {
+      const lantern = heartLanterns[index];
+      const bounds = heartSkillBounds(lantern.owner);
+      const perimeter = (bounds.maxX - bounds.minX + bounds.maxY - bounds.minY) * 2;
+      const travel = lantern.speed * dt;
+      lantern.borderDistance = (lantern.borderDistance + lantern.direction * travel + perimeter) % perimeter;
+      lantern.distanceTraveled += travel;
+      const position = heartBorderPoint(lantern.borderDistance, bounds);
+      lantern.x = position.x;
+      lantern.y = position.y;
+      lantern.damageCooldowns.forEach((remaining, unit) => {
+        lantern.damageCooldowns.set(unit, Math.max(0, remaining - dt));
+      });
+      heartEnemyUnits(lantern.owner).forEach((unit) => {
+        if (Math.hypot(unit.x - lantern.x, unit.y - lantern.y) > lantern.owner.template.heartLanternRadius * CELL_SIZE + unit.r) return;
+        unit.heartLanternSlowTimer = Math.max(unit.heartLanternSlowTimer || 0, 0.16);
+        if ((lantern.damageCooldowns.get(unit) || 0) > 0) return;
+        lantern.damageCooldowns.set(unit, lantern.owner.template.heartLanternTick);
+        applySpecialDamage(unit, lantern.owner.template.heartLanternDamage, lantern.owner, "赤灯灼心", {
+          color: "#ff8d8d",
+          noEnergy: true,
+          quiet: true
+        });
+        spawnBurst(unit.x, unit.y, "#ffb0a8", 12, 170);
+      });
+      if (lantern.distanceTraveled >= perimeter * lantern.laps) heartLanterns.splice(index, 1);
+      if (state !== "playing") break;
+    }
+  }
+
   function spawnWhiteSheep(owner) {
     if (!owner || owner.template.summonType !== "whiteSheep") return;
     const angle = random(0, Math.PI * 2);
@@ -5373,7 +5908,10 @@
       return;
     }
     if (fighter.attackClock > 0 || fighter.template.attackType === "none") return;
-    if (fighter.template.id === "02" && fighter.abyssForm) {
+    if (fighter.template.id === "09") {
+      launchHeartWheels(fighter, opponent);
+      fighter.attackClock = fighter.template.attackCooldown;
+    } else if (fighter.template.id === "02" && fighter.abyssForm) {
       if (inMeleeRange(fighter, opponent)) {
         performAbyssSweep(fighter, opponent);
         fighter.attackClock = fighter.template.abyssScytheCooldown;
@@ -5993,6 +6531,8 @@
         "ability"
       );
       playSound("timeStop");
+    } else if (fighter.template.ultimateType === "heartBarrier") {
+      beginHeartBarrier(fighter);
     } else if (fighter.template.ultimateType === "overclock") {
       fighter.overclock = fighter.template.overclockDuration;
       fighter.attackClock = Math.min(fighter.attackClock, 0.35);
@@ -6473,7 +7013,28 @@
         if (projectile.dead) projectiles.splice(i, 1);
         continue;
       }
-      projectile.life -= dt;
+      if (projectile.kind === "heartWheel") {
+        projectile.delay = Math.max(0, projectile.delay - dt);
+        projectile.life -= dt;
+        if (!projectile.target || projectile.target.hp <= 0) {
+          projectile.target = nearestOpponent(projectile.owner);
+        }
+        if (projectile.life <= 0) {
+          projectiles.splice(i, 1);
+          continue;
+        }
+        if (projectile.delay > 0) continue;
+        if (!projectile.activated) {
+          projectile.activated = true;
+          const targetAngle = projectile.target
+            ? Math.atan2(projectile.target.y - projectile.y, projectile.target.x - projectile.x)
+            : Math.atan2(projectile.vy, projectile.vx);
+          projectile.vx = Math.cos(targetAngle) * projectile.maxSpeed;
+          projectile.vy = Math.sin(targetAngle) * projectile.maxSpeed;
+        }
+      } else {
+        projectile.life -= dt;
+      }
       const target = projectile.target;
       if (target && target.hp > 0) {
         const dx = target.x - projectile.x;
@@ -6482,9 +7043,10 @@
         projectile.vx += (dx / dist) * projectile.homing * 250 * dt;
         projectile.vy += (dy / dist) * projectile.homing * 250 * dt;
         const speed = Math.hypot(projectile.vx, projectile.vy);
-        if (speed > 410) {
-          projectile.vx = (projectile.vx / speed) * 410;
-          projectile.vy = (projectile.vy / speed) * 410;
+        const maxSpeed = projectile.maxSpeed || 410;
+        if (speed > maxSpeed) {
+          projectile.vx = (projectile.vx / speed) * maxSpeed;
+          projectile.vy = (projectile.vy / speed) * maxSpeed;
         }
       }
       projectile.x += projectile.vx * dt;
@@ -6505,7 +7067,7 @@
           explodeFireball(projectile, true);
         } else {
           const damageHandler = projectile.category === DAMAGE_CATEGORIES.SPECIAL ? applySpecialDamage : applyDamage;
-          damageHandler(target, projectile.damage, projectile.owner, projectile.kind === "brantShot" ? "船长手枪" : "弹丸", {
+          damageHandler(target, projectile.damage, projectile.owner, projectile.label || (projectile.kind === "brantShot" ? "船长手枪" : "弹丸"), {
             color: projectile.color,
             brantAttack: Boolean(projectile.brantAttack)
           });
@@ -6703,6 +7265,9 @@
             : "共鸣解放就绪";
         }
         else if (fighter.template.id === "08") status = `风息 ${Math.round(fighter.aeroWind)}/100`;
+        else if (fighter.template.id === "09" && fighter.heartBarrierPending) status = `分界 ${fighter.heartBarrierWindup.toFixed(1)}s`;
+        else if (fighter.template.id === "09" && heartBarriers.some((item) => item.owner === fighter)) status = "心界屏障";
+        else if (fighter.template.id === "09") status = `随机技能 ${fighter.skillClock.toFixed(1)}s`;
         else if (fighter.overclock > 0) status = "解放";
         else if (fighter.horned) status = "羊角";
         return {
@@ -6958,6 +7523,16 @@
           : "两次风息斩击完成 · 共鸣解放就绪";
       } else if (player.template.id === "08") {
         dom.battleStatus.textContent = `风息 ${Math.round(player.aeroWind)}/100`;
+      } else if (player.template.id === "09" && player.heartBarrierPending) {
+        dom.battleStatus.textContent = `心界分界蓄势 ${player.heartBarrierWindup.toFixed(1)}s`;
+      } else if (player.template.id === "09" && heartBarriers.some((item) => item.owner === player)) {
+        const barrier = heartBarriers.find((item) => item.owner === player);
+        dom.battleStatus.textContent = `心界屏障 ${barrier.life.toFixed(1)}s`;
+      } else if (player.template.id === "09") {
+        const bambooCount = heartBamboos.filter((item) => item.owner === player).length;
+        const blueCount = heartBlueLines.filter((item) => item.owner === player).length;
+        const lanternCount = heartLanterns.filter((item) => item.owner === player).length;
+        dom.battleStatus.textContent = `心阵竹${bambooCount} · 纵线${blueCount} · 赤灯${lanternCount} · 技能 ${player.skillClock.toFixed(1)}s`;
       } else if (player.template.id === "01") {
         dom.battleStatus.textContent = `时序 ${Math.round(player.specialEnergy)}/3 · 普攻范围 +${player.wandererRangeBonus.toFixed(1)} · 伤害 +${player.wandererDamageBonus}`;
       } else if (player.timeForceTimer > 0) {
@@ -7095,6 +7670,7 @@
     }
     ctx.translate(shakeX, shakeY);
     ctx.drawImage(arenaLayer, 0, 0, ARENA_SIZE, ARENA_SIZE);
+    drawHeartSystem();
     drawJinhsiSystem();
     drawCantarellaMirage();
     drawBrantTreasures();
@@ -7198,6 +7774,18 @@
               : "风息积攒";
       return `风息 ${Math.round(fighter.aeroWind)}/100 · ${modeText}`;
     }
+    if (id === "09") {
+      const barrier = heartBarriers.find((item) => item.owner === fighter);
+      const bambooCount = heartBamboos.filter((item) => item.owner === fighter).length;
+      const blueCount = heartBlueLines.filter((item) => item.owner === fighter).length;
+      const lanternCount = heartLanterns.filter((item) => item.owner === fighter).length;
+      const modeText = fighter.heartBarrierPending
+        ? `分界蓄势 ${fighter.heartBarrierWindup.toFixed(1)}s`
+        : barrier
+          ? `屏障 ${barrier.life.toFixed(1)}s`
+          : `技能 ${fighter.skillClock.toFixed(1)}s`;
+      return `心阵 竹${bambooCount} 线${blueCount} 灯${lanternCount} · ${modeText}`;
+    }
     return `特殊能量 ${Math.round(fighter.specialEnergy || 0)}`;
   }
 
@@ -7218,6 +7806,9 @@
     if (fighter.aeroUltimateTimer > 0) states.push("飘渺无相");
     if (fighter.aeroAirTimer > 0) states.push("升空免疫");
     if (fighter.aeroDashTimer > 0) states.push("风迹突刺");
+    if (fighter.heartBarrierPending) states.push("分界蓄势");
+    if (heartBarriers.some((item) => item.owner === fighter)) states.push("心界屏障");
+    if (fighter.heartLanternSlowTimer > 0) states.push("赤灯减速");
     return states.join(" · ") || "战斗中";
   }
 
@@ -8324,6 +8915,191 @@
     });
   }
 
+  function drawHeartSystem() {
+    heartBlueLines.forEach((line) => {
+      const alpha = clamp(line.life / line.maxLife, 0, 1);
+      ctx.save();
+      const lineGradient = ctx.createLinearGradient(line.x - 9, 0, line.x + 9, 0);
+      lineGradient.addColorStop(0, "rgba(83, 167, 255, 0)");
+      lineGradient.addColorStop(0.46, `rgba(95, 184, 255, ${0.16 * alpha})`);
+      lineGradient.addColorStop(0.5, `rgba(168, 224, 255, ${0.82 * alpha})`);
+      lineGradient.addColorStop(0.54, `rgba(95, 184, 255, ${0.16 * alpha})`);
+      lineGradient.addColorStop(1, "rgba(83, 167, 255, 0)");
+      ctx.fillStyle = lineGradient;
+      ctx.fillRect(line.x - 10, BOUNDARY, 20, ARENA_SIZE - BOUNDARY * 2);
+      ctx.strokeStyle = `rgba(130, 211, 255, ${0.72 * alpha})`;
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([8, 9]);
+      ctx.lineDashOffset = -visualTime * 42;
+      ctx.beginPath();
+      ctx.moveTo(line.x, BOUNDARY);
+      ctx.lineTo(line.x, ARENA_SIZE - BOUNDARY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    });
+
+    heartBlueObstacles.forEach((obstacle) => {
+      const pulse = 1 + Math.sin(visualTime * 3.2 + obstacle.phase) * 0.035;
+      ctx.save();
+      ctx.translate(obstacle.x, obstacle.y);
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(0, 0, obstacle.radius * 0.45, 0, 0, obstacle.radius * 0.78 * pulse);
+      glow.addColorStop(0, "rgba(94, 186, 255, 0.04)");
+      glow.addColorStop(0.68, "rgba(86, 169, 255, 0.12)");
+      glow.addColorStop(0.9, "rgba(155, 222, 255, 0.3)");
+      glow.addColorStop(1, "rgba(108, 190, 255, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(0, 0, obstacle.radius * 0.82 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(174, 228, 255, 0.72)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([7, 8]);
+      ctx.lineDashOffset = -visualTime * 25;
+      ctx.beginPath();
+      ctx.arc(0, 0, obstacle.radius * 0.82, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.rotate(visualTime * 0.8 + obstacle.phase);
+      for (let index = 0; index < 3; index += 1) {
+        ctx.beginPath();
+        ctx.arc(0, 0, obstacle.radius * (0.28 + index * 0.16), index * 2.1, index * 2.1 + 1.5);
+        ctx.stroke();
+      }
+      ctx.fillStyle = "rgba(214, 243, 255, 0.8)";
+      ctx.beginPath();
+      ctx.arc(0, 0, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    heartBamboos.forEach((bamboo) => {
+      const sway = Math.sin(visualTime * 2.2 + bamboo.phase) * 2;
+      ctx.save();
+      ctx.translate(bamboo.x, bamboo.y);
+      ctx.rotate(bamboo.angle * 0.12);
+      ctx.globalAlpha = 0.86;
+      const glow = ctx.createRadialGradient(0, 0, 2, 0, 0, bamboo.r * 2.2);
+      glow.addColorStop(0, "rgba(150, 238, 124, 0.24)");
+      glow.addColorStop(1, "rgba(83, 171, 86, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(0, 0, bamboo.r * 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#91d97b";
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = "#79cf78";
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(-2, 17);
+      ctx.quadraticCurveTo(sway, 1, sway * 0.7, -24);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      for (let index = 0; index < 3; index += 1) {
+        const y = -13 + index * 9;
+        const side = index % 2 ? 1 : -1;
+        ctx.beginPath();
+        ctx.ellipse(sway * 0.65 + side * 7, y, 6, 2.1, side * 0.55, 0, Math.PI * 2);
+        ctx.fillStyle = index % 2 ? "#b8ed9e" : "#8dd979";
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "rgba(215, 255, 196, 0.62)";
+      ctx.font = "700 6px 'Microsoft YaHei'";
+      ctx.textAlign = "center";
+      ctx.fillText("竹", 0, -31);
+      ctx.restore();
+    });
+
+    heartLanterns.forEach((lantern) => {
+      const bounds = heartSkillBounds(lantern.owner);
+      const perimeter = (bounds.maxX - bounds.minX + bounds.maxY - bounds.minY) * 2;
+      const progress = clamp(lantern.distanceTraveled / Math.max(1, perimeter * lantern.laps), 0, 1);
+      const radius = lantern.owner.template.heartLanternRadius * CELL_SIZE;
+      const alpha = clamp((1 - progress) * 8, 0.2, 1);
+      const bob = Math.sin(visualTime * 3.2 + lantern.phase) * 3;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const field = ctx.createRadialGradient(lantern.x, lantern.y, 4, lantern.x, lantern.y, radius);
+      field.addColorStop(0, `rgba(255, 123, 115, ${0.14 * alpha})`);
+      field.addColorStop(0.7, `rgba(255, 83, 91, ${0.07 * alpha})`);
+      field.addColorStop(0.94, `rgba(255, 205, 138, ${0.18 * alpha})`);
+      field.addColorStop(1, "rgba(255, 171, 120, 0)");
+      ctx.fillStyle = field;
+      ctx.beginPath();
+      ctx.arc(lantern.x, lantern.y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = `rgba(255, 190, 166, ${0.34 * alpha})`;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 8]);
+      ctx.lineDashOffset = -visualTime * 18;
+      ctx.beginPath();
+      ctx.arc(lantern.x, lantern.y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.translate(lantern.x, lantern.y + bob);
+      ctx.fillStyle = `rgba(255, 100, 102, ${0.94 * alpha})`;
+      ctx.strokeStyle = "rgba(255, 215, 163, 0.9)";
+      ctx.lineWidth = 1.4;
+      ctx.shadowColor = "#ff5d68";
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 10, 14, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#ffd477";
+      ctx.fillRect(-7, -14, 14, 3);
+      ctx.fillRect(-6, 12, 12, 2);
+      ctx.strokeStyle = "rgba(255, 177, 137, 0.7)";
+      ctx.beginPath();
+      ctx.moveTo(0, 14);
+      ctx.quadraticCurveTo(5, 20, -1, 25);
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    heartBarriers.forEach((barrier) => {
+      const alpha = clamp(barrier.life / barrier.maxLife, 0.16, 1);
+      const left = barrier.x - barrier.halfWidth;
+      const right = barrier.x + barrier.halfWidth;
+      ctx.save();
+      const barrierGradient = ctx.createLinearGradient(left, 0, right, 0);
+      barrierGradient.addColorStop(0, "rgba(255, 106, 127, 0)");
+      barrierGradient.addColorStop(0.24, `rgba(255, 106, 127, ${0.18 * alpha})`);
+      barrierGradient.addColorStop(0.5, `rgba(255, 224, 175, ${0.46 * alpha})`);
+      barrierGradient.addColorStop(0.76, `rgba(255, 106, 127, ${0.18 * alpha})`);
+      barrierGradient.addColorStop(1, "rgba(255, 106, 127, 0)");
+      ctx.fillStyle = barrierGradient;
+      ctx.fillRect(left - 10, BOUNDARY, barrier.halfWidth * 2 + 20, ARENA_SIZE - BOUNDARY * 2);
+      ctx.strokeStyle = `rgba(255, 213, 179, ${0.9 * alpha})`;
+      ctx.lineWidth = 2.4;
+      ctx.shadowColor = "#ff667e";
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.moveTo(barrier.x, BOUNDARY);
+      ctx.lineTo(barrier.x, ARENA_SIZE - BOUNDARY);
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(255, 115, 132, ${0.52 * alpha})`;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([7, 9]);
+      ctx.lineDashOffset = -visualTime * 34;
+      ctx.beginPath();
+      ctx.moveTo(left, BOUNDARY);
+      ctx.lineTo(left, ARENA_SIZE - BOUNDARY);
+      ctx.moveTo(right, BOUNDARY);
+      ctx.lineTo(right, ARENA_SIZE - BOUNDARY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = `rgba(255, 229, 188, ${0.72 * alpha})`;
+      ctx.font = "800 8px 'Microsoft YaHei'";
+      ctx.textAlign = "center";
+      ctx.fillText(`心界屏障 ${Math.ceil(barrier.life)}s`, barrier.x, BOUNDARY + 16);
+      ctx.restore();
+    });
+  }
+
   function drawSummons() {
     const portrait = summonPortraits.get("white-sheep");
     if (!portrait?.complete) return;
@@ -8979,6 +9755,23 @@
       ctx.fillText("麻痹", 0, -radius - 15);
     }
 
+    if (fighter.heartLanternSlowTimer > 0) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(255, 120, 116, 0.78)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 5]);
+      ctx.lineDashOffset = -t * 18;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius + 10 + Math.sin(t * 5) * 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(255, 196, 177, 0.9)";
+      ctx.font = "800 7px 'Trebuchet MS'";
+      ctx.textAlign = "center";
+      ctx.fillText("赤灯 · 迟缓", 0, -radius - 15);
+      ctx.restore();
+    }
+
     if (fighter.energy > 0) {
       ctx.strokeStyle = colorWithAlpha("#fff4c1", 0.7);
       ctx.lineWidth = 2.1;
@@ -9618,6 +10411,50 @@
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     projectiles.forEach((projectile) => {
+      if (projectile.kind === "heartWheel") {
+        const rotation = visualTime * 7.5 + projectile.phase;
+        const summonScale = projectile.delay > 0
+          ? 0.72 + (1 - projectile.delay / projectile.owner.template.heartWheelDelay) * 0.28
+          : 1;
+        ctx.save();
+        ctx.translate(projectile.x, projectile.y);
+        ctx.rotate(rotation);
+        ctx.scale(summonScale, summonScale);
+        ctx.shadowColor = "#ff425d";
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = "#ff506a";
+        ctx.fillStyle = "rgba(255, 74, 101, 0.28)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let tooth = 0; tooth < 12; tooth += 1) {
+          const radius = tooth % 2 ? projectile.r * 0.7 : projectile.r * 1.22;
+          const angle = tooth * Math.PI / 6;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          if (tooth === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(255, 226, 225, 0.92)";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(0, 0, projectile.r * 0.55, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-projectile.r * 0.44, 0);
+        ctx.lineTo(projectile.r * 0.44, 0);
+        ctx.moveTo(0, -projectile.r * 0.44);
+        ctx.lineTo(0, projectile.r * 0.44);
+        ctx.stroke();
+        ctx.fillStyle = "#ffd6da";
+        ctx.beginPath();
+        ctx.arc(0, 0, projectile.r * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return;
+      }
       if (projectile.kind === "aeroSword") {
         const sword = aeroEffectPortraits.get("dash");
         const angle = Math.atan2(projectile.vy, projectile.vx);
@@ -11283,6 +12120,10 @@
         beginAeroAerialAttack(player);
         description = "风息充满，漂泊者升空演示两段全场斩击。";
         break;
+      case "09":
+        triggerHeartSkill(player);
+        description = "随机释放一种心阵场地效果：细竹、纵线或赤灯。";
+        break;
       default:
         player.specialEnergy = Math.max(3, player.specialEnergy);
         break;
@@ -11357,7 +12198,10 @@
   function updateShowcaseTraining(dt) {
     if (!showcaseTrainingActive || !player || !enemy || state !== "playing") return;
     if (enemy.trainingDummy) {
-      enemy.x = ARENA_SIZE / 2;
+      const barrier = heartBarriers[0];
+      enemy.x = barrier
+        ? barrier.x - barrier.halfWidth - enemy.r - 24
+        : ARENA_SIZE / 2;
       enemy.y = ARENA_SIZE / 2;
       enemy.vx = 0;
       enemy.vy = 0;
