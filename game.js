@@ -459,26 +459,27 @@
       heartWheelDelay: 0.2,
       heartWheelLife: 2,
       skillCooldown: 7,
+      heartUltimateSkillCooldown: 4,
       heartBambooCount: 5,
       heartBambooRadius: 3.4,
       heartBambooHitRadius: 0.56,
       heartBambooDamage: 15,
-      heartBlueRadius: 4,
-      heartBlueSpeed: 6,
+      heartBlueRadius: 2,
+      heartBlueSpeed: 12,
       heartBlueDuration: 5,
       heartBlueDamage: 25,
-      heartLanternRadius: 6,
+      heartLanternRadius: 8,
       heartLanternSpeed: 6,
       heartLanternLaps: 1,
       heartLanternSlow: 0.35,
       heartLanternDamage: 15,
-      heartLanternTick: 1,
+      heartLanternTick: 0.5,
       ultimateType: "heartBarrier",
       ultimateDuration: 25,
       ultimateCooldown: 60,
       ability: "心界分界",
       abilityIcon: "界",
-      abilityDesc: "清除心团子释放的全部场地技能；1 秒后在地图中央生成纵向屏障，将所有场上实体单位随机传送至屏障左侧。屏障持续 25 秒，任何单位撞击时都会反弹，效果等同于地图边界。冷却 60 秒。",
+      abilityDesc: "清除心团子释放的全部场地技能；1 秒后在地图中央生成纵向屏障，将所有场上实体单位随机传送至屏障左侧。屏障持续 25 秒，任何单位撞击时都会反弹；屏障期间随机技能间隔缩短至 4 秒，结束后恢复 7 秒。冷却 60 秒。",
       cooldown: 60
     }
   ];
@@ -836,19 +837,20 @@
     },
     "09": {
       role: "追踪普攻 / 随机场地 / 地图分界",
-      range: "飞轮全图追踪；旋转细竹环半径 3.4 格；蓝色障碍半径 4 格；天灯影响半径 6 格",
+      range: "飞轮全图追踪；固定细竹环半径 3.4 格；蓝色障碍半径 2 格；天灯影响半径 8 格",
       interval: "普攻 2 秒 / 随机技能 7 秒 / 共鸣解放 60 秒",
       mechanics: [
         "生命 1100、移动速度 6 格/秒。",
         "每 2 秒召唤 6 枚红色环形飞轮，原地悬停 0.2 秒后以 20 格/秒追踪最近敌人；每枚命中造成 5 点伤害，且最多在场 2 秒。",
         "每 7 秒从绿、蓝、红三种场地效果中随机释放一种。",
-        "绿色·细竹：5 柄细竹围绕心团子旋转并跟随自身移动；敌方单位撞到后改变移动方向并受到 15 点特殊伤害，该细竹随后损毁。",
-        "蓝色·纵线：记录自身施放时的纵向轴线，持续 5 秒；每次施放只在上边界生成一个半径 4 格的蓝色障碍，以 6 格/秒向下移动。",
+        "绿色·细竹：5 柄细竹作为固定障碍生成在施放位置，不跟随心团子移动；敌方单位撞到后改变移动方向并受到 15 点特殊伤害，该细竹随后损毁。",
+        "蓝色·纵线：记录自身施放时的纵向轴线，持续 5 秒；每秒在上边界生成一个半径 2 格的蓝色障碍，以 12 格/秒向下移动。",
         "敌方单位撞击蓝色障碍时改变移动方向并受到 25 点特殊伤害，障碍不会因碰撞消失；心团子自身无视蓝色障碍。",
         "红色·天灯：在边界随机生成无实体天灯，以 6 格/秒绕当前有效地图边缘移动，绕完一整圈后消失。",
-        "天灯的半径 6 格领域内，敌方单位移速降低 35%，并每 1 秒受到 15 点特殊伤害。",
+        "天灯的半径 8 格领域内，敌方单位移速降低 35%，并每 0.5 秒受到 15 点特殊伤害。",
         "共鸣解放「心界分界」会清除自身全部场地技能，停滞 1 秒后在地图中央生成贯穿上下边界的纵向屏障。屏障存在期间，心团子的场地技能会把左半图视为当前地图。",
-        "屏障生成时，所有团子、坎特蕾拉水母与白咩等场上实体单位会被随机传送至屏障左侧；屏障持续 25 秒，所有单位撞击屏障都会反弹，包括心团子自身。"
+        "屏障生成时，所有团子、坎特蕾拉水母与白咩等场上实体单位会被随机传送至屏障左侧；右侧区域显示禁止进入的虚线封锁特效。屏障持续 25 秒，所有单位撞击屏障都会反弹，包括心团子自身。",
+        "屏障开启期间，心团子的随机技能间隔从 7 秒缩短为 4 秒；屏障结束后恢复 7 秒。"
       ]
     }
   };
@@ -857,6 +859,52 @@
   const ctx = canvas.getContext("2d");
   const arenaLayer = document.createElement("canvas");
   const arenaLayerCtx = arenaLayer.getContext("2d");
+  const heartWheelSprite = document.createElement("canvas");
+  const heartWheelSpriteCtx = heartWheelSprite.getContext("2d");
+  heartWheelSprite.width = 64;
+  heartWheelSprite.height = 64;
+  heartWheelSpriteCtx.translate(32, 32);
+  const heartWheelGlow = heartWheelSpriteCtx.createRadialGradient(0, 0, 2, 0, 0, 29);
+  heartWheelGlow.addColorStop(0, "rgba(255, 226, 230, 0.26)");
+  heartWheelGlow.addColorStop(0.46, "rgba(255, 72, 101, 0.16)");
+  heartWheelGlow.addColorStop(1, "rgba(255, 72, 101, 0)");
+  heartWheelSpriteCtx.fillStyle = heartWheelGlow;
+  heartWheelSpriteCtx.beginPath();
+  heartWheelSpriteCtx.arc(0, 0, 29, 0, Math.PI * 2);
+  heartWheelSpriteCtx.fill();
+  heartWheelSpriteCtx.shadowColor = "#ff425d";
+  heartWheelSpriteCtx.shadowBlur = 9;
+  heartWheelSpriteCtx.strokeStyle = "#ff506a";
+  heartWheelSpriteCtx.fillStyle = "rgba(255, 74, 101, 0.32)";
+  heartWheelSpriteCtx.lineWidth = 3;
+  heartWheelSpriteCtx.beginPath();
+  for (let tooth = 0; tooth < 12; tooth += 1) {
+    const radius = tooth % 2 ? 7 : 11.5;
+    const angle = tooth * Math.PI / 6;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    if (tooth === 0) heartWheelSpriteCtx.moveTo(x, y);
+    else heartWheelSpriteCtx.lineTo(x, y);
+  }
+  heartWheelSpriteCtx.closePath();
+  heartWheelSpriteCtx.fill();
+  heartWheelSpriteCtx.stroke();
+  heartWheelSpriteCtx.shadowBlur = 0;
+  heartWheelSpriteCtx.strokeStyle = "rgba(255, 235, 235, 0.94)";
+  heartWheelSpriteCtx.lineWidth = 1.4;
+  heartWheelSpriteCtx.beginPath();
+  heartWheelSpriteCtx.arc(0, 0, 5.5, 0, Math.PI * 2);
+  heartWheelSpriteCtx.stroke();
+  heartWheelSpriteCtx.beginPath();
+  heartWheelSpriteCtx.moveTo(-4.5, 0);
+  heartWheelSpriteCtx.lineTo(4.5, 0);
+  heartWheelSpriteCtx.moveTo(0, -4.5);
+  heartWheelSpriteCtx.lineTo(0, 4.5);
+  heartWheelSpriteCtx.stroke();
+  heartWheelSpriteCtx.fillStyle = "#ffd6da";
+  heartWheelSpriteCtx.beginPath();
+  heartWheelSpriteCtx.arc(0, 0, 1.8, 0, Math.PI * 2);
+  heartWheelSpriteCtx.fill();
   const replayCompositionCanvas = document.createElement("canvas");
   const replayCompositionCtx = replayCompositionCanvas.getContext("2d");
   const dom = {
@@ -5354,6 +5402,7 @@
         maxSpeed: speed,
         delay: fighter.template.heartWheelDelay,
         activated: false,
+        trailClock: random(0, 0.06),
         homing: fighter.template.heartWheelHoming,
         damage: fighter.template.attackDamage,
         color: "#ff5b73",
@@ -5394,8 +5443,6 @@
         y: owner.y + Math.sin(angle) * radius,
         r: owner.template.heartBambooHitRadius * CELL_SIZE,
         angle,
-        orbitRadius: radius,
-        rotationSpeed: 0.9,
         phase: random(0, Math.PI * 2)
       });
     }
@@ -5420,6 +5467,7 @@
       x: clamp(owner.x, bounds.minX, bounds.maxX),
       life: owner.template.heartBlueDuration,
       maxLife: owner.template.heartBlueDuration,
+      spawnClock: 1,
       phase: random(0, Math.PI * 2)
     };
     heartBlueLines.push(line);
@@ -5486,6 +5534,14 @@
     });
   }
 
+  function getHeartSkillCooldown(owner) {
+    const ultimateActive = owner.heartBarrierPending
+      || heartBarriers.some((barrier) => barrier.owner === owner);
+    return ultimateActive
+      ? owner.template.heartUltimateSkillCooldown
+      : owner.template.skillCooldown;
+  }
+
   function triggerHeartSkill(owner, forcedType = null) {
     if (!owner || owner.hp <= 0 || owner.template.id !== "09") return;
     const types = ["green", "blue", "red"];
@@ -5508,7 +5564,7 @@
       addLog(`${owner.template.name} 在边界放出一盏绕场移动的天灯。`, "ability");
       playSound("fire");
     }
-    owner.skillClock = owner.template.skillCooldown;
+    owner.skillClock = getHeartSkillCooldown(owner);
   }
 
   function beginHeartBarrier(owner) {
@@ -5516,6 +5572,7 @@
     clearHeartSkillEffects(owner);
     owner.heartBarrierPending = true;
     owner.heartBarrierWindup = 1;
+    owner.skillClock = Math.min(owner.skillClock, owner.template.heartUltimateSkillCooldown);
     owner.vx = 0;
     owner.vy = 0;
     effects.push({
@@ -5646,18 +5703,21 @@
     });
 
     for (let index = heartBarriers.length - 1; index >= 0; index -= 1) {
-      heartBarriers[index].life -= dt;
-      if (heartBarriers[index].life <= 0) heartBarriers.splice(index, 1);
+      const barrier = heartBarriers[index];
+      barrier.life -= dt;
+      if (barrier.life <= 0) {
+        heartBarriers.splice(index, 1);
+        const owner = barrier.owner;
+        const anotherBarrier = heartBarriers.some((item) => item.owner === owner);
+        if (owner && !owner.heartBarrierPending && !anotherBarrier) {
+          owner.skillClock = owner.template.skillCooldown;
+        }
+      }
     }
     resolveHeartBarrierCollisions();
 
     for (let index = heartBamboos.length - 1; index >= 0; index -= 1) {
       const bamboo = heartBamboos[index];
-      if (bamboo.owner?.hp > 0) {
-        bamboo.angle += bamboo.rotationSpeed * dt;
-        bamboo.x = bamboo.owner.x + Math.cos(bamboo.angle) * bamboo.orbitRadius;
-        bamboo.y = bamboo.owner.y + Math.sin(bamboo.angle) * bamboo.orbitRadius;
-      }
       const target = heartEnemyUnits(bamboo.owner).find((unit) => (
         Math.hypot(unit.x - bamboo.x, unit.y - bamboo.y) <= bamboo.r + unit.r
       ));
@@ -5676,6 +5736,11 @@
     for (let index = heartBlueLines.length - 1; index >= 0; index -= 1) {
       const line = heartBlueLines[index];
       line.life -= dt;
+      line.spawnClock -= dt;
+      if (line.life > 0 && line.spawnClock <= 0) {
+        spawnHeartBlueObstacle(line);
+        line.spawnClock += 1;
+      }
       if (line.life <= 0) heartBlueLines.splice(index, 1);
     }
 
@@ -7051,16 +7116,33 @@
       }
       projectile.x += projectile.vx * dt;
       projectile.y += projectile.vy * dt;
-      particles.push({
-        x: projectile.x,
-        y: projectile.y,
-        vx: random(-10, 10),
-        vy: random(-10, 10),
-        life: 0.24,
-        maxLife: 0.24,
-        size: 4,
-        color: projectile.color
-      });
+      if (projectile.kind === "heartWheel") {
+        projectile.trailClock -= dt;
+        if (projectile.trailClock <= 0) {
+          projectile.trailClock = 0.075;
+          particles.push({
+            x: projectile.x,
+            y: projectile.y,
+            vx: random(-5, 5),
+            vy: random(-5, 5),
+            life: 0.16,
+            maxLife: 0.16,
+            size: 2.1,
+            color: "#ff6b83"
+          });
+        }
+      } else {
+        particles.push({
+          x: projectile.x,
+          y: projectile.y,
+          vx: random(-10, 10),
+          vy: random(-10, 10),
+          life: 0.24,
+          maxLife: 0.24,
+          size: 4,
+          color: projectile.color
+        });
+      }
       const hitTarget = target && Math.hypot(projectile.x - target.x, projectile.y - target.y) < target.r + projectile.r;
       if (hitTarget) {
         if (projectile.kind === "fireball") {
@@ -9065,6 +9147,41 @@
       const left = barrier.x - barrier.halfWidth;
       const right = barrier.x + barrier.halfWidth;
       ctx.save();
+      const lockedLeft = right;
+      const lockedWidth = ARENA_SIZE - BOUNDARY - lockedLeft;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(lockedLeft, BOUNDARY, lockedWidth, ARENA_SIZE - BOUNDARY * 2);
+      ctx.clip();
+      ctx.fillStyle = `rgba(49, 12, 23, ${0.12 * alpha})`;
+      ctx.fillRect(lockedLeft, BOUNDARY, lockedWidth, ARENA_SIZE - BOUNDARY * 2);
+      ctx.strokeStyle = `rgba(255, 121, 143, ${0.28 * alpha})`;
+      ctx.lineWidth = 1.1;
+      ctx.setLineDash([8, 10]);
+      ctx.lineDashOffset = visualTime * 28;
+      for (let offset = -ARENA_SIZE; offset <= lockedWidth + ARENA_SIZE; offset += 38) {
+        ctx.beginPath();
+        ctx.moveTo(lockedLeft + offset, BOUNDARY);
+        ctx.lineTo(lockedLeft + offset + ARENA_SIZE, ARENA_SIZE - BOUNDARY);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = `rgba(255, 191, 171, ${0.2 * alpha})`;
+      ctx.setLineDash([4, 13]);
+      ctx.lineDashOffset = -visualTime * 22;
+      for (let y = BOUNDARY + 28; y < ARENA_SIZE - BOUNDARY; y += 46) {
+        ctx.beginPath();
+        ctx.moveTo(lockedLeft, y);
+        ctx.lineTo(ARENA_SIZE - BOUNDARY, y);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.fillStyle = `rgba(255, 198, 181, ${0.52 * alpha})`;
+      ctx.font = "900 12px 'Microsoft YaHei'";
+      ctx.textAlign = "center";
+      ctx.fillText("封锁区域", lockedLeft + lockedWidth / 2, ARENA_SIZE / 2 - 6);
+      ctx.font = "800 8px 'Trebuchet MS'";
+      ctx.fillText("NO ENTRY", lockedLeft + lockedWidth / 2, ARENA_SIZE / 2 + 12);
+      ctx.restore();
       const barrierGradient = ctx.createLinearGradient(left, 0, right, 0);
       barrierGradient.addColorStop(0, "rgba(255, 106, 127, 0)");
       barrierGradient.addColorStop(0.24, `rgba(255, 106, 127, ${0.18 * alpha})`);
@@ -10420,38 +10537,8 @@
         ctx.translate(projectile.x, projectile.y);
         ctx.rotate(rotation);
         ctx.scale(summonScale, summonScale);
-        ctx.shadowColor = "#ff425d";
-        ctx.shadowBlur = 18;
-        ctx.strokeStyle = "#ff506a";
-        ctx.fillStyle = "rgba(255, 74, 101, 0.28)";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        for (let tooth = 0; tooth < 12; tooth += 1) {
-          const radius = tooth % 2 ? projectile.r * 0.7 : projectile.r * 1.22;
-          const angle = tooth * Math.PI / 6;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
-          if (tooth === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-        ctx.strokeStyle = "rgba(255, 226, 225, 0.92)";
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.arc(0, 0, projectile.r * 0.55, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(-projectile.r * 0.44, 0);
-        ctx.lineTo(projectile.r * 0.44, 0);
-        ctx.moveTo(0, -projectile.r * 0.44);
-        ctx.lineTo(0, projectile.r * 0.44);
-        ctx.stroke();
-        ctx.fillStyle = "#ffd6da";
-        ctx.beginPath();
-        ctx.arc(0, 0, projectile.r * 0.18, 0, Math.PI * 2);
-        ctx.fill();
+        const spriteSize = projectile.r * 6.2;
+        ctx.drawImage(heartWheelSprite, -spriteSize / 2, -spriteSize / 2, spriteSize, spriteSize);
         ctx.restore();
         return;
       }
