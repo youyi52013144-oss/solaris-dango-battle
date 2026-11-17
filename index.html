@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#090b12">
+  <meta name="theme-color" content="#e7edf2">
   <title>索拉里斯团子大对决</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -44,6 +44,10 @@
           <button class="mode-button" type="button" data-mode="multi" aria-pressed="false">
             <span class="mode-icon" aria-hidden="true">✦</span>
             多团混战
+          </button>
+          <button class="mode-button" type="button" data-mode="video" aria-pressed="false">
+            <span class="mode-icon" aria-hidden="true">▣</span>
+            录视频模式
           </button>
         </div>
         <label class="duration-control" for="durationInput" title="设置每局对局时长">
@@ -87,9 +91,9 @@
         <label class="map-select" for="mapSelect">
           <span>对战地图</span>
           <select id="mapSelect">
-            <option value="duel20" selected>星穹决斗场 · 20 × 20</option>
-            <option value="20">星环 · 20 × 20</option>
-            <option value="30">标准 · 30 × 30</option>
+            <option value="stadium20" selected>星穹体育场 · 20 × 20</option>
+            <option value="20">星环网格 · 20 × 20</option>
+            <option value="30">标准网格 · 30 × 30</option>
           </select>
         </label>
         <div id="rosterGrid" class="roster-grid" role="listbox" aria-label="选择出战团子"></div>
@@ -141,11 +145,16 @@
       <section class="stage-column" aria-label="游戏区域">
         <div id="multiBoard" class="multi-board" aria-label="混战状态" hidden></div>
         <div class="match-head">
+          <div class="scoreboard-ribbon">
+            <span><i aria-hidden="true"></i> SOLARIS ARENA</span>
+            <b>VS · LIVE MATCH FEED</b>
+            <small>20 × 20 · ARENA DISPLAY 01</small>
+          </div>
           <div class="fighter-readout fighter-readout-left">
             <div class="fighter-avatar" id="playerMini" aria-hidden="true"><span></span></div>
             <div class="fighter-info">
               <span class="fighter-meta">
-                <span class="fighter-team">左侧团子</span>
+                <span class="fighter-team">PLAYER 01 · 左侧团子</span>
                 <span class="fighter-energy-text" id="playerEnergyText">共鸣 0%</span>
               </span>
               <strong id="playerName">卡卡罗团子</strong>
@@ -169,6 +178,7 @@
           </div>
 
           <div class="score-box" aria-label="比分">
+            <span class="scoreboard-live"><i aria-hidden="true"></i> LIVE</span>
             <span class="round-label" id="roundLabel">第 1 局</span>
             <div class="score-line">
               <b id="playerScore">0</b>
@@ -183,7 +193,7 @@
             <div class="fighter-info">
               <span class="fighter-meta">
                 <span class="fighter-energy-text" id="enemyEnergyText">共鸣 0%</span>
-                <span class="fighter-team">右侧团子</span>
+                <span class="fighter-team">右侧团子 · PLAYER 02</span>
               </span>
               <strong id="enemyName">安可团子</strong>
               <div class="health-track"><i id="enemyHpBar"></i></div>
@@ -233,13 +243,21 @@
             <div class="overlay-orb" aria-hidden="true">
               <i></i><i></i><i></i>
             </div>
-            <span class="overlay-eyebrow" id="overlayEyebrow">READY TO BOUNCE?</span>
-            <h1 id="overlayTitle">直线遭遇战</h1>
-            <p id="overlayCopy">20×20 格地图。团子沿随机直线移动，只在碰撞或触边后改变方向。</p>
+            <span class="overlay-eyebrow" id="overlayEyebrow">SOLARIS STADIUM · READY</span>
+            <h1 id="overlayTitle">星穹体育场</h1>
+            <p id="overlayCopy">20×20 格体育场已就绪。团子沿随机直线移动，只在碰撞或触边后改变方向。</p>
             <button id="overlayButton" class="primary-button" type="button">
               <span>开始对战</span>
               <i aria-hidden="true">→</i>
             </button>
+            <div id="videoExportActions" class="video-export-actions" hidden>
+              <span>一键导出 · 1920 × 1080</span>
+              <div>
+                <button type="button" data-video-export-fps="60"><b>1080P</b><small>60 帧</small></button>
+                <button type="button" data-video-export-fps="120"><b>1080P</b><small>120 帧</small></button>
+              </div>
+              <em id="videoExportStatus">每局结束后自动下载 MP4（不兼容时回退 WebM）</em>
+            </div>
             <span class="overlay-hint" id="overlayHint">自动观战 · 无需操作</span>
           </div>
         </div>

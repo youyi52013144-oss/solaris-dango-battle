@@ -5,7 +5,7 @@
   const MAP_PADDING = 45;
   const BOUNDARY = MAP_PADDING;
   let MAP_SIZE = 20;
-  let ARENA_THEME = "duel";
+  let ARENA_THEME = "stadium";
   let CELL_SIZE = (ARENA_SIZE - MAP_PADDING * 2) / MAP_SIZE;
   const DEFAULT_ROUND_SECONDS = 300;
   const WINNING_SCORE = 2;
@@ -187,7 +187,7 @@
       speed: 8,
       radius: 27,
       stats: { power: 92, speed: 100, hp: 100 },
-      display: { attack: "100×2", speed: "8.0格/s", hp: "1000" },
+      display: { attack: "120×2", speed: "8.0格/s", hp: "1000" },
       attackType: "aeroBlade",
       attackDamage: 100,
       attackCooldown: 1.2,
@@ -196,15 +196,15 @@
       aeroWindAttackCost: 50,
       aeroWindUnlockDelay: 2,
       aeroAirDuration: 1.42,
-      aeroSkillCooldown: 5,
-      aeroSkillSpeed: 20,
+      aeroSkillCooldown: 3,
+      aeroSkillSpeed: 32,
       aeroSkillDistance: 20,
       aeroSkillRadius: 5,
       aeroSkillDamage: 15,
       aeroSkillWindGain: 50,
-      aeroSlashDamage: 100,
+      aeroSlashDamage: 120,
       aeroSwordCooldown: 3,
-      aeroSwordSpeed: 40,
+      aeroSwordSpeed: 55,
       aeroSwordRadius: 2,
       aeroSwordDamage: 80,
       aeroSwordLife: 4,
@@ -213,7 +213,7 @@
       ultimateCooldown: 40,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "首场倒计时结束后自动开启一次；后续需完成两次风息斩击解锁。开启后持续 15 秒并锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的穿透飞剑，每把对路径敌人各造成一次 80 点伤害；普攻改为朝距离自身最远的墙边突刺。冷却 40 秒。",
+      abilityDesc: "首场倒计时结束后自动开启一次；后续需完成两次风息斩击解锁。开启后持续 15 秒并锁定风息获取，每 3 秒朝最近敌人发射一柄 55 格/秒的穿透飞剑，对路径敌人各造成一次 80 点伤害；普攻改为瞬闪至敌人移动方向相反一侧的边界，并对落点半径 5 格内敌人造成 15 点伤害。冷却 40 秒。",
       cooldown: 40
     },
     {
@@ -727,20 +727,20 @@
       ]
     },
     "08": {
-      role: "突刺积攒 / 全场双斩 / 平行飞剑",
+      role: "突刺积攒 / 全场双斩 / 单剑压制",
       range: "普攻突刺约 20 格、落点半径 5 格；技能双斩横跨全场；飞剑命中半径 2 格",
-      interval: "普攻 5 秒 / 双斩间隔 1 秒 / 大招飞剑 3 秒 / 共鸣解放 40 秒",
+      interval: "普攻 3 秒 / 双斩间隔 1 秒 / 大招飞剑 3 秒 / 共鸣解放 40 秒",
       mechanics: [
         "生命 1000、移动速度 8 格/秒。",
         "风息上限 100，初始为 0。风息达到上限时立刻锁定普攻与大招，2 秒后解锁技能。",
-        "普攻朝最近敌人以 25 格/秒突刺约 20 格，冷却 5 秒；对落点半径 5 格内敌人造成 15 点伤害，冲刺途中接触敌人会立即停止并提前结算。",
+        "普攻朝最近敌人以 32 格/秒突刺约 20 格，冷却 3 秒；对落点半径 5 格内敌人造成 15 点伤害，冲刺途中接触敌人会立即停止并提前结算。",
         "普攻仅在实际命中敌人时恢复 50 风息。",
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
-        "每刀消耗 50 风息并造成 100 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
+        "每刀消耗 50 风息并造成 120 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
         "首场倒计时结束后直接开启一次共鸣解放；后续冷却 40 秒，完成两次风息斩击解锁后自动开启 15 秒。",
-        "大招期间锁定风息获取，每 3 秒朝最近敌人平行发射两柄 40 格/秒的独立飞剑。",
+        "大招期间锁定风息获取，每 3 秒朝最近敌人发射一柄 55 格/秒的独立飞剑。",
         "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 80 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
-        "大招期间普攻改为朝距离自身最远的墙边突刺。大招结束后恢复风息获取，飞剑攻击移除。"
+        "大招期间普攻改为瞬闪至敌人移动方向相反一侧的边界，并对落点半径 5 格内敌人造成 15 点伤害；大招结束后恢复风息获取，飞剑攻击移除。"
       ]
     },
     "03": {
@@ -951,6 +951,8 @@
     overlayTitle: document.getElementById("overlayTitle"),
     overlayCopy: document.getElementById("overlayCopy"),
     overlayButton: document.getElementById("overlayButton"),
+    videoExportActions: document.getElementById("videoExportActions"),
+    videoExportStatus: document.getElementById("videoExportStatus"),
     overlayHint: document.getElementById("overlayHint"),
     fightButton: document.getElementById("fightButton"),
     restartButton: document.getElementById("restartButton"),
@@ -1088,6 +1090,18 @@
   let ambientTimer = 0;
   let lastFrame = performance.now();
   let visualTime = 0;
+  const videoCamera = {
+    x: ARENA_SIZE / 2,
+    y: ARENA_SIZE / 2,
+    zoom: 1,
+    targetX: ARENA_SIZE / 2,
+    targetY: ARENA_SIZE / 2,
+    targetZoom: 1
+  };
+  let videoWideShotTimer = 0;
+  let videoExportArmed = false;
+  let videoExportFps = 60;
+  let replayExportSettings = null;
   let soundEnabled = true;
   let arenaItemsEnabled = false;
   let gameSpeedIndex = 3;
@@ -1144,6 +1158,8 @@
   const REPLAY_DB_NAME = "solaris-dango-replays";
   const REPLAY_DB_STORE = "replays";
   const REPLAY_RENDER_FPS = 45;
+  const VIDEO_EXPORT_WIDTH = 1920;
+  const VIDEO_EXPORT_HEIGHT = 1080;
   const replayRecords = [];
   let activeReplaySession = null;
   let selectedReplayId = null;
@@ -1408,13 +1424,12 @@
   }
 
   function syncWandererFormState() {
-    const locked = state !== "idle" && state !== "matchEnd";
     document.querySelectorAll("[data-wanderer-form]").forEach((button) => {
       const fighterId = button.dataset.wandererForm;
       const active = wandererForms[fighterId] === button.dataset.gender;
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
-      button.disabled = locked;
+      button.disabled = false;
     });
     WANDERER_FORM_IDS.forEach((fighterId) => {
       const fighter = templateById(fighterId);
@@ -1436,17 +1451,29 @@
   function setWandererForm(fighterId, gender) {
     if (!WANDERER_FORM_IDS.has(fighterId)) return;
     if (gender !== "male" && gender !== "female") return;
-    if (state !== "idle" && state !== "matchEnd") return;
     wandererForms[fighterId] = gender;
     try {
       localStorage.setItem("solaris-wanderer-forms", JSON.stringify(wandererForms));
     } catch {
       // Persistence is optional.
     }
+    [player, enemy, ...multiFighters].forEach((fighter) => {
+      if (!fighter || !WANDERER_FORM_IDS.has(fighter.template?.id)) return;
+      const visual = templateById(fighter.template.id);
+      fighter.template = {
+        ...fighter.template,
+        image: visual.image,
+        altImage: visual.altImage,
+        portraitKey: visual.portraitKey,
+        altPortraitKey: visual.altPortraitKey,
+        formGender: visual.formGender
+      };
+    });
     syncWandererFormState();
     syncRosterSelection();
     updateChosenPanel();
     if (state === "idle" || state === "matchEnd") preparePreview();
+    else updateHud(true);
     if (mode === "multi") renderMultiSetupBoard();
     if (dom.fighterArchive.open) renderArchive();
     playSound("select");
@@ -1629,8 +1656,14 @@
 
   function setMode(nextMode) {
     if (showcaseTrainingActive) finishShowcaseTraining(false);
+    if (activeReplaySession) discardReplayRecording("切换模式，当前录制已取消。");
     mode = nextMode;
     if (mode === "play" || mode === "multi") configSide = "left";
+    if (mode !== "video") resetVideoCamera();
+    if (mode !== "video") {
+      videoExportArmed = false;
+      dom.videoExportActions.hidden = true;
+    }
     document.querySelectorAll(".mode-button").forEach((button) => {
       const active = button.dataset.mode === mode;
       button.classList.toggle("is-active", active);
@@ -1662,6 +1695,22 @@
       dom.overlayHint.textContent = "自动观战 · 无需操作";
       dom.abilityKey.textContent = "AUTO";
       dom.abilityLabel.textContent = "自动解放";
+    } else if (mode === "video") {
+      dom.controlCopy.innerHTML = `
+        <span class="control-kicker">录视频模式</span>
+        <p>自动对战与动态镜头跟随。普通移动时靠近双方，碰撞和爆炸时自动拉远到双团同框。</p>
+      `;
+      dom.overlayHint.textContent = "动态导播镜头 · 双团同框爆炸画面";
+      dom.abilityKey.textContent = "AUTO";
+      dom.abilityLabel.textContent = "自动解放";
+      resetVideoCamera();
+      dom.videoExportActions.hidden = false;
+      dom.videoExportStatus.textContent = replayRecordingSupported()
+        ? "每局结束后自动下载 MP4（不兼容时回退 WebM）"
+        : "当前浏览器不支持视频录制";
+      document.querySelectorAll("[data-video-export-fps]").forEach((button) => {
+        button.disabled = !replayRecordingSupported();
+      });
     } else {
       dom.controlCopy.innerHTML = `
         <span class="control-kicker">亲自挑战</span>
@@ -1930,12 +1979,90 @@
     if (target === 0 && voiceCameraMix < 0.002) voiceCameraMix = 0;
   }
 
+  function resetVideoCamera() {
+    videoCamera.x = ARENA_SIZE / 2;
+    videoCamera.y = ARENA_SIZE / 2;
+    videoCamera.zoom = 1;
+    videoCamera.targetX = ARENA_SIZE / 2;
+    videoCamera.targetY = ARENA_SIZE / 2;
+    videoCamera.targetZoom = 1;
+    videoWideShotTimer = 0;
+  }
+
+  function updateVideoCamera(dt, snap = false) {
+    if (mode !== "video" || !player || !enemy || state === "idle" || state === "matchEnd") return;
+    const dramaticEffect = effects.some((effect) => (
+      effect.life / effect.maxLife > 0.08
+      && [
+        "impact",
+        "fire",
+        "fireBlast",
+        "ankoFireExplosion",
+        "blackFlameShockwave",
+        "windBurst",
+        "brantAnchorImpact",
+        "jinhsiDragonImpact",
+        "aeroUltimateBurst",
+        "abyssBurst",
+        "perceptionBlast",
+        "deathSentenceLightning"
+      ].includes(effect.type)
+    ));
+    if (dramaticEffect || screenShake > 2.2) videoWideShotTimer = Math.max(videoWideShotTimer, 0.95);
+    else videoWideShotTimer = Math.max(0, videoWideShotTimer - dt);
+
+    const wideShot = videoWideShotTimer > 0;
+    const midpointX = (player.x + enemy.x) * 0.5;
+    const midpointY = (player.y + enemy.y) * 0.5;
+    const separation = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+    const maxRadius = Math.max(player.r, enemy.r);
+    const sidePadding = wideShot ? 105 : 58;
+    const requiredWidth = Math.abs(player.x - enemy.x) + maxRadius * 2 + sidePadding * 2;
+    const requiredHeight = Math.abs(player.y - enemy.y) + maxRadius * 2 + sidePadding * 2;
+    const fitZoom = Math.min(
+      (ARENA_SIZE - 32) / Math.max(1, requiredWidth),
+      (ARENA_SIZE - 32) / Math.max(1, requiredHeight)
+    );
+    const desiredZoom = wideShot
+      ? clamp(Math.min(fitZoom, 1.08), 0.72, 1.08)
+      : clamp(Math.min(fitZoom, 1.48 - separation / (ARENA_SIZE * 2.2)), 0.92, 1.48);
+
+    const lookAhead = wideShot ? 0 : 0.16;
+    const desiredX = midpointX + (player.vx + enemy.vx) * 0.5 * lookAhead;
+    const desiredY = midpointY + (player.vy + enemy.vy) * 0.5 * lookAhead;
+    const constrainCamera = (value) => {
+      const halfView = ARENA_SIZE / (2 * desiredZoom);
+      return halfView >= ARENA_SIZE / 2 ? ARENA_SIZE / 2 : clamp(value, halfView, ARENA_SIZE - halfView);
+    };
+    videoCamera.targetX = constrainCamera(desiredX);
+    videoCamera.targetY = constrainCamera(desiredY);
+    videoCamera.targetZoom = desiredZoom;
+
+    const follow = snap ? 1 : 1 - Math.exp(-dt * (wideShot ? 10 : 5.5));
+    videoCamera.x += (videoCamera.targetX - videoCamera.x) * follow;
+    videoCamera.y += (videoCamera.targetY - videoCamera.y) * follow;
+    videoCamera.zoom += (videoCamera.targetZoom - videoCamera.zoom) * follow;
+  }
+
   function resetScores() {
     score = [0, 0];
     round = 1;
     dom.playerScore.textContent = "0";
     dom.enemyScore.textContent = "0";
     dom.roundLabel.textContent = "第 1 局";
+  }
+
+  function startVideoExport(fps) {
+    if (mode !== "video" || (state !== "idle" && state !== "matchEnd")) return;
+    const requestedFps = fps === 120 ? 120 : 60;
+    if (!replayRecordingSupported()) {
+      dom.videoExportStatus.textContent = "当前浏览器不支持视频录制";
+      return;
+    }
+    videoExportArmed = true;
+    videoExportFps = requestedFps;
+    dom.videoExportStatus.textContent = `正在启动 1920×1080 · ${requestedFps}帧录制…`;
+    startMatch();
   }
 
   function startMatch() {
@@ -2022,7 +2149,7 @@
     state = "countdown";
     syncPauseControl();
     syncWandererFormState();
-    startReplayRecording({
+    const recordingStart = startReplayRecording({
       mode: "multi",
       round: 1,
       leftName: player.template.name,
@@ -2043,8 +2170,11 @@
     updateHud();
     addLog(`${multiFighters.length} 只团子进入多团混战。`, "system");
     announce("多团混战", "#ffd84d");
-    playSound("round");
-    playIntroVoices();
+    void recordingStart.then(() => {
+      if (state !== "countdown") return;
+      playSound("round");
+      playIntroVoices();
+    });
   }
 
   function startRound() {
@@ -2063,16 +2193,28 @@
     countdownClock = 3.05;
     countdownBeat = 4;
     state = "countdown";
+    if (mode === "video") updateVideoCamera(1, true);
     syncPauseControl();
     syncWandererFormState();
-    startReplayRecording({
+    const exportOptions = mode === "video" && videoExportArmed
+      ? {
+          force: true,
+          autoDownload: true,
+          exportSettings: {
+            fps: videoExportFps,
+            width: VIDEO_EXPORT_WIDTH,
+            height: VIDEO_EXPORT_HEIGHT
+          }
+        }
+      : null;
+    const recordingStart = startReplayRecording({
       mode,
       round,
       leftName: chosen.name,
       rightName: rival.name,
       fighterCount: 2,
       mapSize: MAP_SIZE
-    });
+    }, exportOptions);
     dom.gameOverlay.classList.add("is-hidden");
     dom.abilityButton.disabled = true;
     dom.abilityButton.classList.remove("is-ready");
@@ -2084,8 +2226,11 @@
     updateHud();
     addLog(`${chosen.name} 对上 ${rival.name}，第 ${round} 局蓄势待发。`, "system");
     announce("准备碰撞", "#ffd84d");
-    playSound("round");
-    playIntroVoices();
+    void recordingStart.then(() => {
+      if (state !== "countdown") return;
+      playSound("round");
+      playIntroVoices();
+    });
   }
 
   function showCountdown(value) {
@@ -3098,8 +3243,10 @@
     if (fighter.template.id !== "08") return;
     const max = fighter.template.aeroWindMax;
     const atMax = fighter.aeroWind >= max;
-    fighter.aeroBasicUnlocked = !atMax && !fighter.aeroSequenceActive;
-    fighter.aeroSkillUnlocked = atMax
+    const ultimateActive = fighter.aeroUltimateTimer > 0;
+    fighter.aeroBasicUnlocked = ultimateActive || (!atMax && !fighter.aeroSequenceActive);
+    fighter.aeroSkillUnlocked = !ultimateActive
+      && atMax
       && fighter.aeroBasicUnlockTimer <= 0
       && !fighter.aeroSequenceActive;
   }
@@ -3189,18 +3336,51 @@
     }
   }
 
+  function getAeroOppositeMovementBoundaryPoint(fighter, target) {
+    const minX = BOUNDARY + fighter.r;
+    const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
+    const minY = BOUNDARY + fighter.r;
+    const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
+    let directionX = -target.vx;
+    let directionY = -target.vy;
+    const directionLength = Math.hypot(directionX, directionY);
+    if (directionLength > 0.001) {
+      directionX /= directionLength;
+      directionY /= directionLength;
+    } else {
+      const fallbackLength = Math.hypot(target.x - fighter.x, target.y - fighter.y) || 1;
+      directionX = (target.x - fighter.x) / fallbackLength;
+      directionY = (target.y - fighter.y) / fallbackLength;
+    }
+
+    let boundaryTime = Infinity;
+    if (directionX > 0.001) boundaryTime = Math.min(boundaryTime, (maxX - target.x) / directionX);
+    if (directionX < -0.001) boundaryTime = Math.min(boundaryTime, (minX - target.x) / directionX);
+    if (directionY > 0.001) boundaryTime = Math.min(boundaryTime, (maxY - target.y) / directionY);
+    if (directionY < -0.001) boundaryTime = Math.min(boundaryTime, (minY - target.y) / directionY);
+    if (!Number.isFinite(boundaryTime)) boundaryTime = 0;
+
+    return {
+      x: clamp(target.x + directionX * boundaryTime, minX, maxX),
+      y: clamp(target.y + directionY * boundaryTime, minY, maxY)
+    };
+  }
+
   function beginAeroSkillDash(fighter) {
     const target = nearestOpponent(fighter);
     if (!target) return;
     const targetAngle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-    const angle = fighter.aeroUltimateTimer > 0 ? getFarthestAeroWallAngle(fighter) : targetAngle;
+    const ultimateActive = fighter.aeroUltimateTimer > 0;
+    const destination = ultimateActive
+      ? getAeroOppositeMovementBoundaryPoint(fighter, target)
+      : {
+          x: fighter.x + Math.cos(targetAngle) * fighter.template.aeroSkillDistance * CELL_SIZE,
+          y: fighter.y + Math.sin(targetAngle) * fighter.template.aeroSkillDistance * CELL_SIZE
+        };
+    const angle = Math.atan2(destination.y - fighter.y, destination.x - fighter.x);
     fighter.aeroDashAngle = angle;
     fighter.aeroDashSpeed = fighter.template.aeroSkillSpeed * CELL_SIZE;
-    fighter.aeroDashDuration = fighter.template.aeroSkillDistance / fighter.template.aeroSkillSpeed;
-    fighter.aeroDashTimer = fighter.aeroDashDuration;
     fighter.aeroSkillClock = fighter.template.aeroSkillCooldown;
-    fighter.vx = Math.cos(angle) * fighter.aeroDashSpeed;
-    fighter.vy = Math.sin(angle) * fighter.aeroDashSpeed;
     effects.push({
       type: "aeroDashBurst",
       fighter,
@@ -3211,23 +3391,20 @@
       maxLife: 0.42,
       color: "#72efb5"
     });
-    announce(`${fighter.template.name} · 风迹突刺`, fighter.template.color, 0.75);
+    if (ultimateActive) {
+      fighter.x = destination.x;
+      fighter.y = destination.y;
+      fighter.aeroDashTimer = 0;
+      resolveAeroDashLanding(fighter);
+      announce(`${fighter.template.name} · 风迹瞬闪`, fighter.template.color, 0.75);
+    } else {
+      fighter.aeroDashDuration = fighter.template.aeroSkillDistance / fighter.template.aeroSkillSpeed;
+      fighter.aeroDashTimer = fighter.aeroDashDuration;
+      fighter.vx = Math.cos(angle) * fighter.aeroDashSpeed;
+      fighter.vy = Math.sin(angle) * fighter.aeroDashSpeed;
+      announce(`${fighter.template.name} · 风迹突刺`, fighter.template.color, 0.75);
+    }
     playSound("blade");
-  }
-
-  function getFarthestAeroWallAngle(fighter) {
-    const minX = BOUNDARY + fighter.r;
-    const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
-    const minY = BOUNDARY + fighter.r;
-    const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
-    return [
-      { distance: fighter.x - minX, angle: Math.PI },
-      { distance: maxX - fighter.x, angle: 0 },
-      { distance: fighter.y - minY, angle: -Math.PI / 2 },
-      { distance: maxY - fighter.y, angle: Math.PI / 2 }
-    ].reduce((farthest, wall) => (
-      wall.distance > farthest.distance ? wall : farthest
-    )).angle;
   }
 
   function findAeroDashContact(fighter, startX, startY, endX, endY) {
@@ -3396,38 +3573,34 @@
     const target = nearestOpponent(fighter) || opponent;
     if (!target) return;
     const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-    const sideX = Math.cos(angle + Math.PI / 2) * (fighter.r + 8);
-    const sideY = Math.sin(angle + Math.PI / 2) * (fighter.r + 8);
     const speed = fighter.template.aeroSwordSpeed * CELL_SIZE;
     playAttackVoice(fighter);
-    [-1, 1].forEach((side) => {
-      const startX = fighter.x + sideX * side;
-      const startY = fighter.y + sideY * side;
-      const trailEffect = {
-        type: "aeroSwordTrail",
-        points: [{ x: startX, y: startY }],
-        active: true,
-        life: 2,
-        maxLife: 2,
-        color: "#72efb5"
-      };
-      effects.push(trailEffect);
-      projectiles.push({
-        owner: fighter,
-        kind: "aeroSword",
-        category: DAMAGE_CATEGORIES.SPECIAL,
-        x: startX,
-        y: startY,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        r: fighter.template.aeroSwordRadius * CELL_SIZE,
-        collisionRadius: CELL_SIZE * 0.14,
-        damage: fighter.template.aeroSwordDamage,
-        life: fighter.template.aeroSwordLife,
-        color: "#72efb5",
-        hitIds: new Set(),
-        trailEffect
-      });
+    const startX = fighter.x + Math.cos(angle) * (fighter.r + 8);
+    const startY = fighter.y + Math.sin(angle) * (fighter.r + 8);
+    const trailEffect = {
+      type: "aeroSwordTrail",
+      points: [{ x: startX, y: startY }],
+      active: true,
+      life: 2.4,
+      maxLife: 2.4,
+      color: "#72efb5"
+    };
+    effects.push(trailEffect);
+    projectiles.push({
+      owner: fighter,
+      kind: "aeroSword",
+      category: DAMAGE_CATEGORIES.SPECIAL,
+      x: startX,
+      y: startY,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      r: fighter.template.aeroSwordRadius * CELL_SIZE,
+      collisionRadius: CELL_SIZE * 0.14,
+      damage: fighter.template.aeroSwordDamage,
+      life: fighter.template.aeroSwordLife,
+      color: "#72efb5",
+      hitIds: new Set(),
+      trailEffect
     });
     effects.push({
       type: "ring",
@@ -3440,7 +3613,7 @@
       color: "#72efb5",
       width: 4
     });
-    addLog(`${fighter.template.name} 朝最近敌人方向平行射出两柄直线飞剑。`, "ability");
+    addLog(`${fighter.template.name} 朝最近敌人方向射出一柄 55 格/秒的直线飞剑。`, "ability");
     playSound("windup");
   }
 
@@ -5886,27 +6059,16 @@
     const blastRadius = projectile.owner.template.fireballBlastRadius * CELL_SIZE;
     createFireCrater(projectile.x, projectile.y, projectile.owner);
     effects.push({
-      type: "ring",
-      x: projectile.x,
-      y: projectile.y,
-      radius: 10,
-      growth: 390,
-      life: 0.58,
-      maxLife: 0.58,
-      color: "#ff9d5d",
-      width: 8
-    });
-    effects.push({
-      type: "fireBlast",
+      type: "ankoFireExplosion",
       x: projectile.x,
       y: projectile.y,
       radius: blastRadius,
-      life: 0.55,
-      maxLife: 0.55,
-      color: "#ff9d5d"
+      life: 0.78,
+      maxLife: 0.78,
+      color: "#ff7540",
+      phase: random(0, Math.PI * 2)
     });
-    effects.push({ type: "fire", x: projectile.x, y: projectile.y, radius: blastRadius, life: 0.8, maxLife: 0.8, color: "#ff6f43" });
-    spawnBurst(projectile.x, projectile.y, "#ffad65", 28, 260);
+    spawnBurst(projectile.x, projectile.y, "#ffad65", 16, 205);
     getDamageableUnits()
       .filter((target) => target.side !== projectile.owner.side && target.hp > 0)
       .forEach((target) => {
@@ -6195,31 +6357,30 @@
       if (slam.timer > 0) continue;
       const { attacker } = slam;
       const range = attacker.template.hornedHitRange * CELL_SIZE;
+      effects.push({
+        type: "blackFlameShockwave",
+        x: attacker.x,
+        y: attacker.y,
+        radius: range,
+        life: 0.62,
+        maxLife: 0.62,
+        phase: random(0, Math.PI * 2)
+      });
       const targets = getDamageableUnits().filter((target) => (
         target.hp > 0
         && target.side !== attacker.side
         && distance(attacker, target) <= range + target.r * 0.15
       ));
-      effects.push({
-        type: "ring",
-        x: attacker.x,
-        y: attacker.y,
-        radius: 8,
-        growth: targets.length ? 650 : 430,
-        life: 0.55,
-        maxLife: 0.55,
-        color: "#adb6c5",
-        width: 8
-      });
+      spawnBurst(attacker.x, attacker.y, "#e55232", targets.length ? 24 : 16, targets.length ? 250 : 190);
+      screenShake = Math.max(screenShake, targets.length ? 8 : 5);
       if (targets.length) {
         targets.forEach((target) => {
           applySpecialDamage(target, attacker.template.hornedDamage, attacker, "黑咩砸击", {
-            color: "#c8ced8"
+            color: "#ff7952"
           });
-          spawnBurst(target.x, target.y, "#d8dee8", 24, 250);
+          spawnBurst(target.x, target.y, "#ff6b48", 24, 250);
         });
-        screenShake = Math.max(screenShake, 8);
-        announce(`${attacker.template.name} · 黑咩砸击`, "#d8dee8", 0.9);
+        announce(`${attacker.template.name} · 黑咩砸击`, "#ff8b62", 0.9);
         addLog(`${attacker.template.name} 的黑咩命中 ${targets.length} 个敌方单位，各造成 ${attacker.template.hornedDamage} 点范围伤害。`, "ability");
       } else {
         addLog("所有目标都在前摇结束前离开了黑咩预警范围。", "system");
@@ -6362,13 +6523,50 @@
     fighter.x = clamp(opponent.x + Math.cos(angle) * distanceToTarget, BOUNDARY + fighter.r, ARENA_SIZE - BOUNDARY - fighter.r);
     fighter.y = clamp(opponent.y + Math.sin(angle) * distanceToTarget, BOUNDARY + fighter.r, ARENA_SIZE - BOUNDARY - fighter.r);
     effects.push({ type: "ring", x: oldX, y: oldY, radius: 8, growth: 420, life: 0.45, maxLife: 0.45, color: "#75f2ed", width: 6 });
-    effects.push({ type: "ring", x: opponent.x, y: opponent.y, radius: 8, growth: 650, life: 0.56, maxLife: 0.56, color: "#e8ffff", width: 9 });
-    spawnBurst(opponent.x, opponent.y, "#9ff9ef", 38, 330);
+    effects.push({ type: "ring", x: opponent.x, y: opponent.y, radius: 8, growth: 650, life: 0.56, maxLife: 0.56, color: "#c692ff", width: 9 });
+    const lightningPoints = [];
+    const lightningStartX = opponent.x + random(-7, 7);
+    const lightningStartY = BOUNDARY - 3;
+    const lightningEnd = {
+      x: opponent.x,
+      y: opponent.y - opponent.r * 0.12
+    };
+    for (let index = 0; index <= 9; index += 1) {
+      const t = index / 9;
+      lightningPoints.push({
+        x: lightningStartX + (lightningEnd.x - lightningStartX) * t + (index > 0 && index < 9 ? random(-11, 11) : 0),
+        y: lightningStartY + (lightningEnd.y - lightningStartY) * t + (index > 0 && index < 9 ? random(-3, 3) : 0)
+      });
+    }
+    const lightningBranches = [];
+    [2, 4, 6, 8].forEach((originIndex) => {
+      const origin = lightningPoints[originIndex];
+      const branchPoints = [{ x: origin.x, y: origin.y }];
+      let branchX = origin.x;
+      let branchY = origin.y;
+      for (let step = 0; step < 3; step += 1) {
+        branchX += random(-18, 18);
+        branchY += random(8, 19);
+        branchPoints.push({ x: branchX, y: branchY });
+      }
+      lightningBranches.push(branchPoints);
+    });
+    effects.push({
+      type: "deathSentenceLightning",
+      x: opponent.x,
+      y: opponent.y,
+      points: lightningPoints,
+      branches: lightningBranches,
+      life: 0.42,
+      maxLife: 0.42,
+      color: "#b56cff"
+    });
+    spawnBurst(opponent.x, opponent.y, "#cda6ff", 38, 330);
     screenShake = Math.max(screenShake, 10);
     applySpecialDamage(opponent, fighter.template.deathSentenceDamage, fighter, "死告", {
-      color: "#c9fffb"
+      color: "#e2c8ff"
     });
-    announce("死告 · 三格共鸣", "#d9fffb", 1);
+    announce("死告 · 三格共鸣", "#dfc2ff", 1);
     addLog(`${fighter.template.name} 释放「死告」，瞬身重击造成 ${fighter.template.deathSentenceDamage} 点伤害。`, "ability");
     playSound("deathSentence");
   }
@@ -6929,6 +7127,11 @@
     const timeUp = reason === "时间到";
     dom.battleStatus.textContent = timeUp ? "时间到 · 比赛结束" : "比赛结束";
     dom.liveBadge.classList.remove("is-live");
+    if (mode === "video") {
+      videoExportArmed = false;
+      dom.videoExportActions.hidden = false;
+      dom.videoExportStatus.textContent = "选择 60 或 120 帧可开始新的 1080P 导出";
+    }
     const playerWon = winnerSide === 0;
     dom.overlayEyebrow.textContent = timeUp
       ? "TIME UP · WINNER"
@@ -6996,10 +7199,14 @@
     manualPaused = false;
     syncPauseControl();
     syncWandererFormState();
+    dom.videoExportActions.hidden = mode !== "video";
+    if (mode === "video" && videoExportArmed) {
+      dom.videoExportStatus.textContent = `上一局已结束；可继续选择 1080P · ${videoExportFps}帧导出`;
+    }
     if (mode === "multi") {
       dom.overlayEyebrow.textContent = "FREE-FOR-ALL";
       dom.overlayTitle.textContent = "多团混战";
-      dom.overlayCopy.textContent = `${MAP_SIZE}×${MAP_SIZE} 格地图，${multiIds.length} 只团子同时参战。点击角色牌调整阵容。`;
+      dom.overlayCopy.textContent = `${MAP_SIZE}×${MAP_SIZE} ${ARENA_THEME === "stadium" ? "星穹体育场" : "格地图"}，${multiIds.length} 只团子同时参战。点击角色牌调整阵容。`;
       dom.overlayButton.querySelector("span").textContent = "开始混战";
       dom.overlayHint.textContent = "全自动战斗 · 最后存活者获胜";
       dom.gameOverlay.classList.remove("is-hidden");
@@ -7010,11 +7217,23 @@
       renderMultiSetupBoard();
       return;
     }
-    dom.overlayEyebrow.textContent = "READY TO BOUNCE?";
-    dom.overlayTitle.textContent = "直线遭遇战";
-    dom.overlayCopy.textContent = `${MAP_SIZE}×${MAP_SIZE} 格地图。团子沿随机直线移动，只在碰撞或触边后改变方向。`;
-    dom.overlayButton.querySelector("span").textContent = "开始对战";
-    dom.overlayHint.textContent = mode === "watch" ? "自动观战 · 无需操作" : "你来控制左边的团子";
+    const stadiumTheme = ARENA_THEME === "stadium";
+    const videoMode = mode === "video";
+    dom.overlayEyebrow.textContent = videoMode
+      ? "CINEMATIC ARENA · TAKE 01"
+      : stadiumTheme ? "SOLARIS STADIUM · READY" : "READY TO BOUNCE?";
+    dom.overlayTitle.textContent = videoMode ? "录视频模式" : stadiumTheme ? "星穹体育场" : "直线遭遇战";
+    dom.overlayCopy.textContent = videoMode
+      ? "镜头会跟随战场移动；发生碰撞与爆炸时自动拉远，让两只团子同时留在画面中。"
+      : stadiumTheme
+        ? `${MAP_SIZE}×${MAP_SIZE} 格体育场已就绪。团子沿随机直线移动，只在碰撞或触边后改变方向。`
+        : `${MAP_SIZE}×${MAP_SIZE} 格地图。团子沿随机直线移动，只在碰撞或触边后改变方向。`;
+    dom.overlayButton.querySelector("span").textContent = videoMode ? "开始录制视角" : "开始对战";
+    dom.overlayHint.textContent = mode === "watch"
+      ? "自动观战 · 无需操作"
+      : mode === "video"
+        ? "动态导播镜头 · 双团同框爆炸画面"
+        : "你来控制左边的团子";
     dom.gameOverlay.classList.remove("is-hidden");
     dom.battleStatus.textContent = "等待开局";
     dom.statusDot.classList.remove("live");
@@ -7806,7 +8025,11 @@
     ctx.clearRect(0, 0, ARENA_SIZE, ARENA_SIZE);
     ctx.fillStyle = "#0d111b";
     ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
-    if (voiceCameraMix > 0 && voiceFocusFighter) {
+    if (mode === "video" && player && enemy && state !== "idle" && state !== "matchEnd") {
+      ctx.translate(ARENA_SIZE / 2, ARENA_SIZE / 2);
+      ctx.scale(videoCamera.zoom, videoCamera.zoom);
+      ctx.translate(-videoCamera.x, -videoCamera.y);
+    } else if (voiceCameraMix > 0 && voiceFocusFighter) {
       const zoom = 1 + voiceCameraMix * 0.48;
       ctx.translate(ARENA_SIZE / 2, ARENA_SIZE / 2);
       ctx.scale(zoom, zoom);
@@ -8063,7 +8286,167 @@
     paint.restore();
   }
 
+  function drawVideoExportComposition(exportSettings) {
+    const paint = replayCompositionCtx;
+    const outputWidth = exportSettings?.width || VIDEO_EXPORT_WIDTH;
+    const outputHeight = exportSettings?.height || VIDEO_EXPORT_HEIGHT;
+    const fps = exportSettings?.fps || 60;
+    if (replayCompositionCanvas.width !== outputWidth || replayCompositionCanvas.height !== outputHeight) {
+      replayCompositionCanvas.width = outputWidth;
+      replayCompositionCanvas.height = outputHeight;
+    }
+    paint.setTransform(1, 0, 0, 1, 0, 0);
+    paint.clearRect(0, 0, outputWidth, outputHeight);
+    const background = paint.createLinearGradient(0, 0, outputWidth, outputHeight);
+    background.addColorStop(0, "#08111a");
+    background.addColorStop(0.5, "#142330");
+    background.addColorStop(1, "#080d14");
+    paint.fillStyle = background;
+    paint.fillRect(0, 0, outputWidth, outputHeight);
+
+    const coverScale = Math.max(outputWidth / canvas.width, outputHeight / canvas.height);
+    const coverWidth = canvas.width * coverScale;
+    const coverHeight = canvas.height * coverScale;
+    paint.save();
+    paint.globalAlpha = 0.22;
+    paint.drawImage(canvas, (outputWidth - coverWidth) / 2, (outputHeight - coverHeight) / 2, coverWidth, coverHeight);
+    paint.restore();
+    paint.fillStyle = "rgba(4, 9, 14, 0.52)";
+    paint.fillRect(0, 0, outputWidth, outputHeight);
+
+    const gameSize = outputHeight;
+    const gameX = (outputWidth - gameSize) / 2;
+    paint.save();
+    paint.shadowColor = "rgba(0,0,0,0.62)";
+    paint.shadowBlur = 38;
+    paint.drawImage(canvas, gameX, 0, gameSize, gameSize);
+    paint.restore();
+    paint.strokeStyle = "rgba(117, 238, 232, 0.72)";
+    paint.lineWidth = 3;
+    paint.strokeRect(gameX + 2, 1, gameSize - 4, gameSize - 2);
+
+    const drawExportFighter = (fighter, side) => {
+      if (!fighter) return;
+      const left = side === 0;
+      const cardX = left ? 28 : outputWidth - 348;
+      const cardWidth = 320;
+      const centerX = cardX + cardWidth / 2;
+      replayRoundedRect(paint, cardX, 96, cardWidth, 820, 28);
+      paint.fillStyle = "rgba(7, 14, 22, 0.78)";
+      paint.fill();
+      paint.strokeStyle = colorWithAlpha(fighter.template.color, 0.62);
+      paint.lineWidth = 2;
+      paint.stroke();
+
+      drawReplayPortrait(paint, fighter, centerX, 230, 82);
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.fillStyle = "#f5f1e7";
+      paint.font = "900 28px 'Microsoft YaHei'";
+      paint.fillText(fighter.template.name, centerX, 356);
+      paint.fillStyle = colorWithAlpha(fighter.template.color, 0.95);
+      paint.font = "800 14px 'Microsoft YaHei'";
+      paint.fillText(left ? "PLAYER 01" : "PLAYER 02", centerX, 390);
+
+      const barX = cardX + 28;
+      const barWidth = cardWidth - 56;
+      paint.textAlign = "left";
+      paint.fillStyle = "#aebaca";
+      paint.font = "700 13px 'Microsoft YaHei'";
+      paint.fillText("生命", barX, 444);
+      paint.textAlign = "right";
+      paint.fillStyle = "#f2f5f8";
+      paint.font = "800 12px 'Trebuchet MS'";
+      paint.fillText(`${Math.ceil(fighter.hp)} / ${Math.ceil(fighter.maxHp)}`, cardX + cardWidth - 28, 444);
+      replayBar(paint, barX, 462, barWidth, 12, fighter.hp / Math.max(1, fighter.maxHp), fighter.hp / Math.max(1, fighter.maxHp) <= 0.3 ? "#f06a72" : "#78dd95");
+      paint.textAlign = "left";
+      paint.fillStyle = "#aebaca";
+      paint.font = "700 12px 'Microsoft YaHei'";
+      paint.fillText("共鸣", barX, 500);
+      replayBar(paint, barX, 516, barWidth, 7, fighter.energy / 100, "#ffd84d");
+
+      paint.fillStyle = colorWithAlpha(fighter.template.color, 0.96);
+      paint.font = "800 14px 'Microsoft YaHei'";
+      paint.fillText(fighter.template.ability, barX, 565);
+      paint.fillStyle = "#bdc8d5";
+      paint.font = "600 12px 'Microsoft YaHei'";
+      const readout = replaySpecialReadout(fighter);
+      const lines = [];
+      let currentLine = "";
+      readout.split(" ").forEach((part) => {
+        const candidate = currentLine ? `${currentLine} ${part}` : part;
+        if (paint.measureText(candidate).width > barWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = part;
+        } else {
+          currentLine = candidate;
+        }
+      });
+      if (currentLine) lines.push(currentLine);
+      lines.slice(0, 4).forEach((line, index) => paint.fillText(line, barX, 598 + index * 21));
+      paint.fillStyle = "#7f8d9c";
+      paint.font = "700 11px 'Microsoft YaHei'";
+      paint.fillText(replayFighterStatus(fighter), barX, 710);
+    };
+
+    drawExportFighter(player, 0);
+    drawExportFighter(enemy, 1);
+
+    if (replayCountdownText && visualTime < replayCountdownUntil) {
+      const remaining = clamp((replayCountdownUntil - visualTime) / 0.85, 0, 1);
+      const scaleIn = 0.82 + Math.min(0.18, (1 - remaining) * 0.9);
+      const isStart = replayCountdownText.includes("开撞");
+      paint.save();
+      paint.globalAlpha = Math.min(1, remaining * 2.4);
+      paint.translate(gameX + gameSize / 2, gameSize / 2);
+      paint.scale(scaleIn, scaleIn);
+      paint.fillStyle = "rgba(5, 9, 14, 0.66)";
+      paint.beginPath();
+      paint.arc(0, 0, isStart ? 128 : 110, 0, Math.PI * 2);
+      paint.fill();
+      paint.strokeStyle = isStart ? "rgba(255, 216, 77, 0.92)" : "rgba(198, 246, 242, 0.76)";
+      paint.lineWidth = 4;
+      paint.shadowColor = isStart ? "#ffd84d" : "#78efeb";
+      paint.shadowBlur = 24;
+      paint.beginPath();
+      paint.arc(0, 0, isStart ? 128 : 110, 0, Math.PI * 2);
+      paint.stroke();
+      paint.shadowBlur = 0;
+      paint.textAlign = "center";
+      paint.textBaseline = "middle";
+      paint.fillStyle = isStart ? "#fff0a1" : "#f7fffe";
+      paint.font = isStart ? "900 78px 'Microsoft YaHei'" : "900 132px 'Trebuchet MS'";
+      paint.fillText(replayCountdownText, 0, 4);
+      paint.restore();
+    }
+
+    paint.save();
+    replayRoundedRect(paint, outputWidth / 2 - 86, 24, 172, 50, 25);
+    paint.fillStyle = "rgba(4, 8, 13, 0.82)";
+    paint.fill();
+    paint.strokeStyle = "rgba(255, 216, 77, 0.42)";
+    paint.lineWidth = 1.5;
+    paint.stroke();
+    paint.textAlign = "center";
+    paint.textBaseline = "middle";
+    paint.fillStyle = "#ffd84d";
+    paint.font = "900 19px 'Trebuchet MS'";
+    paint.fillText(`${score[0]} : ${score[1]}`, outputWidth / 2, 49);
+    paint.fillStyle = "#a4afbd";
+    paint.font = "700 11px 'Microsoft YaHei'";
+    paint.fillText(`第 ${round} 局 · 录视频模式`, outputWidth / 2, 91);
+    paint.fillStyle = "rgba(221, 231, 238, 0.72)";
+    paint.font = "700 11px 'Trebuchet MS'";
+    paint.fillText(`SOLARIS CLASH · 1920 × 1080 · ${fps} FPS`, outputWidth / 2, 1030);
+    paint.restore();
+  }
+
   function drawReplayComposition() {
+    const exportSettings = replayExportSettings || activeReplaySession?.exportSettings;
+    if (exportSettings) {
+      drawVideoExportComposition(exportSettings);
+      return;
+    }
     const paint = replayCompositionCtx;
     const scale = canvas.height / ARENA_SIZE;
     const fighters = getActiveFighters();
@@ -8198,7 +8581,8 @@
 
   function updateReplayCompositionFrame(force = false) {
     const now = performance.now();
-    if (!force && now - lastReplayCompositeAt < 1000 / REPLAY_RENDER_FPS - 1) return;
+    const renderFps = replayExportSettings?.fps || activeReplaySession?.exportSettings?.fps || REPLAY_RENDER_FPS;
+    if (!force && now - lastReplayCompositeAt < 1000 / renderFps - 1) return;
     lastReplayCompositeAt = now;
     drawReplayComposition();
   }
@@ -8281,6 +8665,10 @@
   }
 
   function drawArena(paint = ctx) {
+    if (ARENA_THEME === "stadium") {
+      drawStadiumArena(paint);
+      return;
+    }
     if (ARENA_THEME === "duel") {
       drawDuelArena(paint);
       return;
@@ -8333,6 +8721,226 @@
     drawCornerMark(ARENA_SIZE - BOUNDARY - 16, BOUNDARY + 16, -1, 1, "#5ce8e5", paint);
     drawCornerMark(BOUNDARY + 16, ARENA_SIZE - BOUNDARY - 16, 1, -1, "#5ce8e5", paint);
     drawCornerMark(ARENA_SIZE - BOUNDARY - 16, ARENA_SIZE - BOUNDARY - 16, -1, -1, "#ffd84d", paint);
+  }
+
+  function drawStadiumArena(paint) {
+    const center = ARENA_SIZE / 2;
+    const min = BOUNDARY;
+    const max = ARENA_SIZE - BOUNDARY;
+    const interior = max - min;
+    const pitchCornerRadius = 53;
+    paint.save();
+
+    const stadiumBase = paint.createRadialGradient(center, center - 40, 35, center, center, ARENA_SIZE * 0.74);
+    stadiumBase.addColorStop(0, "#173841");
+    stadiumBase.addColorStop(0.58, "#10252e");
+    stadiumBase.addColorStop(1, "#07131c");
+    paint.fillStyle = stadiumBase;
+    paint.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+
+    // Tiered spectator bowl fills the dark margins around the track.
+    paint.save();
+    const bowl = paint.createLinearGradient(0, 0, 0, ARENA_SIZE);
+    bowl.addColorStop(0, "#294d69");
+    bowl.addColorStop(0.32, "#173a51");
+    bowl.addColorStop(0.7, "#122d40");
+    bowl.addColorStop(1, "#071923");
+    paint.fillStyle = bowl;
+    paint.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
+    for (let tier = 0; tier < 8; tier += 1) {
+      const inset = 2 + tier * 3;
+      replayRoundedRect(
+        paint,
+        inset,
+        inset,
+        ARENA_SIZE - inset * 2,
+        ARENA_SIZE - inset * 2,
+        96 - tier * 2
+      );
+      paint.fillStyle = tier % 2
+        ? "rgba(89, 157, 184, 0.18)"
+        : "rgba(25, 69, 93, 0.22)";
+      paint.fill();
+      paint.strokeStyle = tier < 3
+        ? "rgba(184, 225, 235, 0.22)"
+        : "rgba(123, 189, 207, 0.13)";
+      paint.lineWidth = tier < 3 ? 1.4 : 0.9;
+      paint.stroke();
+    }
+
+    const crowdColors = ["#ffb27d", "#7fe5e3", "#ffd36c", "#ff8fa7", "#c7b2ff", "#eaf7fa"];
+    for (let index = 0; index < 112; index += 1) {
+      const x = 12 + (index * 13.7) % (ARENA_SIZE - 24);
+      const yTop = 5 + (index % 3) * 4.5;
+      const yBottom = ARENA_SIZE - 7 - (index % 3) * 4.5;
+      paint.fillStyle = colorWithAlpha(crowdColors[index % crowdColors.length], 0.32 + (index % 4) * 0.06);
+      paint.beginPath();
+      paint.arc(x, yTop, 1.2 + (index % 2) * 0.55, 0, Math.PI * 2);
+      paint.fill();
+      paint.beginPath();
+      paint.arc(ARENA_SIZE - x, yBottom, 1.1 + (index % 3) * 0.35, 0, Math.PI * 2);
+      paint.fill();
+    }
+    for (let index = 0; index < 86; index += 1) {
+      const y = 16 + (index * 17.1) % (ARENA_SIZE - 32);
+      const xLeft = 5 + (index % 3) * 4.5;
+      const xRight = ARENA_SIZE - 7 - (index % 3) * 4.5;
+      paint.fillStyle = colorWithAlpha(crowdColors[(index + 2) % crowdColors.length], 0.28 + (index % 3) * 0.07);
+      paint.beginPath();
+      paint.arc(xLeft, y, 1.1, 0, Math.PI * 2);
+      paint.fill();
+      paint.beginPath();
+      paint.arc(xRight, ARENA_SIZE - y, 1.1, 0, Math.PI * 2);
+      paint.fill();
+    }
+    paint.restore();
+
+    // Floodlight bloom at the four corners.
+    [
+      [10, 10],
+      [ARENA_SIZE - 10, 10],
+      [10, ARENA_SIZE - 10],
+      [ARENA_SIZE - 10, ARENA_SIZE - 10]
+    ].forEach(([x, y]) => {
+      const light = paint.createRadialGradient(x, y, 1, x, y, 82);
+      light.addColorStop(0, "rgba(236,255,255,0.34)");
+      light.addColorStop(0.25, "rgba(139,226,230,0.12)");
+      light.addColorStop(1, "rgba(139,226,230,0)");
+      paint.fillStyle = light;
+      paint.beginPath();
+      paint.arc(x, y, 82, 0, Math.PI * 2);
+      paint.fill();
+      paint.fillStyle = "#eefcff";
+      paint.beginPath();
+      paint.arc(x, y, 3, 0, Math.PI * 2);
+      paint.fill();
+    });
+
+    // Wide terracotta running track surrounds, but never overlaps, the 20 × 20 pitch.
+    replayRoundedRect(paint, 14, 14, ARENA_SIZE - 28, ARENA_SIZE - 28, 84);
+    const track = paint.createLinearGradient(0, 0, ARENA_SIZE, ARENA_SIZE);
+    track.addColorStop(0, "#c65f35");
+    track.addColorStop(0.5, "#e08349");
+    track.addColorStop(1, "#b85332");
+    paint.fillStyle = track;
+    paint.fill();
+    paint.strokeStyle = "rgba(255,226,190,0.55)";
+    paint.lineWidth = 2;
+    paint.stroke();
+
+    paint.save();
+    replayRoundedRect(paint, 18, 18, ARENA_SIZE - 36, ARENA_SIZE - 36, 80);
+    paint.clip();
+    for (let lane = 1; lane <= 4; lane += 1) {
+      replayRoundedRect(paint, 18 + lane * 5, 18 + lane * 5, ARENA_SIZE - 36 - lane * 10, ARENA_SIZE - 36 - lane * 10, 80 - lane * 4);
+      paint.strokeStyle = lane === 4 ? "rgba(255,248,227,0.78)" : "rgba(255,235,208,0.34)";
+      paint.lineWidth = lane === 4 ? 2 : 1;
+      paint.stroke();
+    }
+    paint.restore();
+
+    // Grass pitch.
+    paint.save();
+    replayRoundedRect(paint, min, min, interior, interior, pitchCornerRadius);
+    paint.clip();
+    const grass = paint.createLinearGradient(min, min, max, max);
+    grass.addColorStop(0, "#67b85b");
+    grass.addColorStop(0.5, "#58a951");
+    grass.addColorStop(1, "#469644");
+    paint.fillStyle = grass;
+    paint.fillRect(min, min, interior, interior);
+    const stripeHeight = interior / 10;
+    for (let stripe = 0; stripe < 10; stripe += 1) {
+      if (stripe % 2 === 0) continue;
+      paint.fillStyle = "rgba(229,255,183,0.055)";
+      paint.fillRect(min, min + stripe * stripeHeight, interior, stripeHeight);
+    }
+
+    // 20 × 20 competition grid.
+    for (let cell = 0; cell <= MAP_SIZE; cell += 1) {
+      const point = min + cell * CELL_SIZE;
+      const major = cell % 5 === 0;
+      paint.strokeStyle = major
+        ? "rgba(209,255,247,0.26)"
+        : "rgba(78,225,220,0.2)";
+      paint.lineWidth = major ? 1.15 : 0.7;
+      paint.beginPath();
+      paint.moveTo(point, min);
+      paint.lineTo(point, max);
+      paint.stroke();
+      paint.beginPath();
+      paint.moveTo(min, point);
+      paint.lineTo(max, point);
+      paint.stroke();
+    }
+
+    // Football pitch markings layered over the tactical grid.
+    paint.strokeStyle = "rgba(238,255,235,0.72)";
+    paint.lineWidth = 1.5;
+    paint.beginPath();
+    paint.moveTo(center, min);
+    paint.lineTo(center, max);
+    paint.stroke();
+    paint.beginPath();
+    paint.arc(center, center, 77, 0, Math.PI * 2);
+    paint.stroke();
+    paint.fillStyle = "rgba(242,255,224,0.9)";
+    paint.beginPath();
+    paint.arc(center, center, 4.5, 0, Math.PI * 2);
+    paint.fill();
+
+    const boxWidth = CELL_SIZE * 4.1;
+    const boxHeight = CELL_SIZE * 8.2;
+    paint.strokeRect(min + 2, center - boxHeight / 2, boxWidth, boxHeight);
+    paint.strokeRect(max - boxWidth - 2, center - boxHeight / 2, boxWidth, boxHeight);
+    paint.strokeRect(min + 2, center - CELL_SIZE * 2.6, CELL_SIZE * 1.55, CELL_SIZE * 5.2);
+    paint.strokeRect(max - CELL_SIZE * 1.55 - 2, center - CELL_SIZE * 2.6, CELL_SIZE * 1.55, CELL_SIZE * 5.2);
+
+    paint.fillStyle = "rgba(241,255,233,0.13)";
+    paint.font = "800 10px 'Trebuchet MS'";
+    paint.textAlign = "center";
+    paint.textBaseline = "middle";
+    paint.fillText("SOLARIS STADIUM · 20 × 20", center, min + 22);
+    paint.fillText("PLAY FAIR · BREAK LIMITS", center, max - 20);
+    paint.restore();
+
+    // Track/field divider and light rails.
+    paint.strokeStyle = "rgba(240,255,232,0.82)";
+    paint.lineWidth = 1.8;
+    replayRoundedRect(paint, min - 1, min - 1, interior + 2, interior + 2, pitchCornerRadius + 1);
+    paint.stroke();
+    const rail = paint.createLinearGradient(min, min, max, max);
+    rail.addColorStop(0, "#65ece8");
+    rail.addColorStop(0.48, "rgba(239,224,169,0.7)");
+    rail.addColorStop(1, "#ff7896");
+    paint.strokeStyle = rail;
+    paint.lineWidth = 2;
+    replayRoundedRect(paint, min + 4, min + 4, interior - 8, interior - 8, pitchCornerRadius - 4);
+    paint.stroke();
+
+    drawCornerMark(min + 21, min + 21, 1, 1, "#e7fff8", paint);
+    drawCornerMark(max - 21, min + 21, -1, 1, "#e7fff8", paint);
+    drawCornerMark(min + 21, max - 21, 1, -1, "#ffd8e0", paint);
+    drawCornerMark(max - 21, max - 21, -1, -1, "#ffd8e0", paint);
+
+    // Flags around the track.
+    [
+      [96, 17, "#ffd36b"],
+      [260, 16, "#7ee6e1"],
+      [510, 16, "#ff849d"],
+      [650, 18, "#8bdd78"],
+      [17, 310, "#7ee6e1"],
+      [703, 404, "#ff849d"]
+    ].forEach(([x, y, color], index) => {
+      paint.fillStyle = colorWithAlpha(color, 0.72);
+      paint.beginPath();
+      paint.moveTo(x, y);
+      paint.lineTo(x + (index % 2 ? -17 : 17), y + 5);
+      paint.lineTo(x, y + 16);
+      paint.closePath();
+      paint.fill();
+    });
+    paint.restore();
   }
 
   function drawDuelArena(paint) {
@@ -8552,6 +9160,53 @@
     ctx.save();
     getActiveFighters().forEach((fighter) => {
       if (!fighter) return;
+      if (
+        fighter.template.id === "kakarot-test"
+        && fighter.overclock > 0
+        && fighter.trail.length > 1
+      ) {
+        const trailPoints = [...fighter.trail, { x: fighter.x, y: fighter.y, life: 1, maxLife: 1 }];
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.shadowColor = "#b995ff";
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        trailPoints.forEach((point, index) => {
+          if (index === 0) {
+            ctx.moveTo(point.x, point.y);
+            return;
+          }
+          const previous = trailPoints[index - 1];
+          const dx = point.x - previous.x;
+          const dy = point.y - previous.y;
+          const segmentLength = Math.hypot(dx, dy);
+          if (segmentLength > CELL_SIZE * 5) {
+            ctx.moveTo(point.x, point.y);
+            return;
+          }
+          const nx = segmentLength > 0.1 ? -dy / segmentLength : 0;
+          const ny = segmentLength > 0.1 ? dx / segmentLength : 0;
+          for (let step = 1; step <= 2; step += 1) {
+            const amount = step / 3;
+            const flicker = Math.sin(visualTime * 22 + index * 1.9 + step * 2.4) * 4.5;
+            ctx.lineTo(
+              previous.x + dx * amount + nx * flicker,
+              previous.y + dy * amount + ny * flicker
+            );
+          }
+          ctx.lineTo(point.x, point.y);
+        });
+        ctx.strokeStyle = "rgba(148, 102, 255, 0.28)";
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(216, 194, 255, 0.42)";
+        ctx.lineWidth = 1.4;
+        ctx.shadowBlur = 5;
+        ctx.stroke();
+        ctx.restore();
+      }
       if (
         fighter.template.id === "08"
         && (fighter.aeroAirTimer > 0 || fighter.aeroDashTimer > 0)
@@ -10673,7 +11328,7 @@
   function drawEffects(front) {
     effects.forEach((effect) => {
       const alpha = clamp(effect.life / effect.maxLife, 0, 1);
-      const isFront = ["impact", "lightning", "shield", "brantAnchorImpact", "jellySlash", "dreamBreak"].includes(effect.type);
+      const isFront = ["impact", "lightning", "deathSentenceLightning", "shield", "brantAnchorImpact", "jellySlash", "dreamBreak", "ankoFireExplosion", "blackFlameShockwave"].includes(effect.type);
       if (isFront !== front) return;
       ctx.save();
       ctx.globalAlpha = alpha;
@@ -10703,6 +11358,135 @@
           ctx.lineTo(effect.x + Math.cos(angle) * outer, effect.y + Math.sin(angle) * outer);
           ctx.stroke();
         }
+      } else if (effect.type === "blackFlameShockwave") {
+        const progress = 1 - alpha;
+        const expansion = 1 - Math.pow(1 - progress, 2.4);
+        const waveRadius = effect.radius * (0.08 + expansion * 0.92);
+        ctx.translate(effect.x, effect.y);
+
+        ctx.globalCompositeOperation = "source-over";
+        const smoke = ctx.createRadialGradient(0, 0, 4, 0, 0, waveRadius);
+        smoke.addColorStop(0, "rgba(78, 26, 22, 0.18)");
+        smoke.addColorStop(0.58, "rgba(84, 31, 25, 0.11)");
+        smoke.addColorStop(1, "rgba(68, 25, 21, 0)");
+        ctx.fillStyle = smoke;
+        ctx.beginPath();
+        ctx.arc(0, 0, waveRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.shadowColor = "#c9231f";
+        ctx.shadowBlur = 12;
+        ctx.lineCap = "round";
+        for (let layer = 0; layer < 3; layer += 1) {
+          ctx.beginPath();
+          for (let segment = 0; segment <= 56; segment += 1) {
+            const angle = (segment / 56) * Math.PI * 2;
+            const turbulence = 1 + Math.sin(angle * 7 + effect.phase + layer) * (0.035 - layer * 0.007);
+            const radius = waveRadius * (1 - layer * 0.045) * turbulence;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            if (segment === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = layer === 0
+            ? "rgba(203, 28, 24, 0.76)"
+            : layer === 1
+              ? "rgba(245, 52, 32, 0.62)"
+              : "rgba(255, 111, 55, 0.5)";
+          ctx.lineWidth = (layer === 0 ? 11 : layer === 1 ? 5.5 : 2) * alpha + 0.8;
+          ctx.stroke();
+        }
+
+        for (let flameIndex = 0; flameIndex < 14; flameIndex += 1) {
+          const angle = effect.phase + flameIndex * 2.399 + progress * 0.2;
+          const baseRadius = waveRadius * (0.88 + (flameIndex % 3) * 0.025);
+          const tipRadius = waveRadius * (1.04 + (flameIndex % 2) * 0.035);
+          const halfWidth = 2.2 + (flameIndex % 3) * 0.9;
+          const bend = Math.sin(effect.phase + flameIndex * 1.7) * 0.08;
+          ctx.save();
+          ctx.rotate(angle);
+          ctx.beginPath();
+          ctx.moveTo(baseRadius, -halfWidth);
+          ctx.quadraticCurveTo(tipRadius * 0.97, -halfWidth * 0.35 + bend * 10, tipRadius, 0);
+          ctx.quadraticCurveTo(tipRadius * 0.96, halfWidth * 0.55, baseRadius, halfWidth);
+          ctx.closePath();
+          const flame = ctx.createLinearGradient(baseRadius, 0, tipRadius, 0);
+          flame.addColorStop(0, "rgba(174, 24, 23, 0.78)");
+          flame.addColorStop(0.62, "rgba(235, 42, 27, 0.68)");
+          flame.addColorStop(1, "rgba(255, 105, 45, 0.58)");
+          ctx.fillStyle = flame;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        ctx.shadowBlur = 0;
+        ctx.globalCompositeOperation = "lighter";
+        const impact = ctx.createRadialGradient(0, 0, 1, 0, 0, effect.radius * 0.24);
+        impact.addColorStop(0, `rgba(255, 236, 169, ${Math.pow(alpha, 1.8) * 0.8})`);
+        impact.addColorStop(0.34, `rgba(255, 94, 45, ${alpha * 0.5})`);
+        impact.addColorStop(1, "rgba(126, 22, 17, 0)");
+        ctx.fillStyle = impact;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radius * 0.24, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (effect.type === "deathSentenceLightning") {
+        const progress = 1 - alpha;
+        const reveal = clamp(0.48 + progress * 3.4, 0, 1);
+        const visibleCount = Math.max(2, Math.ceil(effect.points.length * reveal));
+        const visiblePoints = effect.points.slice(0, visibleCount);
+        const visibleEndY = visiblePoints[visiblePoints.length - 1]?.y ?? effect.points[0].y;
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 30;
+
+        effect.branches.forEach((branch) => {
+          if (branch[0].y > visibleEndY) return;
+          ctx.beginPath();
+          branch.forEach((point, index) => {
+            if (index === 0) ctx.moveTo(point.x, point.y);
+            else ctx.lineTo(point.x, point.y);
+          });
+          ctx.strokeStyle = colorWithAlpha("#8f42ff", 0.72);
+          ctx.lineWidth = 4;
+          ctx.stroke();
+          ctx.strokeStyle = colorWithAlpha("#dfb8ff", 0.58);
+          ctx.lineWidth = 1.35;
+          ctx.stroke();
+        });
+
+        ctx.beginPath();
+        visiblePoints.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.strokeStyle = colorWithAlpha("#9c4dff", 0.86);
+        ctx.lineWidth = 10;
+        ctx.stroke();
+        ctx.strokeStyle = colorWithAlpha("#d6aeff", 0.9);
+        ctx.lineWidth = 3.4;
+        ctx.stroke();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.strokeStyle = "rgba(255, 247, 255, 0.88)";
+        ctx.lineWidth = 1.15;
+        ctx.stroke();
+
+        if (reveal > 0.82) {
+          ctx.globalCompositeOperation = "lighter";
+          ctx.shadowBlur = 18;
+          const impactRadius = 34;
+          const impact = ctx.createRadialGradient(effect.x, effect.y, 2, effect.x, effect.y, impactRadius);
+          impact.addColorStop(0, `rgba(255, 246, 255, ${alpha * 0.72})`);
+          impact.addColorStop(0.24, `rgba(191, 119, 255, ${alpha * 0.5})`);
+          impact.addColorStop(1, "rgba(105, 44, 178, 0)");
+          ctx.fillStyle = impact;
+          ctx.beginPath();
+          ctx.arc(effect.x, effect.y, impactRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
       } else if (effect.type === "lightning") {
         ctx.globalCompositeOperation = "lighter";
         ctx.shadowColor = effect.color;
@@ -10718,6 +11502,143 @@
         ctx.strokeStyle = "rgba(255,255,255,0.85)";
         ctx.lineWidth = 1.4;
         ctx.stroke();
+      } else if (effect.type === "ankoFireExplosion") {
+        const progress = 1 - alpha;
+        const flameFade = Math.pow(alpha, 0.6);
+        const coreRadius = effect.radius * (0.15 + progress * 0.035);
+
+        // Asymmetric smoke puffs soften the silhouette without covering nearby fighters.
+        ctx.globalCompositeOperation = "source-over";
+        for (let smokeIndex = 0; smokeIndex < 7; smokeIndex += 1) {
+          const angle = effect.phase + smokeIndex * 2.399 + progress * 0.04;
+          const distance = effect.radius * (0.68 + (smokeIndex % 3) * 0.045);
+          const puffRadius = effect.radius * (0.2 + (smokeIndex % 2) * 0.04);
+          const puffX = Math.cos(angle) * distance;
+          const puffY = Math.sin(angle) * distance;
+          const puff = ctx.createRadialGradient(puffX, puffY, 1, puffX, puffY, puffRadius);
+          puff.addColorStop(0, "rgba(91, 75, 66, 0.035)");
+          puff.addColorStop(0.58, "rgba(76, 65, 60, 0.06)");
+          puff.addColorStop(1, "rgba(58, 54, 55, 0)");
+          ctx.fillStyle = puff;
+          ctx.beginPath();
+          ctx.arc(puffX, puffY, puffRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = "lighter";
+        const glow = ctx.createRadialGradient(
+          effect.x,
+          effect.y,
+          effect.radius * 0.12,
+          effect.x,
+          effect.y,
+          effect.radius * (0.95 + progress * 0.04)
+        );
+        glow.addColorStop(0, "rgba(255, 174, 70, 0)");
+        glow.addColorStop(0.22, `rgba(255, 198, 91, ${0.22 * flameFade})`);
+        glow.addColorStop(0.5, `rgba(255, 97, 35, ${0.24 * flameFade})`);
+        glow.addColorStop(0.82, `rgba(154, 48, 25, ${0.08 * flameFade})`);
+        glow.addColorStop(1, "rgba(85, 30, 20, 0)");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, effect.radius * (0.95 + progress * 0.04), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(effect.x, effect.y);
+        ctx.shadowColor = "#ff6934";
+        ctx.shadowBlur = 7;
+        const ringSegments = 72;
+        ctx.beginPath();
+        for (let segment = 0; segment <= ringSegments; segment += 1) {
+          const angle = (segment / ringSegments) * Math.PI * 2;
+          const turbulence =
+            1
+            + Math.sin(angle * 5 + effect.phase) * 0.055
+            + Math.sin(angle * 9 - effect.phase * 1.7) * 0.028
+            + Math.sin(angle * 15 + progress * 2.4) * 0.016;
+          const radius = effect.radius * (0.91 + progress * 0.045) * turbulence;
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          if (segment === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        for (let segment = ringSegments; segment >= 0; segment -= 1) {
+          const angle = (segment / ringSegments) * Math.PI * 2;
+          const innerTurbulence =
+            1
+            + Math.sin(angle * 7 - effect.phase) * 0.045
+            + Math.sin(angle * 12 + effect.phase * 1.2) * 0.022;
+          const radius = effect.radius * 0.24 * innerTurbulence;
+          ctx.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
+        }
+        ctx.closePath();
+        const fireRing = ctx.createRadialGradient(0, 0, effect.radius * 0.12, 0, 0, effect.radius * 0.98);
+        fireRing.addColorStop(0, `rgba(255, 230, 146, ${0.3 * flameFade})`);
+        fireRing.addColorStop(0.28, `rgba(255, 153, 55, ${0.38 * flameFade})`);
+        fireRing.addColorStop(0.64, `rgba(230, 69, 27, ${0.3 * flameFade})`);
+        fireRing.addColorStop(0.88, `rgba(126, 39, 24, ${0.1 * flameFade})`);
+        fireRing.addColorStop(1, "rgba(77, 25, 18, 0)");
+        ctx.fillStyle = fireRing;
+        ctx.fill();
+
+        for (let wispIndex = 0; wispIndex < 9; wispIndex += 1) {
+          const start = effect.phase + wispIndex * 2.17 + progress * 0.15;
+          const radius = effect.radius * (0.34 + (wispIndex % 4) * 0.145);
+          const sweep = 0.24 + (wispIndex % 3) * 0.11;
+          ctx.strokeStyle = wispIndex % 2
+            ? `rgba(255, 177, 69, ${0.2 * flameFade})`
+            : `rgba(255, 94, 35, ${0.18 * flameFade})`;
+          ctx.lineWidth = 1.5 + (wispIndex % 3) * 0.55;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, start, start + sweep);
+          ctx.stroke();
+        }
+
+        // A few restrained outer licks break up the circle without forming a starburst.
+        for (let lickIndex = 0; lickIndex < 9; lickIndex += 1) {
+          const angle = effect.phase + lickIndex * 2.399;
+          const baseRadius = effect.radius * (0.84 + (lickIndex % 2) * 0.025);
+          const tipRadius = baseRadius + effect.radius * (0.07 + progress * 0.04);
+          const bend = Math.sin(effect.phase + lickIndex * 1.8) * 0.13;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(angle) * baseRadius, Math.sin(angle) * baseRadius);
+          ctx.quadraticCurveTo(
+            Math.cos(angle + bend) * (baseRadius + effect.radius * 0.04),
+            Math.sin(angle + bend) * (baseRadius + effect.radius * 0.04),
+            Math.cos(angle + bend * 0.55) * tipRadius,
+            Math.sin(angle + bend * 0.55) * tipRadius
+          );
+          ctx.strokeStyle = `rgba(255, 146, 61, ${0.28 * flameFade})`;
+          ctx.lineWidth = Math.max(1.2, effect.radius * 0.018);
+          ctx.stroke();
+        }
+
+        const core = ctx.createRadialGradient(0, 0, 1, 0, 0, coreRadius);
+        core.addColorStop(0, `rgba(255, 251, 224, ${alpha * 0.72})`);
+        core.addColorStop(0.38, `rgba(255, 205, 91, ${alpha * 0.48})`);
+        core.addColorStop(1, "rgba(255, 78, 28, 0)");
+        ctx.fillStyle = core;
+        ctx.beginPath();
+        ctx.arc(0, 0, coreRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        for (let emberIndex = 0; emberIndex < 8; emberIndex += 1) {
+          const angle = effect.phase + emberIndex * 2.41;
+          const travel = effect.radius * (0.36 + progress * (0.5 + (emberIndex % 3) * 0.045));
+          ctx.fillStyle = `rgba(255, 179, 78, ${alpha * 0.46})`;
+          ctx.beginPath();
+          ctx.arc(Math.cos(angle) * travel, Math.sin(angle) * travel, 1.2 + (emberIndex % 2) * 0.55, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = `rgba(255, 155, 70, ${alpha * 0.14})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(0, 0, effect.radius * (0.97 + progress * 0.03), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
       } else if (effect.type === "fire") {
         ctx.globalCompositeOperation = "lighter";
         const gradient = ctx.createRadialGradient(effect.x, effect.y, 2, effect.x, effect.y, effect.radius);
@@ -11650,10 +12571,16 @@
     return audioContext;
   }
 
-  function createReplayAudioTimeline() {
+  async function createReplayAudioTimeline() {
     if (!soundEnabled) return null;
     const context = ensureAudio();
     if (!context || !audioMixNode) return null;
+    if (context.state !== "running") {
+      await Promise.race([
+        context.resume(),
+        new Promise((resolve) => setTimeout(resolve, 300))
+      ]);
+    }
     if (replayAudioDestination) {
       try {
         audioMixNode.disconnect(replayAudioDestination);
@@ -11803,12 +12730,14 @@
   function setMapSize(value) {
     const selectedValue = String(value);
     const nextSize = selectedValue === "30" ? 30 : 20;
-    const nextTheme = selectedValue === "duel20" ? "duel" : "grid";
+    const nextTheme = selectedValue === "stadium20"
+      ? "stadium"
+      : selectedValue === "duel20"
+        ? "duel"
+        : "grid";
     const needsRestart = state === "playing"
       || state === "countdown"
-      || state === "roundEnd"
-      || nextTheme !== ARENA_THEME
-      || nextSize !== MAP_SIZE;
+      || state === "roundEnd";
     ARENA_THEME = nextTheme;
     MAP_SIZE = nextSize;
     CELL_SIZE = (ARENA_SIZE - MAP_PADDING * 2) / MAP_SIZE;
@@ -11928,13 +12857,13 @@
     const fighter = templateById(showcaseSelectedId);
     const detail = FIGHTER_DETAILS[fighter.id];
     const index = Math.max(0, FIGHTERS.findIndex((item) => item.id === fighter.id));
-    const formLocked = state !== "idle" && state !== "matchEnd";
+    const demoLocked = state !== "idle" && state !== "matchEnd";
     const formButtons = WANDERER_FORM_IDS.has(fighter.id)
       ? `
         <div class="showcase-form-toggle" role="group" aria-label="${fighter.name}外观">
           <span>外观</span>
-          <button type="button" data-showcase-gender="male" aria-pressed="${wandererForms[fighter.id] === "male"}" ${formLocked ? "disabled" : ""}>男</button>
-          <button type="button" data-showcase-gender="female" aria-pressed="${wandererForms[fighter.id] === "female"}" ${formLocked ? "disabled" : ""}>女</button>
+          <button type="button" data-showcase-gender="male" aria-pressed="${wandererForms[fighter.id] === "male"}">男</button>
+          <button type="button" data-showcase-gender="female" aria-pressed="${wandererForms[fighter.id] === "female"}">女</button>
         </div>
       `
       : "";
@@ -11961,10 +12890,10 @@
         <h3>${fighter.name}</h3>
         <p>${fighter.tagline}</p>
         ${formButtons}
-        <button class="showcase-demo-launch" type="button" data-showcase-action="demo" ${formLocked ? "disabled" : ""}>
+        <button class="showcase-demo-launch" type="button" data-showcase-action="demo" ${demoLocked ? "disabled" : ""}>
           <span aria-hidden="true">▶</span>
           <b>实机演示</b>
-          <small>${formLocked ? "请先结束当前对局" : "无限生命木桩 · 动作实战"}</small>
+          <small>${demoLocked ? "请先结束当前对局" : "无限生命木桩 · 动作实战"}</small>
         </button>
       </div>
     `;
@@ -12390,9 +13319,13 @@
     "video/webm;codecs=vp9,opus",
     "video/webm;codecs=vp9",
     "video/webm;codecs=vp8",
-    "video/webm",
-    "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
-    "video/mp4;codecs=avc1.42E01E",
+    "video/webm"
+  ];
+  const MP4_MIME_TYPES = [
+    "video/mp4;codecs=avc1.64002A,mp4a.40.2",
+    "video/mp4;codecs=avc1.4D402A,mp4a.40.2",
+    "video/mp4;codecs=avc1,mp4a.40.2",
+    "video/mp4;codecs=avc1",
     "video/mp4"
   ];
 
@@ -12402,7 +13335,8 @@
 
   function preferredReplayMimeType() {
     if (typeof MediaRecorder === "undefined" || typeof MediaRecorder.isTypeSupported !== "function") return "";
-    return REPLAY_MIME_TYPES.find((type) => MediaRecorder.isTypeSupported(type)) || "";
+    const candidates = [...MP4_MIME_TYPES, ...REPLAY_MIME_TYPES];
+    return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || "";
   }
 
   function openReplayDatabase() {
@@ -12431,7 +13365,7 @@
         const transaction = database.transaction(REPLAY_DB_STORE, "readwrite");
         const store = transaction.objectStore(REPLAY_DB_STORE);
         store.clear();
-        replayRecords.forEach((record) => {
+        replayRecords.filter((record) => !record.meta?.exportFps).forEach((record) => {
           store.put({
             key: String(record.id),
             id: record.id,
@@ -12496,7 +13430,9 @@
   }
 
   function replayRecordTitle(record) {
-    return record.meta.mode === "multi" ? "多团混战" : `第 ${record.meta.round} 局`;
+    if (record.meta.mode === "multi") return "多团混战";
+    if (record.meta.mode === "video") return `录视频模式 · 第 ${record.meta.round} 局`;
+    return `第 ${record.meta.round} 局`;
   }
 
   function replayRecordMatchup(record) {
@@ -12508,25 +13444,25 @@
 
   function updateReplayButton() {
     const supported = replayRecordingSupported();
-    const recording = autoReplayEnabled && Boolean(activeReplaySession);
+    const recording = Boolean(activeReplaySession);
     dom.replayCount.textContent = supported ? (recording ? "●" : String(replayRecords.length)) : "×";
     dom.replayButton.classList.toggle("is-unsupported", !supported);
     dom.replayButton.classList.toggle("is-recording", recording);
     dom.replayButton.setAttribute(
       "aria-label",
-      !autoReplayEnabled
-        ? `对局回放，自动录制已关闭，已保存 ${replayRecords.length} 局`
-        : recording
+      recording
         ? `正在录制${activeReplaySession.meta.label}，已保存 ${replayRecords.length} 局回放`
+        : !autoReplayEnabled
+          ? `对局回放，自动录制已关闭，已保存 ${replayRecords.length} 局`
         : `对局回放，已保存 ${replayRecords.length} 局`
     );
-    dom.replayButton.title = !autoReplayEnabled
-      ? "对局回放 · 自动录制已关闭"
-      : supported
-      ? recording
+    dom.replayButton.title = !supported
+      ? "当前浏览器不支持对局录制"
+      : recording
         ? `正在录制 · ${activeReplaySession.meta.label}`
-        : `对局回放 · 最近 ${REPLAY_LIMIT} 局`
-      : "当前浏览器不支持对局录制";
+        : autoReplayEnabled
+          ? `对局回放 · 最近 ${REPLAY_LIMIT} 局`
+          : "对局回放 · 自动录制已关闭";
   }
 
   function updateAutoReplayControl() {
@@ -12550,23 +13486,40 @@
     const winnerText = record.meta.winner ? ` · 胜者 ${record.meta.winner}` : "";
     const reasonText = record.meta.reason ? ` · ${record.meta.reason}` : "";
     const audioText = record.meta.hasAudio ? "含声音" : "无音轨";
+    const qualityText = record.meta.exportFps
+      ? ` · ${record.meta.exportWidth}×${record.meta.exportHeight} · ${record.meta.exportFps}帧`
+      : "";
     dom.replayInfoTitle.textContent = `${replayRecordTitle(record)}${winnerText}`;
-    dom.replayInfoDetail.textContent = `${replayRecordMatchup(record)}${reasonText} · ${formatReplaySize(record.size)} · ${audioText}`;
+    dom.replayInfoDetail.textContent = `${replayRecordMatchup(record)}${reasonText} · ${formatReplaySize(record.size)} · ${audioText}${qualityText}`;
     dom.replayDownload.href = record.url;
     dom.replayDownload.download = `solaris-replay-${record.meta.mode}-${record.meta.round}-${record.id}.${record.extension}`;
     renderReplayList();
+  }
+
+  function downloadReplayRecord(record) {
+    if (!record?.url) return;
+    const quality = record.meta.exportFps
+      ? `-${record.meta.exportWidth || VIDEO_EXPORT_WIDTH}p-${record.meta.exportFps}fps`
+      : "";
+    const anchor = document.createElement("a");
+    anchor.href = record.url;
+    anchor.download = `solaris-video-${record.meta.mode}-${record.meta.round}-${record.id}${quality}.${record.extension}`;
+    anchor.hidden = true;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
   }
 
   function renderReplayList() {
     dom.replayList.innerHTML = "";
     const status = document.createElement("p");
     status.className = "replay-list-status";
-    if (!autoReplayEnabled) {
+    if (activeReplaySession) {
+      status.textContent = `正在录制 ${activeReplaySession.meta.label}${activeReplaySession.exportSettings ? ` · ${activeReplaySession.exportSettings.width}×${activeReplaySession.exportSettings.height} · ${activeReplaySession.exportSettings.fps}帧` : ""}，本局结束后自动保存。`;
+    } else if (!autoReplayEnabled) {
       status.textContent = "自动录制已关闭。你仍可播放和下载已保存的回放。";
     } else if (!replayRecordingSupported()) {
       status.textContent = "当前浏览器不支持画布录制，无法生成新回放。";
-    } else if (activeReplaySession) {
-      status.textContent = `正在录制 ${activeReplaySession.meta.label}，本局结束后自动保存。`;
     } else if (replayStatusMessage) {
       status.textContent = replayStatusMessage;
     } else if (!replayRecords.length) {
@@ -12591,7 +13544,10 @@
       matchup.textContent = replayRecordMatchup(record);
       const detail = document.createElement("small");
       const outcome = record.meta.winner ? `胜者 ${record.meta.winner}` : "对局结束";
-      detail.textContent = `${outcome} · ${formatReplaySize(record.size)} · ${record.meta.hasAudio ? "含声音" : "无音轨"}`;
+      const quality = record.meta.exportFps
+        ? ` · ${record.meta.exportWidth}×${record.meta.exportHeight} ${record.meta.exportFps}帧`
+        : "";
+      detail.textContent = `${outcome} · ${formatReplaySize(record.size)} · ${record.meta.hasAudio ? "含声音" : "无音轨"}${quality}`;
       button.append(title, matchup, detail);
       button.addEventListener("click", () => selectReplayRecord(record.id));
       dom.replayList.appendChild(button);
@@ -12626,8 +13582,10 @@
     updateReplayButton();
   }
 
-  function startReplayRecording(meta) {
-    if (!autoReplayEnabled) {
+  async function startReplayRecording(meta, options = {}) {
+    options = options || {};
+    const exportSettings = options.exportSettings || null;
+    if (!autoReplayEnabled && !options.force) {
       replayStatusMessage = "自动录制已关闭，本局不会生成回放。";
       updateReplayButton();
       return;
@@ -12641,27 +13599,34 @@
     let stream;
     let recorder;
     let audioDestination = null;
+    let selectedMimeType = "";
     try {
-      const mimeType = preferredReplayMimeType();
-      audioDestination = createReplayAudioTimeline();
+      selectedMimeType = preferredReplayMimeType();
+      replayExportSettings = exportSettings;
+      audioDestination = await createReplayAudioTimeline();
       lastReplayCompositeAt = 0;
       updateReplayCompositionFrame(true);
-      const videoStream = replayCompositionCanvas.captureStream(REPLAY_RENDER_FPS);
+      const captureFps = exportSettings?.fps || REPLAY_RENDER_FPS;
+      const videoStream = replayCompositionCanvas.captureStream(captureFps);
       const audioTracks = audioDestination?.stream.getAudioTracks() || [];
       stream = audioTracks.length
         ? new MediaStream([...videoStream.getVideoTracks(), ...audioTracks])
         : videoStream;
-      const options = {
-        videoBitsPerSecond: LOW_POWER_DEVICE ? 4000000 : 7000000,
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const recorderOptions = {
+        videoBitsPerSecond: exportSettings
+          ? exportSettings.fps >= 120 ? 32000000 : 18000000
+          : LOW_POWER_DEVICE ? 4000000 : 7000000,
         audioBitsPerSecond: 192000
       };
-      if (mimeType) options.mimeType = mimeType;
+      if (selectedMimeType) recorderOptions.mimeType = selectedMimeType;
       try {
-        recorder = new MediaRecorder(stream, options);
+        recorder = new MediaRecorder(stream, recorderOptions);
       } catch {
         recorder = new MediaRecorder(stream);
       }
     } catch {
+      replayExportSettings = null;
       stream?.getVideoTracks().forEach((track) => track.stop());
       releaseReplayAudioTimeline(audioDestination);
       replayStatusMessage = "对局录制启动失败，可能是浏览器不支持当前视频编码。";
@@ -12678,14 +13643,29 @@
       discard: false,
       hasAudio,
       audioDestination,
+      exportSettings,
+      autoDownload: Boolean(options.autoDownload),
       startedAt: performance.now(),
       meta: {
         ...meta,
-        label: meta.mode === "multi" ? "多团混战" : `第 ${meta.round} 局`,
+        exportWidth: exportSettings?.width || null,
+        exportHeight: exportSettings?.height || null,
+        exportFps: exportSettings?.fps || null,
+        label: meta.mode === "multi"
+          ? "多团混战"
+          : meta.mode === "video"
+            ? `录视频模式 · 第 ${meta.round} 局`
+            : `第 ${meta.round} 局`,
         hasAudio
       }
     };
     activeReplaySession = session;
+    if (exportSettings) {
+      const trackSettings = stream.getVideoTracks()[0]?.getSettings?.() || {};
+      const trackFps = Math.round(trackSettings.frameRate || exportSettings.fps);
+      const formatLabel = selectedMimeType.includes("mp4") ? "MP4 · H.264" : "WebM";
+      dom.videoExportStatus.textContent = `录制中 · ${exportSettings.width}×${exportSettings.height} · ${formatLabel} · 目标 ${exportSettings.fps} 帧 · 轨道 ${trackFps} 帧`;
+    }
     recorder.addEventListener("dataavailable", (event) => {
       if (event.data?.size > 0) session.chunks.push(event.data);
     });
@@ -12704,7 +13684,10 @@
     recorder.addEventListener("stop", () => {
       stream.getVideoTracks().forEach((track) => track.stop());
       releaseReplayAudioTimeline(audioDestination);
-      if (activeReplaySession === session) activeReplaySession = null;
+      if (activeReplaySession === session) {
+        activeReplaySession = null;
+        replayExportSettings = null;
+      }
       if (session.discard) {
         replayStatusMessage = session.discardReason || "本局录制已取消。";
       }
@@ -12734,7 +13717,13 @@
             URL.revokeObjectURL(removed.url);
           }
           replayStatusMessage = `${replayRecordTitle(record)}回放已保存${hasAudio ? "（含声音）" : ""}，可播放或下载。`;
-          persistReplayRecords();
+          if (session.autoDownload) {
+            downloadReplayRecord(record);
+            const exportFormat = record.extension.toUpperCase();
+            dom.videoExportStatus.textContent = `${exportFormat} · ${record.meta.exportWidth}×${record.meta.exportHeight} · ${record.meta.exportFps}帧视频已生成并开始下载`;
+            replayStatusMessage = `${record.meta.exportWidth}×${record.meta.exportHeight} · ${record.meta.exportFps}帧 ${exportFormat} 视频已自动下载。`;
+          }
+          if (!record.meta.exportFps) persistReplayRecords();
         }
       } else if (!session.discard) {
         replayStatusMessage = "本局没有生成有效录像，请确认浏览器允许画布录制。";
@@ -12743,9 +13732,10 @@
       renderReplayList();
     });
     try {
-      recorder.start(1000);
+      recorder.start();
     } catch {
       activeReplaySession = null;
+      replayExportSettings = null;
       stream.getVideoTracks().forEach((track) => track.stop());
       releaseReplayAudioTimeline(audioDestination);
       replayStatusMessage = "对局录制启动失败，本局不会生成回放。";
@@ -12840,6 +13830,7 @@
     }
     if (voicePauseActive) {
       updateVisualEffects(realDt);
+      updateVideoCamera(realDt);
       draw();
       requestAnimationFrame(frame);
       return;
@@ -12859,6 +13850,7 @@
       }
     }
 
+    updateVideoCamera(realDt);
     draw();
     requestAnimationFrame(frame);
   }
@@ -12950,6 +13942,11 @@
 
   dom.overlayButton.addEventListener("click", () => {
     startMatch();
+  });
+  dom.videoExportActions.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-video-export-fps]");
+    if (!button || button.disabled) return;
+    startVideoExport(Number(button.dataset.videoExportFps));
   });
   dom.fightButton.addEventListener("click", () => {
     startMatch();
