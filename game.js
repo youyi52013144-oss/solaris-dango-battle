@@ -113,11 +113,12 @@
       speed: 8,
       radius: 27,
       stats: { power: 84, speed: 100, hp: 100 },
-      display: { attack: "20", speed: "8.0格/s", hp: "1000" },
+      display: { attack: "30", speed: "8.0格/s", hp: "1000" },
       attackType: "thrust",
-      attackDamage: 20,
+      attackDamage: 30,
       attackCooldown: 1,
       attackRange: 2,
+      wandererDamageGrowth: 5,
       knifeOrbitRadius: 3,
       knifeDamage: 25,
       ultimateType: "timeStop",
@@ -187,34 +188,34 @@
       speed: 8,
       radius: 27,
       stats: { power: 92, speed: 100, hp: 100 },
-      display: { attack: "120×2", speed: "8.0格/s", hp: "1000" },
+      display: { attack: "60", speed: "8.0格/s", hp: "1000" },
       attackType: "aeroBlade",
-      attackDamage: 100,
+      attackDamage: 60,
       attackCooldown: 1.2,
-      attackRange: 6,
+      attackRange: 2,
       aeroWindMax: 100,
       aeroWindAttackCost: 50,
       aeroWindUnlockDelay: 2,
+      aeroWindOnHit: 50,
       aeroAirDuration: 1.42,
-      aeroSkillCooldown: 3,
-      aeroSkillSpeed: 32,
-      aeroSkillDistance: 20,
-      aeroSkillRadius: 5,
-      aeroSkillDamage: 15,
-      aeroSkillWindGain: 50,
-      aeroSlashDamage: 120,
-      aeroSwordCooldown: 3,
-      aeroSwordSpeed: 55,
-      aeroSwordRadius: 2,
-      aeroSwordDamage: 80,
-      aeroSwordLife: 4,
+      aeroDashCooldown: 3,
+      aeroDashSpeed: 30,
+      aeroDashDistance: 5,
+      aeroSlashDamage: 140,
+      aeroSwordInterval: 1.5,
+      aeroSwordSpeed: 60,
+      aeroSwordDamage: 40,
+      aeroOrbitDistance: 7,
+      aeroRetreatRange: 4,
+      aeroRetreatDistance: 4,
+      aeroRetreatCooldown: 3,
       ultimateType: "aeroUnbound",
       ultimateDuration: 15,
-      ultimateCooldown: 40,
+      ultimateCooldown: 33,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "首场倒计时结束后自动开启一次；后续需完成两次风息斩击解锁。开启后持续 15 秒并锁定风息获取，每 3 秒朝最近敌人发射一柄 55 格/秒的穿透飞剑，对路径敌人各造成一次 80 点伤害；普攻改为瞬闪至敌人移动方向相反一侧的边界，并对落点半径 5 格内敌人造成 15 点伤害。冷却 40 秒。",
-      cooldown: 40
+      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取，每 1.5 秒向最近敌人发射一柄 60 格/秒的穿透飞剑，沿途每个敌人受到 40 点伤害。距最近敌人约 7 格环绕，触边换向；敌人进入 4 格时，以 30 格/秒后撤 4 格，冷却 3 秒。",
+      cooldown: 33
     },
     {
       id: "03",
@@ -372,9 +373,12 @@
       jellyAttackRange: 2,
       jellyAttackCooldown: 2,
       jellyHealOnDeath: 10,
-      jellySpawnInterval: 2,
+      jellySpawnInterval: 4,
+      jellySpawnCount: 2,
       jellyStartingCount: 3,
       jellyDeathsToUnlock: 3,
+      jellyPoisonDuration: 5,
+      poisonDamageMultiplier: 1.5,
       ultimateType: "cantarellaMirage",
       ultimateDuration: 8,
       ultimateCooldown: 18,
@@ -382,10 +386,10 @@
       mirageBonusDamage: 170,
       perceptionSearchRange: 8,
       perceptionBlastRadius: 4,
-      perceptionDamage: 120,
+      perceptionDamage: 80,
       ability: "蜃境迷梦",
       abilityIcon: "梦",
-      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害，并解除该单位自身的迷梦与减速，蜃境及其他单位仍继续。若蜃境自然结束且期间未造成伤害，获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 120 伤害。冷却 18 秒。",
+      abilityDesc: "累计死亡 3 只水母后解锁。开启 8 秒蜃境：所有单位移速降至 20%，敌方获得迷梦；迷梦单位首次受击追加 170 伤害，并解除该单位自身的迷梦与减速，蜃境及其他单位仍继续。若蜃境自然结束且期间未造成伤害，获得「感知汲取」：敌人进入半径 8 格后，在其位置引爆半径 4 格的水母爆炸，造成 80 伤害。冷却 18 秒。",
       cooldown: 18
     },
     {
@@ -471,7 +475,7 @@
       heartLanternRadius: 8,
       heartLanternSpeed: 6,
       heartLanternLaps: 1,
-      heartLanternSlow: 0.35,
+      heartLanternSlow: 0.25,
       heartLanternDamage: 15,
       heartLanternTick: 1,
       ultimateType: "heartBarrier",
@@ -480,6 +484,78 @@
       ability: "心界分界",
       abilityIcon: "界",
       abilityDesc: "保留已有场地技能并立刻重置随机技能冷却；1 秒后在地图中央生成纵向屏障，将所有场上实体单位随机传送至屏障左侧。屏障持续 25 秒，阻挡弹丸，任何单位撞击时都会反弹，右侧区域无法移动；屏障期间随机技能间隔缩短至 4 秒，结束后恢复 7 秒。冷却 60 秒。",
+      cooldown: 60
+    },
+    {
+      id: "10",
+      voiceOrder: 12,
+      name: "漂泊者·导电团子",
+      element: "导电 · 钩锁型",
+      tagline: "盾弓交错，千声引雷。",
+      color: "#bc83ff",
+      dark: "#4b2871",
+      symbol: "电",
+      image: "assets/wanderer.png",
+      femaleImage: "assets/wanderer-female.png",
+      weaponImage: "assets/wanderer-conductive-shield.png",
+      rangedWeaponImage: "assets/wanderer-conductive-bow.png",
+      hp: 1000,
+      power: 1,
+      speed: 8,
+      radius: 27,
+      stats: { power: 88, speed: 100, hp: 100 },
+      display: { attack: "盾击 50 / 箭矢 30×3", speed: "8.0格/s", hp: "1000" },
+      attackType: "conductive",
+      attackDamage: 50,
+      attackCooldown: 1,
+      attackRange: 2.5,
+      abyssScytheDamage: 50,
+      abyssScytheRange: 3,
+      abyssScytheCooldown: 1,
+      conductive: {
+        pushDistance: 10,
+        pushSpeed: 5,
+        arrowDamage: 30,
+        arrowSpeed: 15,
+        arrowCooldown: 1.5,
+        hookSpeed: 10,
+        hookCooldown: 4,
+        hookWallDelay: 0.5,
+        hookEnemyDelay: 5,
+        hookTickDamage: 25,
+        pullSpeed: 12,
+        wallArrowSpeed: 20,
+        hookLandingDamage: 80,
+        hookLandingRange: 4,
+        ultimateLoad: 1.5,
+        ultimateArrowDamage: 280,
+        ultimateArrowSpeed: 50,
+        ultimateHookSpeed: 20,
+        ultimateHookDelay: 0.35,
+        ultimatePullSpeed: 20,
+        ultimateLandingDamage: 120,
+        ultimateLandingRange: 8,
+        ultimateParalysis: 0.8,
+        surgeDamage: 10,
+        chaseInterval: 2,
+        freezeInterval: 9,
+        freezeDuration: 1,
+        rewindAgo: 0.5,
+        rewindCooldown: 4.5,
+        dashInterval: 1.5,
+        dashRange: 2,
+        dashSpeed: 30,
+        finishWindup: 0.5,
+        finishSlashInterval: 1,
+        finishSlashDamage: 140
+      },
+      ultimateType: "conductiveSurge",
+      ultimateThreshold: 190,
+      ultimateDuration: 18,
+      ultimateCooldown: 60,
+      ability: "千声翻涌",
+      abilityIcon: "雷",
+      abilityDesc: "生命低于 190 时解锁，冷却 60 秒。装填雷箭、沿钩锁突袭并震击落点后，进入 18 秒千声翻涌。期间以附雷镰刀追击，并可短暂停时和受击回溯。结束时释放两段全场斩击。",
       cooldown: 60
     }
   ];
@@ -698,8 +774,8 @@
       range: "突刺初始半径 2 格；每轮第一格时序能量使半径 +0.5 格",
       interval: "1 秒",
       mechanics: [
-        "前刺造成 20 点伤害，近战命中恢复 20% 共鸣能量。",
-        "普攻命中积累 1 格时序能量；只有达到第 1 格时永久增加 0.5 格普攻半径与 10 点普攻伤害，第 2、3 格不再增加属性。",
+        "前刺造成 30 点基础伤害，近战命中恢复 20% 共鸣能量。",
+        "普攻命中积累 1 格时序能量；只有达到第 1 格时永久增加 0.5 格普攻半径与 5 点普攻伤害，第 2、3 格不再增加属性。",
         "达到 2 格时回到 1 秒前的位置，并将生命值恢复为 1 秒前的数值。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
         "其他团子与坎特蕾拉的水母进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 15 秒内不会再次受到任何乱流影响。白咩、芽/藤等其他召唤物不受时间乱流影响。",
@@ -727,20 +803,20 @@
       ]
     },
     "08": {
-      role: "突刺积攒 / 全场双斩 / 单剑压制",
-      range: "普攻突刺约 20 格、落点半径 5 格；技能双斩横跨全场；飞剑命中半径 2 格",
-      interval: "普攻 3 秒 / 双斩间隔 1 秒 / 大招飞剑 3 秒 / 共鸣解放 40 秒",
+      role: "近战积攒 / 全场双斩 / 环绕飞剑",
+      range: "普攻半径 2 格；定期突进 5 格；大招环绕距离 7 格",
+      interval: "普攻 1.2 秒 / 突进 3 秒 / 双斩间隔 1 秒 / 共鸣解放 33 秒",
       mechanics: [
         "生命 1000、移动速度 8 格/秒。",
-        "风息上限 100，初始为 0。风息达到上限时立刻锁定普攻与大招，2 秒后解锁技能。",
-        "普攻朝最近敌人以 32 格/秒突刺约 20 格，冷却 3 秒；对落点半径 5 格内敌人造成 15 点伤害，冲刺途中接触敌人会立即停止并提前结算。",
-        "普攻仅在实际命中敌人时恢复 50 风息。",
+        "普攻为半径 2 格的圆形斩击，对范围内敌人造成 60 点普通近战伤害。每次斩击实际命中时恢复 50 风息。",
+        "每 3 秒朝最近敌人以 30 格/秒突进 5 格。",
+        "风息上限 100，初始为 0。风息达到上限时锁定普攻，2 秒后解锁技能。",
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
-        "每刀消耗 50 风息并造成 120 点伤害；两刀完成后技能重新锁定，同时解锁普攻与大招。",
-        "首场倒计时结束后直接开启一次共鸣解放；后续冷却 40 秒，完成两次风息斩击解锁后自动开启 15 秒。",
-        "大招期间锁定风息获取，每 3 秒朝最近敌人发射一柄 55 格/秒的独立飞剑。",
-        "飞剑按每帧实际运动轨迹判定命中，对所有路径敌人各造成一次 80 点伤害，命中后继续飞行；触碰地图边缘后消失，并留下先显示 1 秒再渐隐的绿色轨迹。",
-        "大招期间普攻改为瞬闪至敌人移动方向相反一侧的边界，并对落点半径 5 格内敌人造成 15 点伤害；大招结束后恢复风息获取，飞剑攻击移除。"
+        "每刀消耗 50 风息并造成 140 点伤害。两刀完成后恢复普攻。",
+        "共鸣能量满时可开启飘渺无相，持续 15 秒，冷却 33 秒。期间锁定普攻、技能及风息获取。",
+        "每 1.5 秒向最近敌人发射一柄 60 格/秒的飞剑。飞剑按实际运动轨迹对沿途每个敌人各造成一次 40 点伤害，触边消失后留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
+        "围绕最近敌人移动，过远时靠近，过近时远离，目标距离 7 格。触碰边界时切换顺逆时针。",
+        "敌人进入 4 格内时，以 30 格/秒向远离敌人的方向突进 4 格，冷却 3 秒。无相结束后恢复常规的普攻、技能和风息规则。"
       ]
     },
     "03": {
@@ -804,15 +880,16 @@
         "敌人或可索敌召唤物进入半径 4 格后，坎特蕾拉沿攻击方向丢出雨伞。",
         "雨伞保持 4 格索敌，以 2 格/秒直线飞行约 15 格，命中判定半径为 2 格；对每个接触目标最多造成 6 段、每段 10 点伤害并沿飞行方向击退。",
         "雨伞可以拦截敌方远程子弹，雨伞攻击冷却 4 秒。",
-        "登场时在身边召唤 3 只水母，此后每 2 秒召唤 1 只。",
+        "登场时在身边召唤 3 只水母，此后每 4 秒召唤 2 只。",
         "水母生命 30、移速 5 格/秒，具有碰撞体积且可被索敌，会自动追踪最近敌人。",
         "水母以半径 2 格进行半圆近战攻击，每次造成 20 点伤害，冷却 2 秒。",
+        "水母命中施加 5 秒中毒，重复命中刷新持续时间。中毒目标受到伞击和感知汲取的最终伤害提高 50%，迷梦追加伤害独立计算。",
         "每只水母死亡时为坎特蕾拉恢复 10 点生命，并累计蜃境解锁进度。",
         "累计死亡 3 只水母后解锁蜃境迷梦；共鸣能量满时可以释放。",
         "蜃境持续 8 秒，使场上所有单位与期间后续召唤的水母移速降至 20%，敌方单位获得迷梦。",
         "迷梦单位首次受击追加 170 点伤害，并解除该单位自身的迷梦与减速；蜃境、坎特蕾拉与其他单位的减速继续生效。",
         "若蜃境持续期间没有对敌方造成伤害，结束时获得一次「感知汲取」。",
-        "感知汲取会替换普通攻击：敌人进入半径 8 格后，立即在其位置引爆半径 4 格的暗紫水母爆炸，造成 120 点范围特殊伤害。",
+        "感知汲取会替换普通攻击：敌人进入半径 8 格后，立即在其位置引爆半径 4 格的暗紫水母爆炸，造成 80 点范围特殊伤害。",
         "感知汲取触发后失效，坎特蕾拉恢复雨伞普通攻击，直到下一次蜃境再次赋予该状态；冷却 18 秒。"
       ]
     },
@@ -847,11 +924,28 @@
         "蓝色·纵线：记录自身施放时的纵向轴线，持续 5 秒；每秒在上边界生成一个半径 2 格的蓝色障碍，以 12 格/秒向下移动。",
         "敌方单位撞击蓝色障碍时改变移动方向并受到 10 点特殊伤害，障碍不会因碰撞消失；心团子自身无视蓝色障碍。",
         "红色·天灯：在边界随机生成无实体天灯，以 6 格/秒绕当前有效地图边缘移动，绕完一整圈后消失。",
-        "天灯的半径 8 格领域内，敌方单位移速降低 35%，并每 1 秒受到 15 点特殊伤害。",
+        "天灯的半径 8 格领域内，敌方单位移速降低 25%，并每 1 秒受到 15 点特殊伤害。",
         "共鸣解放「心界分界」会保留已有场地技能，立即重置随机技能冷却，并在 1 秒后生成贯穿上下边界的纵向屏障。",
         "屏障生成时，所有团子、坎特蕾拉水母与白咩等场上实体单位会被随机传送至屏障左侧；右侧区域显示禁止进入的虚线封锁特效。",
         "屏障期间所有子弹无法穿过屏障，屏障右侧的实体无法移动；所有单位撞击屏障都会反弹，包括心团子自身。",
         "屏障开启期间，心团子的随机技能间隔从 7 秒缩短为 4 秒；屏障结束后恢复 7 秒。"
+      ]
+    },
+    "10": {
+      role: "盾弓切换 / 钩锁牵引 / 雷电追击",
+      range: "盾击半径 2.5 格；钩锁落击半径 4 格；千声震击半径 8 格",
+      interval: "盾击 1 秒 / 弓箭 1.5 秒 / 钩锁完成后 4 秒 / 共鸣解放 60 秒",
+      mechanics: [
+        "1000 生命，8 格/秒移速，可独立切换男、女外观。",
+        "最近敌人进入 2.5 格时造成 50 点盾击伤害，以 5 格/秒击退 10 格。否则朝目标及两侧各偏 30°发射三箭，弹速 15 格/秒，每箭 30 点伤害。",
+        "钩锁以 10 格/秒飞向最近敌人，出钩时可继续移动。完成后进入 4 秒冷却。",
+        "钩爪触边后等待 0.5 秒，以 12 格/秒牵引自身，到位时发射五枚 20 格/秒、各 30 点伤害的箭。钩中敌人后跟随目标 5 秒，每秒造成 25 点伤害，然后以 12 格/秒牵引，到位时对半径 4 格造成 80 点伤害。",
+        "生命低于 190 时开启千声翻涌，无需共鸣能量。装填 1.5 秒后发射 50 格/秒、280 点伤害的雷箭，随后朝同一方向以 20 格/秒出钩。",
+        "大招钩爪附着 0.35 秒后以 20 格/秒牵引自身，着地时对半径 8 格造成 120 点伤害，并令命中敌人停止行动 0.8 秒。",
+        "着地后进入 18 秒千声翻涌，镰刀沿用湮灭团子的半径 3 格、50 点伤害与 1 秒冷却。每次攻击命中附加 10 点落雷伤害。",
+        "每 2 秒重新朝最近敌人追击，成功命中后恢复之前的方向。每 1.5 秒朝最近敌人突进 2 格。",
+        "每 9 秒冻结时间 1 秒并随机瞬移一次。受击时回到 0.5 秒前的位置和生命值，冷却 4.5 秒。",
+        "千声翻涌结束 0.5 秒后停止移动，间隔 1 秒释放两道相反方向的全场斜斩，每道 140 点伤害。第二斩结束后恢复常规普攻、钩锁和移动。"
       ]
     }
   };
@@ -1051,13 +1145,13 @@
   let configSide = "left";
   let archiveSelectedId = "kakarot-test";
   let showcaseSelectedId = "kakarot-test";
-  const WANDERER_FORM_IDS = new Set(["01", "02", "08"]);
-  let wandererForms = { "01": "male", "02": "male", "08": "male" };
+  const WANDERER_FORM_IDS = new Set(["01", "02", "08", "10"]);
+  const wandererForms = Object.fromEntries([...WANDERER_FORM_IDS].map((id) => [id, "male"]));
   try {
     const savedForms = JSON.parse(localStorage.getItem("solaris-wanderer-forms") || "null");
-    if (savedForms?.["01"] === "female" || savedForms?.["01"] === "male") wandererForms["01"] = savedForms["01"];
-    if (savedForms?.["02"] === "female" || savedForms?.["02"] === "male") wandererForms["02"] = savedForms["02"];
-    if (savedForms?.["08"] === "female" || savedForms?.["08"] === "male") wandererForms["08"] = savedForms["08"];
+    WANDERER_FORM_IDS.forEach((id) => {
+      if (savedForms?.[id] === "female" || savedForms?.[id] === "male") wandererForms[id] = savedForms[id];
+    });
   } catch {
     // Local file privacy modes can disable storage; defaults still apply.
   }
@@ -1066,7 +1160,7 @@
   let player = null;
   let enemy = null;
   let multiFighters = [];
-  let multiIds = ["kakarot-test", "anko-test", "01", "02", "08", "03", "06", "04", "05", "07", "09"];
+  const multiIds = FIGHTERS.map((fighter) => fighter.id);
   let score = [0, 0];
   let round = 1;
   let roundSeconds = DEFAULT_ROUND_SECONDS;
@@ -1254,7 +1348,7 @@
       specialEnergy: 0,
       deathSentenceClock: 0,
       fullEnergyTime: 0,
-      abilityCooldown: template.id === "08" ? 0 : 1.6,
+      abilityCooldown: template.id === "08" || template.conductive ? 0 : 1.6,
       ultimateCooldown: 0,
       attackClock: random(0.55, 1.35),
       blackSlamClock: template.blackSlamClock || 0,
@@ -1285,6 +1379,7 @@
       cantarellaPerceptionReady: false,
       cantarellaSlowTimer: 0,
       cantarellaDreamed: false,
+      cantarellaPoisonTimer: 0,
       jinhsiAttackCount: 0,
       jinhsiEmpowered: false,
       jinhsiUltimateUnlocked: false,
@@ -1300,6 +1395,7 @@
       jinhsiSwingMode: "idle",
       heartBarrierWindup: 0,
       heartBarrierPending: false,
+      heartLanternSlow: 0,
       heartLanternSlowTimer: 0,
       voiceUltimatePending: false,
       voiceDeathSentencePending: false,
@@ -1336,28 +1432,33 @@
       abyssRetargetClock: 0,
       abyssScytheSwing: 0,
       aeroWind: 0,
-      aeroBasicUnlockTimer: 0,
-      aeroBasicUnlocked: template.id === "08",
-      aeroSkillClock: 0,
-      aeroSkillUnlocked: false,
+      aeroWindUnlockTimer: 0,
       aeroUltimateTimer: 0,
-      aeroUltimateCooldown: 0,
       aeroSwordClock: 0,
-      aeroEnhanced: false,
-      aeroUltimateUnlocked: template.id === "08",
-      aeroWindGainLocked: false,
-      aeroUltimateReadyTimer: 0,
-      aeroSequenceActive: false,
-      aeroPreLiftTimer: 0,
+      aeroOrbitDirection: 1,
+      aeroOrbitWallContact: false,
+      aeroRetreatClock: 0,
       aeroAirTimer: 0,
       aeroAirSecondClock: 0,
-      aeroAirSecondDone: true,
       aeroAirResumeX: 1,
       aeroAirResumeY: 0,
+      aeroDashClock: template.aeroDashCooldown || 0,
       aeroDashTimer: 0,
-      aeroDashDuration: 0,
       aeroDashAngle: 0,
-      aeroDashSpeed: 0,
+      conductive: template.conductive ? {
+        phase: "normal",
+        timer: 0,
+        hook: null,
+        hookCooldown: 0,
+        aim: angle,
+        weapon: "bow",
+        rewindCooldown: 0,
+        chaseClock: 0,
+        chaseHeading: null,
+        freezeClock: 0,
+        dashClock: 0,
+        dash: null
+      } : null,
       vortexLockTimer: 0,
       vortexLockId: null,
       vortexImmunity: new Map(),
@@ -1617,7 +1718,13 @@
     if (fighter.id === "08") {
       dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
       dom.abilityLabel.textContent = "飘渺无相";
-      dom.abilityButton.title = "首场倒计时后自动释放；后续完成两次风息斩击解锁";
+      dom.abilityButton.title = "共鸣能量满且冷却就绪时开启，持续 15 秒";
+      return;
+    }
+    if (fighter.conductive) {
+      dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
+      dom.abilityLabel.textContent = fighter.ability;
+      dom.abilityButton.title = "生命低于 190 且冷却就绪时开启";
       return;
     }
     if (fighter.ultimateType === "autoThreshold") {
@@ -2472,9 +2579,9 @@
     addResonanceEnergy(caster, 3 * dt);
     updateFighter(caster, target, dt, false);
     updateStatuses(caster, dt);
-    caster.timeStopTeleportClock = Math.max(0, caster.timeStopTeleportClock - dt);
-    if (caster.timeStopTeleportClock === 0 && timeStopTimer > 0) {
-      teleportTimeStopCaster(caster);
+    if (!caster.conductive) {
+      caster.timeStopTeleportClock = Math.max(0, caster.timeStopTeleportClock - dt);
+      if (caster.timeStopTeleportClock === 0 && timeStopTimer > 0) teleportTimeStopCaster(caster);
     }
     if (voicePauseActive) return;
     if (target) {
@@ -2487,7 +2594,7 @@
       if (alive.length <= 1) finishMultiMatch(alive[0] || null, "KO");
     }
     if (timeStopTimer === 0) {
-      addLog("时序停界结束，全图时间恢复流动。", "ability");
+      addLog(caster.conductive ? "千声冻结结束，全图时间恢复流动。" : "时序停界结束，全图时间恢复流动。", "ability");
       announce("时间恢复流动", "#9ddfe5", 1);
       timeStopOwner = null;
       caster.timeStopTeleportClock = 0;
@@ -2496,19 +2603,22 @@
     updateHud();
   }
 
-  function teleportTimeStopCaster(caster) {
+  function teleportTimeStopCaster(caster, color = "#ffe58f") {
     const previousX = caster.x;
     const previousY = caster.y;
-    caster.x = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
-    caster.y = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
+    const x = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
+    const y = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
+    const point = caster.conductive ? getConductivePosition(caster, x, y) : { x, y };
+    caster.x = point.x;
+    caster.y = point.y;
     const angle = random(0, Math.PI * 2);
     const speed = getEffectiveMoveSpeed(caster);
     caster.vx = Math.cos(angle) * speed;
     caster.vy = Math.sin(angle) * speed;
     caster.timeStopTeleportClock = 1;
-    effects.push({ type: "ring", x: previousX, y: previousY, radius: 8, growth: 520, life: 0.45, maxLife: 0.45, color: "#ffe58f", width: 6 });
-    effects.push({ type: "ring", x: caster.x, y: caster.y, radius: 8, growth: 520, life: 0.45, maxLife: 0.45, color: "#fff5c0", width: 6 });
-    spawnBurst(caster.x, caster.y, "#ffe58f", 22, 220);
+    effects.push({ type: "ring", x: previousX, y: previousY, radius: 8, growth: 520, life: 0.45, maxLife: 0.45, color, width: 6 });
+    effects.push({ type: "ring", x: caster.x, y: caster.y, radius: 8, growth: 520, life: 0.45, maxLife: 0.45, color: caster.conductive ? color : "#fff5c0", width: 6 });
+    spawnBurst(caster.x, caster.y, color, 22, 220);
   }
 
   function keepCasterOutsideFrozenTarget(caster, frozen) {
@@ -2557,44 +2667,6 @@
       fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
       return;
     }
-    if (fighter.template.id === "08" && fighter.aeroPreLiftTimer > 0) {
-      fighter.vx = 0;
-      fighter.vy = 0;
-      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
-      return;
-    }
-    if (fighter.template.id === "08" && fighter.aeroDashTimer > 0) {
-      const dashStartX = fighter.x;
-      const dashStartY = fighter.y;
-      const step = fighter.aeroDashSpeed * dt;
-      fighter.x += Math.cos(fighter.aeroDashAngle) * step;
-      fighter.y += Math.sin(fighter.aeroDashAngle) * step;
-      fighter.aeroDashTimer = Math.max(0, fighter.aeroDashTimer - dt);
-      const minX = BOUNDARY + fighter.r;
-      const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
-      const minY = BOUNDARY + fighter.r;
-      const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
-      const hitWall = fighter.x <= minX || fighter.x >= maxX || fighter.y <= minY || fighter.y >= maxY;
-      fighter.x = clamp(fighter.x, minX, maxX);
-      fighter.y = clamp(fighter.y, minY, maxY);
-      const dashContact = findAeroDashContact(fighter, dashStartX, dashStartY, fighter.x, fighter.y);
-      if (dashContact) {
-        fighter.x = clamp(dashContact.x, minX, maxX);
-        fighter.y = clamp(dashContact.y, minY, maxY);
-        fighter.aeroDashTimer = 0;
-      } else if (hitWall) {
-        fighter.aeroDashTimer = 0;
-      }
-      if (fighter.aeroDashTimer === 0) resolveAeroDashLanding(fighter);
-      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
-      return;
-    }
-    if (fighter.template.id === "08" && fighter.aeroAirTimer > 0) {
-      fighter.vx = 0;
-      fighter.vy = 0;
-      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
-      return;
-    }
     if (fighter.vortexLockTimer > 0) return;
     fighter.abilityCooldown = Math.max(0, fighter.abilityCooldown - dt);
     fighter.flash = Math.max(0, fighter.flash - dt * 5.5);
@@ -2604,9 +2676,17 @@
     fighter.thrustTime = Math.max(0, fighter.thrustTime - dt);
     fighter.abyssScytheSwing = Math.max(0, fighter.abyssScytheSwing - dt);
 
+    if (fighter.aeroAirTimer > 0) {
+      fighter.vx = 0;
+      fighter.vy = 0;
+      fighter.attackClock = Math.max(0, fighter.attackClock - dt * getActionSpeed(fighter));
+      return;
+    }
+
     if (fighter.knockback) {
-      fighter.x += fighter.knockback.vx * dt;
-      fighter.y += fighter.knockback.vy * dt;
+      const travelTime = Math.min(dt, fighter.knockback.timer);
+      fighter.x += fighter.knockback.vx * travelTime;
+      fighter.y += fighter.knockback.vy * travelTime;
       fighter.knockback.timer -= dt;
       fighter.vx = 0;
       fighter.vy = 0;
@@ -2630,6 +2710,10 @@
     }
 
     if (fighter.freeze > 0 || fighter.stunned > 0) return;
+    if (fighter.conductive && moveConductiveOverride(fighter, dt)) {
+      fighter.attackClock -= dt * getActionSpeed(fighter);
+      return;
+    }
 
     if (fighter.template.id === "02" && fighter.abyssForm && fighter.abyssHoming && opponent) {
       fighter.abyssRetargetClock = Math.max(0, fighter.abyssRetargetClock - dt);
@@ -2649,7 +2733,10 @@
       }
     }
 
-    if (isPlayer && (mode === "play" || showcaseTrainingActive)) {
+    const orbiting = fighter.aeroUltimateTimer > 0;
+    if (fighter.template.id === "08") steerAeroMovement(fighter, dt);
+    const dashing = fighter.aeroDashTimer > 0;
+    if (!orbiting && !dashing && !fighter.conductive?.chaseHeading && isPlayer && (mode === "play" || showcaseTrainingActive)) {
       const inputX = (keys.ArrowRight || keys.KeyD || touchDirection.right ? 1 : 0)
         - (keys.ArrowLeft || keys.KeyA || touchDirection.left ? 1 : 0);
       const inputY = (keys.ArrowDown || keys.KeyS || touchDirection.down ? 1 : 0)
@@ -2667,18 +2754,20 @@
 
     const speedLimit = getEffectiveMoveSpeed(fighter);
     const speed = Math.hypot(fighter.vx, fighter.vy);
-    if (speed > 0) {
+    if (speed > 0 && !orbiting && !dashing) {
       fighter.vx = (fighter.vx / speed) * speedLimit;
       fighter.vy = (fighter.vy / speed) * speedLimit;
     }
 
-    fighter.x += fighter.vx * dt;
-    fighter.y += fighter.vy * dt;
+    const barrier = orbiting || dashing ? heartBarriers.find((item) => fighter.x <= item.x) : null;
+    const moveTime = dashing ? Math.min(dt, fighter.aeroDashTimer) : dt;
+    fighter.x += fighter.vx * moveTime;
+    fighter.y += fighter.vy * moveTime;
     fighter.tilt += ((fighter.vx / 1800) - fighter.tilt) * Math.min(1, dt * 5);
     fighter.blink -= dt;
 
     const minX = BOUNDARY + fighter.r;
-    const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
+    const maxX = barrier ? barrier.x - barrier.halfWidth - fighter.r - 0.5 : ARENA_SIZE - BOUNDARY - fighter.r;
     const minY = BOUNDARY + fighter.r;
     const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
 
@@ -2706,6 +2795,11 @@
       hitWall = true;
     }
     if (hitWall && fighter.template.id === "02" && fighter.abyssForm) activateAbyssHoming(fighter);
+    if (orbiting) {
+      if (hitWall && !fighter.aeroOrbitWallContact) fighter.aeroOrbitDirection *= -1;
+      fighter.aeroOrbitWallContact = hitWall;
+    }
+    if (dashing) fighter.aeroDashTimer = hitWall ? 0 : Math.max(0, fighter.aeroDashTimer - moveTime);
 
     fighter.attackClock -= dt * getActionSpeed(fighter);
   }
@@ -2733,6 +2827,7 @@
     fighter.timeForceTimer = Math.max(0, fighter.timeForceTimer - dt);
     fighter.timeSlowTimer = Math.max(0, fighter.timeSlowTimer - dt);
     fighter.verinaSlowTimer = Math.max(0, fighter.verinaSlowTimer - dt);
+    fighter.cantarellaPoisonTimer = Math.max(0, fighter.cantarellaPoisonTimer - dt);
     fighter.blackSlamClock = Math.max(0, fighter.blackSlamClock - dt);
     updateWandererHistory(fighter, dt);
     if (fighter.cantarellaMirageTimer > 0) {
@@ -2774,6 +2869,7 @@
       beginJinhsiSkill(fighter);
     }
     if (fighter.template.id === "08") updateWandererAeroState(fighter, dt);
+    if (fighter.conductive) updateConductiveState(fighter, dt);
     fighter.ultimateCooldown = Math.max(0, fighter.ultimateCooldown - dt);
     if (fighter.template.id === "03" && fighter.hp > 0) {
       if (fighter.skillClock > 0) fighter.skillClock = Math.max(0, fighter.skillClock - dt);
@@ -2950,6 +3046,8 @@
       || enemy.aeroAirTimer > 0
       || player.aeroDashTimer > 0
       || enemy.aeroDashTimer > 0
+      || isConductiveTraveling(player)
+      || isConductiveTraveling(enemy)
     ) {
       player.inContact = false;
       enemy.inContact = false;
@@ -3062,6 +3160,7 @@
       && !fighter.jinhsiAirborne
       && fighter.aeroAirTimer <= 0
       && fighter.aeroDashTimer <= 0
+      && !isConductiveTraveling(fighter)
     ));
     fighters.forEach((fighter) => {
       fighter.inContact = false;
@@ -3154,7 +3253,7 @@
     if (fighter.timeSlowTimer > 0) multiplier *= 0.7;
     if (fighter.verinaSlowTimer > 0) multiplier *= 0.5;
     if (fighter.cantarellaSlowTimer > 0) multiplier *= fighter.template.mirageSlowMultiplier || 0.2;
-    if (fighter.heartLanternSlowTimer > 0) multiplier *= 1 - (fighter.template.heartLanternSlow || 0.35);
+    if (fighter.heartLanternSlowTimer > 0) multiplier *= 1 - fighter.heartLanternSlow;
     if (fighter.template.id === "04" && fighter.brantUltimateTimer > 0) multiplier *= 2;
     return baseSpeed * multiplier;
   }
@@ -3239,257 +3338,124 @@
     }
   }
 
-  function refreshAeroAccess(fighter) {
-    if (fighter.template.id !== "08") return;
-    const max = fighter.template.aeroWindMax;
-    const atMax = fighter.aeroWind >= max;
-    const ultimateActive = fighter.aeroUltimateTimer > 0;
-    fighter.aeroBasicUnlocked = ultimateActive || (!atMax && !fighter.aeroSequenceActive);
-    fighter.aeroSkillUnlocked = !ultimateActive
-      && atMax
-      && fighter.aeroBasicUnlockTimer <= 0
-      && !fighter.aeroSequenceActive;
-  }
-
   function addAeroWind(fighter, amount) {
-    if (!fighter || fighter.template.id !== "08" || amount <= 0 || fighter.aeroWindGainLocked) return 0;
+    if (fighter.aeroUltimateTimer > 0) return;
     const previous = fighter.aeroWind;
-    fighter.aeroWind = Math.min(fighter.template.aeroWindMax, fighter.aeroWind + amount);
-    if (fighter.aeroWind >= fighter.template.aeroWindMax) {
-      fighter.aeroBasicUnlocked = false;
-      fighter.aeroSkillUnlocked = false;
-      fighter.aeroUltimateUnlocked = false;
-      fighter.aeroBasicUnlockTimer = fighter.template.aeroWindUnlockDelay;
+    fighter.aeroWind = Math.min(fighter.template.aeroWindMax, previous + amount);
+    if (fighter.aeroWind === previous) return;
+    if (fighter.aeroWind === fighter.template.aeroWindMax) {
+      fighter.aeroWindUnlockTimer = fighter.template.aeroWindUnlockDelay;
     }
-    refreshAeroAccess(fighter);
-    if (fighter.aeroWind > previous) {
-      spawnDamageText(fighter.x, fighter.y - fighter.r, `+${fighter.aeroWind - previous} 风息`, "#72efb5", true);
-    }
-    return fighter.aeroWind - previous;
+    spawnDamageText(fighter.x, fighter.y - fighter.r, "+" + (fighter.aeroWind - previous) + " 风息", "#72efb5", true);
   }
 
   function updateWandererAeroState(fighter, dt) {
-    if (!fighter || fighter.template.id !== "08" || fighter.hp <= 0) return;
-    fighter.aeroUltimateCooldown = Math.max(0, fighter.aeroUltimateCooldown - dt);
-    fighter.aeroSkillClock = Math.max(0, fighter.aeroSkillClock - dt);
-    if (fighter.aeroBasicUnlockTimer > 0) {
-      fighter.aeroBasicUnlockTimer = Math.max(0, fighter.aeroBasicUnlockTimer - dt);
-      if (fighter.aeroBasicUnlockTimer === 0 && fighter.aeroWind >= fighter.template.aeroWindMax) {
-        fighter.aeroBasicUnlocked = false;
-        fighter.aeroSkillUnlocked = true;
-      }
-    }
-
+    if (fighter.hp <= 0 || state !== "playing") return;
     if (fighter.aeroUltimateTimer > 0) {
+      const elapsed = Math.min(dt, fighter.aeroUltimateTimer);
       fighter.aeroUltimateTimer = Math.max(0, fighter.aeroUltimateTimer - dt);
-      if (fighter.aeroUltimateTimer === 0) {
-        fighter.aeroEnhanced = false;
-        fighter.aeroWindGainLocked = false;
-        refreshAeroAccess(fighter);
-        announce(`${fighter.template.name} · 无相结束`, fighter.template.color, 1);
-        addLog(`${fighter.template.name} 的「飘渺无相」结束，风息获取恢复。`, "system");
+      fighter.aeroRetreatClock = Math.max(0, fighter.aeroRetreatClock - elapsed);
+      fighter.aeroSwordClock -= elapsed;
+      if (fighter.aeroSwordClock <= 1e-8) {
+        fireAeroSword(fighter);
+        fighter.aeroSwordClock += fighter.template.aeroSwordInterval;
       }
+      if (fighter.aeroUltimateTimer <= 1e-8) {
+        fighter.aeroUltimateTimer = 0;
+        fighter.aeroDashTimer = 0;
+        announce(fighter.template.name + " · 无相结束", fighter.template.color, 1);
+        addLog(fighter.template.name + " 的「飘渺无相」结束，恢复常规战斗。", "system");
+      }
+      return;
     }
 
+    fighter.aeroDashClock = Math.max(0, fighter.aeroDashClock - dt);
+    fighter.aeroWindUnlockTimer = Math.max(0, fighter.aeroWindUnlockTimer - dt);
     if (fighter.aeroAirTimer > 0) {
       fighter.aeroAirTimer = Math.max(0, fighter.aeroAirTimer - dt);
-      fighter.aeroAirSecondClock = Math.max(0, fighter.aeroAirSecondClock - dt);
-      if (!fighter.aeroAirSecondDone && fighter.aeroAirSecondClock === 0 && state === "playing") {
-        fighter.aeroAirSecondDone = true;
-        performAeroLineSlash(fighter, Math.PI * 0.75, true);
+      if (fighter.aeroAirSecondClock > 0) {
+        fighter.aeroAirSecondClock = Math.max(0, fighter.aeroAirSecondClock - dt);
+        if (fighter.aeroAirSecondClock === 0) performAeroLineSlash(fighter, Math.PI * 0.75, true);
       }
       if (fighter.aeroAirTimer === 0) {
-        fighter.aeroSequenceActive = false;
-        refreshAeroAccess(fighter);
         const speed = getEffectiveMoveSpeed(fighter);
         fighter.vx = fighter.aeroAirResumeX * speed;
         fighter.vy = fighter.aeroAirResumeY * speed;
       }
+      return;
     }
 
     if (
       fighter.aeroDashTimer <= 0
-      && fighter.aeroPreLiftTimer <= 0
-      && fighter.aeroAirTimer <= 0
-      && !fighter.aeroSequenceActive
-      && fighter.aeroSkillUnlocked
+      && fighter.aeroWind >= fighter.template.aeroWindMax
+      && fighter.aeroWindUnlockTimer <= 0
       && fighter.stunned <= 0
       && fighter.freeze <= 0
-      && fighter.vortexLockTimer <= 0
-      && state === "playing"
+      && !fighter.knockback
     ) {
       beginAeroAerialAttack(fighter);
     }
+  }
 
-    if (
-      fighter.aeroUltimateTimer > 0
-      && fighter.stunned <= 0
-      && fighter.freeze <= 0
-      && fighter.vortexLockTimer <= 0
-      && state === "playing"
-    ) {
-      fighter.aeroSwordClock = Math.max(0, fighter.aeroSwordClock - dt);
-      if (fighter.aeroSwordClock === 0) {
-        fireAeroSwords(fighter, nearestOpponent(fighter));
-        fighter.aeroSwordClock = fighter.template.aeroSwordCooldown;
+  function steerAeroMovement(fighter, dt) {
+    const config = fighter.template;
+    const orbiting = fighter.aeroUltimateTimer > 0;
+    const target = orbiting || fighter.aeroDashClock <= 0 ? nearestOpponent(fighter) : null;
+    const targetDistance = target ? distance(fighter, target) : 0;
+
+    if (fighter.aeroDashTimer <= 0 && target) {
+      const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+      if (orbiting && fighter.aeroRetreatClock <= 0 && targetDistance <= config.aeroRetreatRange * CELL_SIZE) {
+        startAeroDash(fighter, angle + Math.PI, config.aeroRetreatDistance, "无相 · 后撤");
+        fighter.aeroRetreatClock = config.aeroRetreatCooldown;
+      } else if (!orbiting) {
+        startAeroDash(fighter, angle, config.aeroDashDistance, "风迹突进");
+        fighter.aeroDashClock = config.aeroDashCooldown;
       }
     }
-  }
 
-  function getAeroOppositeMovementBoundaryPoint(fighter, target) {
-    const minX = BOUNDARY + fighter.r;
-    const maxX = ARENA_SIZE - BOUNDARY - fighter.r;
-    const minY = BOUNDARY + fighter.r;
-    const maxY = ARENA_SIZE - BOUNDARY - fighter.r;
-    let directionX = -target.vx;
-    let directionY = -target.vy;
-    const directionLength = Math.hypot(directionX, directionY);
-    if (directionLength > 0.001) {
-      directionX /= directionLength;
-      directionY /= directionLength;
-    } else {
-      const fallbackLength = Math.hypot(target.x - fighter.x, target.y - fighter.y) || 1;
-      directionX = (target.x - fighter.x) / fallbackLength;
-      directionY = (target.y - fighter.y) / fallbackLength;
+    if (fighter.aeroDashTimer > 0) {
+      const speed = config.aeroDashSpeed * CELL_SIZE;
+      fighter.vx = Math.cos(fighter.aeroDashAngle) * speed;
+      fighter.vy = Math.sin(fighter.aeroDashAngle) * speed;
+    } else if (orbiting && target) {
+      const angle = Math.atan2(fighter.y - target.y, fighter.x - target.x);
+      const travel = getEffectiveMoveSpeed(fighter) * dt;
+      const radius = config.aeroOrbitDistance * CELL_SIZE;
+      // Keep enough sideways movement to pull away from corners and follow the orbit.
+      const radialLimit = travel * (fighter.aeroOrbitWallContact ? 0.45 : 0.8);
+      const radialStep = clamp(radius - targetDistance, -radialLimit, radialLimit);
+      const nextDistance = targetDistance + radialStep;
+      const arcLength = Math.sqrt(Math.max(0, travel * travel - radialStep * radialStep));
+      const nextAngle = angle + fighter.aeroOrbitDirection * arcLength / Math.max(CELL_SIZE, targetDistance + radialStep / 2);
+      fighter.vx = (target.x + Math.cos(nextAngle) * nextDistance - fighter.x) / dt;
+      fighter.vy = (target.y + Math.sin(nextAngle) * nextDistance - fighter.y) / dt;
     }
-
-    let boundaryTime = Infinity;
-    if (directionX > 0.001) boundaryTime = Math.min(boundaryTime, (maxX - target.x) / directionX);
-    if (directionX < -0.001) boundaryTime = Math.min(boundaryTime, (minX - target.x) / directionX);
-    if (directionY > 0.001) boundaryTime = Math.min(boundaryTime, (maxY - target.y) / directionY);
-    if (directionY < -0.001) boundaryTime = Math.min(boundaryTime, (minY - target.y) / directionY);
-    if (!Number.isFinite(boundaryTime)) boundaryTime = 0;
-
-    return {
-      x: clamp(target.x + directionX * boundaryTime, minX, maxX),
-      y: clamp(target.y + directionY * boundaryTime, minY, maxY)
-    };
   }
 
-  function beginAeroSkillDash(fighter) {
-    const target = nearestOpponent(fighter);
-    if (!target) return;
-    const targetAngle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-    const ultimateActive = fighter.aeroUltimateTimer > 0;
-    const destination = ultimateActive
-      ? getAeroOppositeMovementBoundaryPoint(fighter, target)
-      : {
-          x: fighter.x + Math.cos(targetAngle) * fighter.template.aeroSkillDistance * CELL_SIZE,
-          y: fighter.y + Math.sin(targetAngle) * fighter.template.aeroSkillDistance * CELL_SIZE
-        };
-    const angle = Math.atan2(destination.y - fighter.y, destination.x - fighter.x);
+  function startAeroDash(fighter, angle, distanceCells, label) {
     fighter.aeroDashAngle = angle;
-    fighter.aeroDashSpeed = fighter.template.aeroSkillSpeed * CELL_SIZE;
-    fighter.aeroSkillClock = fighter.template.aeroSkillCooldown;
+    fighter.aeroDashTimer = distanceCells / fighter.template.aeroDashSpeed;
     effects.push({
       type: "aeroDashBurst",
       fighter,
       x: fighter.x,
       y: fighter.y,
       angle,
-      life: 0.42,
-      maxLife: 0.42,
-      color: "#72efb5"
+      length: distanceCells * CELL_SIZE,
+      life: 0.34,
+      maxLife: 0.34,
+      color: fighter.template.color
     });
-    if (ultimateActive) {
-      fighter.x = destination.x;
-      fighter.y = destination.y;
-      fighter.aeroDashTimer = 0;
-      resolveAeroDashLanding(fighter);
-      announce(`${fighter.template.name} · 风迹瞬闪`, fighter.template.color, 0.75);
-    } else {
-      fighter.aeroDashDuration = fighter.template.aeroSkillDistance / fighter.template.aeroSkillSpeed;
-      fighter.aeroDashTimer = fighter.aeroDashDuration;
-      fighter.vx = Math.cos(angle) * fighter.aeroDashSpeed;
-      fighter.vy = Math.sin(angle) * fighter.aeroDashSpeed;
-      announce(`${fighter.template.name} · 风迹突刺`, fighter.template.color, 0.75);
-    }
-    playSound("blade");
-  }
-
-  function findAeroDashContact(fighter, startX, startY, endX, endY) {
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const segmentLengthSquared = dx * dx + dy * dy;
-    let nearestContact = null;
-    let nearestProgress = Infinity;
-    getDamageableUnits()
-      .filter((target) => target.side !== fighter.side && target.hp > 0)
-      .forEach((target) => {
-        const amount = segmentLengthSquared > 0
-          ? clamp(((target.x - startX) * dx + (target.y - startY) * dy) / segmentLengthSquared, 0, 1)
-          : 0;
-        const contactX = startX + dx * amount;
-        const contactY = startY + dy * amount;
-        const contactDistance = Math.hypot(target.x - contactX, target.y - contactY);
-        if (contactDistance > fighter.r + target.r + CELL_SIZE * 0.08) return;
-        if (amount >= nearestProgress) return;
-        nearestProgress = amount;
-        nearestContact = { x: contactX, y: contactY, target };
-      });
-    return nearestContact;
-  }
-
-  function resolveAeroDashLanding(fighter) {
-    if (!fighter || fighter.hp <= 0 || state !== "playing") return;
-    fighter.vx = 0;
-    fighter.vy = 0;
-    const radius = fighter.template.aeroSkillRadius * CELL_SIZE;
-    let hitAny = false;
-    getDamageableUnits()
-      .filter((target) => target.side !== fighter.side && target.hp > 0)
-      .forEach((target) => {
-        if (Math.hypot(target.x - fighter.x, target.y - fighter.y) > radius + target.r * 0.2) return;
-        hitAny = true;
-        applySpecialDamage(target, fighter.template.aeroSkillDamage, fighter, "风迹突刺", {
-          color: "#72efb5",
-          noEnergy: true
-        });
-        effects.push({
-          type: "aeroHit",
-          x: target.x,
-          y: target.y,
-          angle: fighter.aeroDashAngle,
-          life: 0.42,
-          maxLife: 0.42,
-          color: "#72efb5"
-        });
-        spawnBurst(target.x, target.y, "#72efb5", 24, 280);
-      });
-    effects.push({
-      type: "aeroLandingImpact",
-      x: fighter.x,
-      y: fighter.y,
-      radius,
-      life: 0.68,
-      maxLife: 0.68,
-      color: "#72efb5",
-      angle: fighter.aeroDashAngle
-    });
-    effects.push({
-      type: "ring",
-      x: fighter.x,
-      y: fighter.y,
-      radius: radius * 0.42,
-      growth: 380,
-      life: 0.48,
-      maxLife: 0.48,
-      color: "#a9ffe0",
-      width: 4
-    });
-    if (hitAny) addAeroWind(fighter, fighter.template.aeroSkillWindGain);
-    const resumeAngle = fighter.aeroDashAngle + Math.PI;
-    fighter.vx = Math.cos(resumeAngle) * getEffectiveMoveSpeed(fighter);
-    fighter.vy = Math.sin(resumeAngle) * getEffectiveMoveSpeed(fighter);
+    announce(fighter.template.name + " · " + label, fighter.template.color, 0.75);
     playSound("windup");
   }
 
   function beginAeroAerialAttack(fighter) {
     if (
       !fighter
+      || fighter.aeroUltimateTimer > 0
       || fighter.aeroWind < fighter.template.aeroWindMax
-      || fighter.aeroSequenceActive
-      || fighter.aeroPreLiftTimer > 0
       || fighter.aeroAirTimer > 0
     ) return;
     const currentSpeed = Math.hypot(fighter.vx, fighter.vy);
@@ -3497,15 +3463,8 @@
     const fallbackAngle = target ? Math.atan2(target.y - fighter.y, target.x - fighter.x) : fighter.jinhsiAttackAngle;
     fighter.aeroAirResumeX = currentSpeed > 0 ? fighter.vx / currentSpeed : Math.cos(fallbackAngle);
     fighter.aeroAirResumeY = currentSpeed > 0 ? fighter.vy / currentSpeed : Math.sin(fallbackAngle);
-    fighter.aeroSequenceActive = true;
-    fighter.aeroPreLiftTimer = 0;
-    fighter.aeroBasicUnlocked = false;
-    fighter.aeroSkillUnlocked = false;
-    fighter.aeroUltimateUnlocked = false;
-    fighter.aeroUltimateReadyTimer = 0;
     fighter.aeroAirTimer = fighter.template.aeroAirDuration;
     fighter.aeroAirSecondClock = 1;
-    fighter.aeroAirSecondDone = false;
     fighter.vx = 0;
     fighter.vy = 0;
     performAeroLineSlash(fighter, Math.PI * 0.25, false);
@@ -3517,10 +3476,17 @@
   function performAeroLineSlash(fighter, angle, second) {
     if (fighter.aeroWind < fighter.template.aeroWindAttackCost) return false;
     fighter.aeroWind = Math.max(0, fighter.aeroWind - fighter.template.aeroWindAttackCost);
+    performDiagonalSlash(fighter, angle, second, fighter.template.aeroSlashDamage, "双刃斩风");
+    if (second) addLog(`${fighter.template.name} 完成两次风息斩击。`, "ability");
+    return true;
+  }
+
+  function performDiagonalSlash(fighter, angle, second, damage, label) {
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
     const slashX = ARENA_SIZE / 2;
     const slashY = ARENA_SIZE / 2;
+    const color = fighter.template.color;
     effects.push({
       type: "aeroSlash",
       fighter,
@@ -3530,7 +3496,7 @@
       mirror: second,
       life: 0.5,
       maxLife: 0.5,
-      color: "#72efb5"
+      color
     });
     getDamageableUnits()
       .filter((target) => target.side !== fighter.side && target.hp > 0)
@@ -3539,10 +3505,7 @@
         const dy = target.y - slashY;
         const lateral = -dx * sin + dy * cos;
         if (Math.abs(lateral) > CELL_SIZE * 1.05 + target.r * 0.28) return;
-        applyDamage(target, fighter.template.aeroSlashDamage, fighter, "双刃斩风", {
-          color: "#72efb5",
-          melee: true
-        });
+        applyDamage(target, damage, fighter, label, { color, melee: true });
         effects.push({
           type: "aeroHit",
           x: target.x,
@@ -3550,54 +3513,42 @@
           angle,
           life: 0.38,
           maxLife: 0.38,
-          color: "#72efb5"
+          color
         });
-        spawnBurst(target.x, target.y, "#72efb5", second ? 24 : 18, second ? 280 : 220);
+        spawnBurst(target.x, target.y, color, second ? 24 : 18, second ? 280 : 220);
       });
-    spawnBurst(fighter.x, fighter.y, "#72efb5", 18, 180);
-    if (second) {
-      fighter.aeroBasicUnlocked = false;
-      fighter.aeroSkillUnlocked = true;
-      fighter.aeroUltimateUnlocked = true;
-      announce(`${fighter.template.name} · 共鸣解放就绪`, fighter.template.color, 1);
-      addLog(`${fighter.template.name} 完成两次风息斩击，普攻与「飘渺无相」已解锁。`, "ability");
-    } else {
-      fighter.aeroBasicUnlocked = false;
-      fighter.aeroSkillUnlocked = false;
-    }
+    spawnBurst(fighter.x, fighter.y, color, 18, 180);
     playSound(second ? "blade" : "sword");
-    return true;
   }
 
-  function fireAeroSwords(fighter, opponent) {
-    const target = nearestOpponent(fighter) || opponent;
+  function fireAeroSword(fighter) {
+    const target = nearestOpponent(fighter);
     if (!target) return;
     const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
     const speed = fighter.template.aeroSwordSpeed * CELL_SIZE;
     playAttackVoice(fighter);
-    const startX = fighter.x + Math.cos(angle) * (fighter.r + 8);
-    const startY = fighter.y + Math.sin(angle) * (fighter.r + 8);
+    const startX = fighter.x;
+    const startY = fighter.y;
     const trailEffect = {
       type: "aeroSwordTrail",
       points: [{ x: startX, y: startY }],
       active: true,
-      life: 2.4,
-      maxLife: 2.4,
+      life: 2,
+      maxLife: 2,
       color: "#72efb5"
     };
     effects.push(trailEffect);
     projectiles.push({
       owner: fighter,
       kind: "aeroSword",
-      category: DAMAGE_CATEGORIES.SPECIAL,
+      independent: true,
       x: startX,
       y: startY,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      r: fighter.template.aeroSwordRadius * CELL_SIZE,
+      r: CELL_SIZE * 2,
       collisionRadius: CELL_SIZE * 0.14,
       damage: fighter.template.aeroSwordDamage,
-      life: fighter.template.aeroSwordLife,
       color: "#72efb5",
       hitIds: new Set(),
       trailEffect
@@ -3613,7 +3564,7 @@
       color: "#72efb5",
       width: 4
     });
-    addLog(`${fighter.template.name} 朝最近敌人方向射出一柄 55 格/秒的直线飞剑。`, "ability");
+    addLog(`${fighter.template.name} 朝最近敌人方向射出一柄 ${fighter.template.aeroSwordSpeed} 格/秒的飞剑。`, "ability");
     playSound("windup");
   }
 
@@ -3621,20 +3572,28 @@
     const owner = projectile.owner;
     const previousX = projectile.x;
     const previousY = projectile.y;
-    projectile.x += projectile.vx * dt;
-    projectile.y += projectile.vy * dt;
-    projectile.life -= dt;
-    const trail = projectile.trailEffect;
-    if (trail) {
-      const lastPoint = trail.points[trail.points.length - 1];
-      if (!lastPoint || Math.hypot(projectile.x - lastPoint.x, projectile.y - lastPoint.y) >= 2) {
-        trail.points.push({ x: projectile.x, y: projectile.y });
-      }
-      trail.life = trail.maxLife;
+    const wallX = projectile.vx > 0 ? ARENA_SIZE - BOUNDARY : BOUNDARY;
+    const wallY = projectile.vy > 0 ? ARENA_SIZE - BOUNDARY : BOUNDARY;
+    const timeToWallX = projectile.vx === 0 ? Infinity : (wallX - previousX) / projectile.vx;
+    const timeToWallY = projectile.vy === 0 ? Infinity : (wallY - previousY) / projectile.vy;
+    const timeToWall = Math.max(0, Math.min(timeToWallX, timeToWallY));
+    let travelTime = Math.min(dt, timeToWall);
+    const barrier = heartBarrierBlockingProjectile(
+      previousX, previousY,
+      previousX + projectile.vx * travelTime, previousY + projectile.vy * travelTime,
+      projectile.collisionRadius
+    );
+    if (barrier) {
+      const edgeX = barrier.x - Math.sign(projectile.vx) * (barrier.halfWidth + projectile.collisionRadius);
+      travelTime = projectile.vx === 0 ? 0 : clamp((edgeX - previousX) / projectile.vx, 0, travelTime);
     }
-    const hits = findAeroSwordTrajectoryHits(
-      projectile,
+    projectile.x += projectile.vx * travelTime;
+    projectile.y += projectile.vy * travelTime;
+    const trail = projectile.trailEffect;
+    trail.points.push({ x: projectile.x, y: projectile.y });
+    const hits = traceHostileUnits(
       owner,
+      projectile.collisionRadius,
       previousX,
       previousY,
       projectile.x,
@@ -3658,26 +3617,20 @@
       });
       spawnBurst(hit.unit.x, hit.unit.y, projectile.color, 12, 180);
     });
-    if (
-      projectile.life <= 0
-      || projectile.x < BOUNDARY
-      || projectile.x > ARENA_SIZE - BOUNDARY
-      || projectile.y < BOUNDARY
-      || projectile.y > ARENA_SIZE - BOUNDARY
-    ) {
+    if (barrier || timeToWall <= dt) {
       projectile.dead = true;
-      if (trail) trail.active = false;
+      trail.active = false;
     }
   }
 
-  function findAeroSwordTrajectoryHits(projectile, owner, startX, startY, endX, endY) {
+  function traceHostileUnits(owner, collisionRadius, startX, startY, endX, endY) {
     const dx = endX - startX;
     const dy = endY - startY;
     const segmentLengthSquared = dx * dx + dy * dy;
     return getDamageableUnits()
       .filter((unit) => unit.side !== owner.side && unit.hp > 0)
       .map((unit) => {
-        const hitRadius = projectile.collisionRadius + unit.r;
+        const hitRadius = collisionRadius + unit.r;
         const offsetX = startX - unit.x;
         const offsetY = startY - unit.y;
         const c = offsetX * offsetX + offsetY * offsetY - hitRadius * hitRadius;
@@ -3699,6 +3652,416 @@
       })
       .filter(Boolean)
       .sort((a, b) => a.progress - b.progress);
+  }
+
+  function conductiveMotion(x, y, vx, vy, dt, margin = 0) {
+    const min = BOUNDARY + margin;
+    const max = ARENA_SIZE - BOUNDARY - margin;
+    const wallTimeX = vx === 0 ? Infinity : ((vx > 0 ? max : min) - x) / vx;
+    const wallTimeY = vy === 0 ? Infinity : ((vy > 0 ? max : min) - y) / vy;
+    let limit = Math.max(0, Math.min(wallTimeX, wallTimeY));
+    const timeToEdge = Math.min(dt, limit);
+    const barrier = heartBarrierBlockingProjectile(x, y, x + vx * timeToEdge, y + vy * timeToEdge, margin);
+    if (barrier) {
+      const edgeX = barrier.x - Math.sign(vx) * (barrier.halfWidth + margin);
+      limit = Math.min(limit, vx === 0 ? 0 : Math.max(0, (edgeX - x) / vx));
+    }
+    const travel = Math.min(dt, limit);
+    return { x: x + vx * travel, y: y + vy * travel, time: travel, blocked: limit <= dt };
+  }
+
+  function conductiveTargets(fighter, radius) {
+    return getDamageableUnits().filter((target) => (
+      target.hp > 0 && target.side !== fighter.side && distance(fighter, target) <= radius
+    ));
+  }
+
+  function fireConductiveArrows(fighter, angle, offsets, speed, empowered = false) {
+    const config = fighter.template.conductive;
+    fighter.conductive.aim = angle;
+    speed *= CELL_SIZE;
+    for (const offset of offsets) {
+      const direction = angle + offset * Math.PI / 180;
+      projectiles.push({
+        owner: fighter,
+        kind: "conductiveArrow",
+        independent: true,
+        empowered,
+        x: fighter.x,
+        y: fighter.y,
+        previousX: fighter.x,
+        previousY: fighter.y,
+        vx: Math.cos(direction) * speed,
+        vy: Math.sin(direction) * speed,
+        r: empowered ? 7 : 3.5,
+        damage: empowered ? config.ultimateArrowDamage : config.arrowDamage,
+        color: fighter.template.color
+      });
+    }
+    playSound(empowered ? "lightning" : "shot");
+  }
+
+  function updateConductiveArrow(arrow, dt) {
+    const { x, y, blocked } = conductiveMotion(arrow.x, arrow.y, arrow.vx, arrow.vy, dt);
+    const hit = traceHostileUnits(arrow.owner, arrow.r, arrow.x, arrow.y, x, y)[0];
+    arrow.previousX = arrow.x;
+    arrow.previousY = arrow.y;
+    arrow.x = hit ? hit.x : x;
+    arrow.y = hit ? hit.y : y;
+    if (hit) {
+      const strike = arrow.empowered ? applySpecialDamage : applyDamage;
+      const dealt = strike(hit.unit, arrow.damage, arrow.owner, arrow.empowered ? "千声雷箭" : "导电箭矢", {
+        color: arrow.color,
+        conductiveStrike: true
+      });
+      if (arrow.empowered && dealt > 0) spawnConductiveLightning(hit.unit);
+      spawnBurst(arrow.x, arrow.y, arrow.color, arrow.empowered ? 27 : 8, arrow.empowered ? 260 : 125);
+    }
+    return Boolean(hit || blocked);
+  }
+
+  function beginConductivePush(fighter, target, angle) {
+    const config = fighter.template.conductive;
+    const speed = config.pushSpeed * CELL_SIZE;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    const duration = conductiveMotion(target.x, target.y, vx, vy, config.pushDistance / config.pushSpeed, target.r).time;
+    if (duration <= 0) return;
+    const previousSpeed = Math.hypot(target.vx, target.vy);
+    target.knockback = {
+      vx, vy,
+      timer: duration,
+      stun: 0,
+      resumeX: previousSpeed > 0 ? target.vx / previousSpeed : Math.cos(angle),
+      resumeY: previousSpeed > 0 ? target.vy / previousSpeed : Math.sin(angle)
+    };
+  }
+
+  function performConductiveAttack(fighter, target) {
+    const combat = fighter.conductive;
+    if (combat.phase === "surge") {
+      if (inMeleeRange(fighter, target)) {
+        performAbyssSweep(fighter, target);
+        fighter.attackClock = fighter.template.abyssScytheCooldown;
+      }
+      return;
+    }
+    if (combat.phase !== "normal" || combat.hook?.stage === "pull") return;
+    const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+    const config = fighter.template.conductive;
+    combat.aim = angle;
+    if (distance(fighter, target) <= fighter.template.attackRange * CELL_SIZE) {
+      combat.weapon = "shield";
+      fighter.attackClock = fighter.template.attackCooldown;
+      const dealt = applyDamage(target, fighter.template.attackDamage, fighter, "导电盾击", {
+        color: fighter.template.color,
+        melee: true
+      });
+      if (dealt > 0 && target.hp > 0) beginConductivePush(fighter, target, angle);
+      effects.push({
+        type: "conductiveImpact", x: target.x, y: target.y, radius: CELL_SIZE * 1.25,
+        color: fighter.template.color, life: 0.32, maxLife: 0.32
+      });
+      playSound("shield");
+    } else {
+      combat.weapon = "bow";
+      fighter.attackClock = config.arrowCooldown;
+      fireConductiveArrows(fighter, angle, [-30, 0, 30], config.arrowSpeed);
+    }
+  }
+
+  function launchConductiveHook(fighter, angle, empowered = false) {
+    const combat = fighter.conductive;
+    const config = fighter.template.conductive;
+    const speed = (empowered ? config.ultimateHookSpeed : config.hookSpeed) * CELL_SIZE;
+    combat.hook = {
+      x: fighter.x,
+      y: fighter.y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      stage: "flight",
+      empowered,
+      target: null,
+      wait: 0,
+      tick: 1
+    };
+    playSound("windup");
+  }
+
+  function updateConductiveHook(fighter, dt) {
+    const hook = fighter.conductive.hook;
+    const config = fighter.template.conductive;
+    if (hook.stage === "flight") {
+      const end = conductiveMotion(hook.x, hook.y, hook.vx, hook.vy, dt);
+      const hit = traceHostileUnits(fighter, 4, hook.x, hook.y, end.x, end.y)[0];
+      hook.x = hit ? hit.unit.x : end.x;
+      hook.y = hit ? hit.unit.y : end.y;
+      if (hit || end.blocked) {
+        hook.target = hit?.unit || null;
+        hook.stage = "attached";
+        hook.wait = hook.empowered ? config.ultimateHookDelay : hit ? config.hookEnemyDelay : config.hookWallDelay;
+        spawnBurst(hook.x, hook.y, fighter.template.color, 16, 185);
+      }
+      return;
+    }
+    if (hook.target?.hp > 0) {
+      hook.x = hook.target.x;
+      hook.y = hook.target.y;
+    }
+    if (hook.stage !== "attached") return;
+    const elapsed = Math.min(dt, hook.wait);
+    hook.wait -= elapsed;
+    if (!hook.empowered && hook.target?.hp > 0) {
+      hook.tick -= elapsed;
+      if (hook.tick <= 1e-8) {
+        hook.tick += 1;
+        applySpecialDamage(hook.target, config.hookTickDamage, fighter, "钩锁电击", {
+          color: fighter.template.color, noEnergy: true
+        });
+        spawnConductiveLightning(hook.target);
+      }
+    }
+    if (hook.wait <= 1e-8) hook.stage = "pull";
+  }
+
+  function getConductivePosition(fighter, x, y) {
+    const min = BOUNDARY + fighter.r;
+    let maxX = ARENA_SIZE - min;
+    const barrier = heartBarriers[0];
+    if (barrier && fighter.x <= barrier.x) {
+      maxX = Math.min(maxX, barrier.x - barrier.halfWidth - fighter.r - 0.5);
+    }
+    return { x: clamp(x, min, maxX), y: clamp(y, min, ARENA_SIZE - min) };
+  }
+
+  function finishConductiveHook(fighter) {
+    const combat = fighter.conductive;
+    const hook = combat.hook;
+    const config = fighter.template.conductive;
+    combat.hook = null;
+    const radius = (hook.empowered ? config.ultimateLandingRange : config.hookLandingRange) * CELL_SIZE;
+    if (hook.empowered || hook.target) {
+      const damage = hook.empowered ? config.ultimateLandingDamage : config.hookLandingDamage;
+      effects.push({
+        type: "conductiveImpact", x: fighter.x, y: fighter.y, radius,
+        color: fighter.template.color, life: 0.65, maxLife: 0.65
+      });
+      for (const target of conductiveTargets(fighter, radius)) {
+        const dealt = applySpecialDamage(target, damage, fighter, hook.empowered ? "千声震击" : "钩锁落击", {
+          color: fighter.template.color
+        });
+        if (hook.empowered && dealt > 0 && target.hp > 0) {
+          target.stunned = Math.max(target.stunned, config.ultimateParalysis);
+          effects.push({ type: "paralysis", fighter: target, life: 0.8, maxLife: 0.8, color: fighter.template.color });
+        }
+      }
+      playSound("lightning");
+    } else {
+      const target = nearestOpponent(fighter);
+      if (target) {
+        const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+        combat.weapon = "bow";
+        fireConductiveArrows(fighter, angle, [-60, -30, 0, 30, 60], config.wallArrowSpeed);
+      }
+    }
+    if (hook.empowered) {
+      combat.phase = "surge";
+      combat.timer = fighter.template.ultimateDuration;
+      combat.chaseClock = config.chaseInterval;
+      combat.freezeClock = config.freezeInterval;
+      combat.dashClock = config.dashInterval;
+      combat.rewindCooldown = 0;
+      announce(fighter.template.name + " · 千声翻涌", fighter.template.color, 1.15);
+      addLog(fighter.template.name + " 进入千声翻涌，持续 18 秒。", "ability");
+    } else {
+      combat.hookCooldown = config.hookCooldown;
+    }
+  }
+
+  function isConductiveTraveling(fighter) {
+    const combat = fighter.conductive;
+    return Boolean(combat && (combat.dash || combat.hook?.stage === "pull" || combat.phase === "finishGap"));
+  }
+
+  function moveConductiveOverride(fighter, dt) {
+    const combat = fighter.conductive;
+    if (combat.phase === "finishGap") return true;
+    if (combat.hook?.stage === "pull") {
+      const hook = combat.hook;
+      const config = fighter.template.conductive;
+      const anchor = hook.target?.hp > 0 ? hook.target : hook;
+      const point = getConductivePosition(fighter, anchor.x, anchor.y);
+      const length = distance(fighter, point);
+      const speed = (hook.empowered ? config.ultimatePullSpeed : config.pullSpeed) * CELL_SIZE;
+      const travel = Math.min(length, speed * dt);
+      if (length > 0) {
+        fighter.x += (point.x - fighter.x) * travel / length;
+        fighter.y += (point.y - fighter.y) * travel / length;
+      }
+      if (travel >= length - 1e-8) finishConductiveHook(fighter);
+      return true;
+    }
+    if (!combat.dash) return false;
+    const dash = combat.dash;
+    const end = conductiveMotion(fighter.x, fighter.y, dash.vx, dash.vy, Math.min(dt, dash.time), fighter.r);
+    fighter.x = end.x;
+    fighter.y = end.y;
+    dash.time -= end.time;
+    if (end.blocked || dash.time <= 1e-8) combat.dash = null;
+    return true;
+  }
+
+  function restoreConductiveHeading(fighter) {
+    const combat = fighter.conductive;
+    const heading = combat.chaseHeading;
+    if (!heading) return;
+    fighter.vx = heading.vx;
+    fighter.vy = heading.vy;
+    combat.chaseHeading = null;
+  }
+
+  function startConductiveFreeze(fighter) {
+    const config = fighter.template.conductive;
+    timeStopOwner = fighter;
+    timeStopTimer = config.freezeDuration;
+    effects.push({ type: "timeFlash", x: fighter.x, y: fighter.y, life: 0.8, maxLife: 0.8, color: fighter.template.color });
+    teleportTimeStopCaster(fighter, fighter.template.color);
+    announce("千声翻涌 · 时间冻结", fighter.template.color, 1);
+    playSound("timeStop");
+  }
+
+  function updateConductiveSurge(fighter, dt) {
+    const combat = fighter.conductive;
+    const config = fighter.template.conductive;
+    const elapsed = Math.min(dt, combat.timer);
+    combat.timer -= elapsed;
+    combat.freezeClock -= elapsed;
+    combat.chaseClock -= elapsed;
+    combat.dashClock -= elapsed;
+    combat.rewindCooldown = Math.max(0, combat.rewindCooldown - elapsed);
+
+    if (combat.freezeClock <= 1e-8 && !timeStopOwner) {
+      combat.freezeClock += config.freezeInterval;
+      startConductiveFreeze(fighter);
+    }
+    if (combat.timer <= 1e-8) {
+      restoreConductiveHeading(fighter);
+      combat.dash = null;
+      combat.phase = "finishWindup";
+      combat.timer = config.finishWindup;
+      return;
+    }
+
+    const canMove = fighter.stunned <= 0 && fighter.freeze <= 0 && !fighter.knockback;
+    if (!canMove || (combat.chaseClock > 1e-8 && combat.dashClock > 1e-8)) return;
+    const target = nearestOpponent(fighter);
+    if (!target) return;
+    const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+    if (combat.chaseClock <= 1e-8) {
+      if (!combat.chaseHeading) combat.chaseHeading = { vx: fighter.vx, vy: fighter.vy };
+      const speed = getEffectiveMoveSpeed(fighter);
+      fighter.vx = Math.cos(angle) * speed;
+      fighter.vy = Math.sin(angle) * speed;
+      combat.chaseClock = config.chaseInterval;
+    }
+    if (combat.dashClock <= 1e-8) {
+      const speed = config.dashSpeed * CELL_SIZE;
+      combat.dash = { vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, time: config.dashRange / config.dashSpeed };
+      combat.dashClock = config.dashInterval;
+      effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 8, growth: 185,
+        life: 0.26, maxLife: 0.26, width: 3, color: fighter.template.color });
+    }
+  }
+
+  function canConductiveUseUltimate(fighter) {
+    return fighter.conductive.phase === "normal" && fighter.hp > 0
+      && fighter.hp < fighter.template.ultimateThreshold && fighter.abilityCooldown <= 0
+      && fighter.stunned <= 0 && fighter.freeze <= 0 && fighter.vortexLockTimer <= 0 && !fighter.knockback;
+  }
+
+  function beginConductiveUltimate(fighter) {
+    const combat = fighter.conductive;
+    const config = fighter.template.conductive;
+    combat.phase = "loading";
+    combat.timer = config.ultimateLoad;
+    combat.hook = null;
+    combat.hookCooldown = config.hookCooldown;
+    combat.weapon = "bow";
+    announce(fighter.template.name + " · 雷箭装填", fighter.template.color, config.ultimateLoad);
+    playSound("windup");
+  }
+
+  function updateConductiveState(fighter, dt) {
+    if (state !== "playing" || fighter.hp <= 0 || (timeStopOwner && timeStopOwner !== fighter)) return;
+    const combat = fighter.conductive;
+    const config = fighter.template.conductive;
+    combat.hookCooldown = Math.max(0, combat.hookCooldown - dt);
+    if (combat.hook) updateConductiveHook(fighter, dt);
+    if (state !== "playing") return;
+
+    if (combat.phase === "surge") {
+      updateConductiveSurge(fighter, dt);
+      return;
+    }
+    if (combat.phase === "normal") {
+      if (!combat.hook && combat.hookCooldown <= 0 && fighter.freeze <= 0 && fighter.stunned <= 0 && !fighter.knockback) {
+        const target = nearestOpponent(fighter);
+        if (target) launchConductiveHook(fighter, Math.atan2(target.y - fighter.y, target.x - fighter.x));
+      }
+      return;
+    }
+    if (combat.phase === "ultimateHook") return;
+
+    combat.timer = Math.max(0, combat.timer - dt);
+    if (combat.timer > 1e-8) return;
+    if (combat.phase === "loading") {
+      const target = nearestOpponent(fighter);
+      const angle = target ? Math.atan2(target.y - fighter.y, target.x - fighter.x) : combat.aim;
+      fireConductiveArrows(fighter, angle, [0], config.ultimateArrowSpeed, true);
+      launchConductiveHook(fighter, angle, true);
+      combat.phase = "ultimateHook";
+      return;
+    }
+    if (combat.phase === "finishWindup") {
+      combat.phase = "finishGap";
+      combat.timer = config.finishSlashInterval;
+      performDiagonalSlash(fighter, Math.PI / 4, false, config.finishSlashDamage, "千声终斩");
+      return;
+    }
+    performDiagonalSlash(fighter, 3 * Math.PI / 4, true, config.finishSlashDamage, "千声终斩");
+    combat.phase = "normal";
+  }
+
+  function spawnConductiveLightning(target) {
+    const points = [{ x: target.x - 13, y: target.y - CELL_SIZE * 2.2 }];
+    for (let part = 1; part < 5; part += 1) {
+      const progress = part / 5;
+      points.push({ x: target.x + random(-10, 10) * (1 - progress), y: target.y - CELL_SIZE * 2.2 * (1 - progress) });
+    }
+    points.push({ x: target.x, y: target.y });
+    effects.push({ type: "conductiveBolt", points, color: "#b46bff", life: 0.36, maxLife: 0.36 });
+  }
+
+  function rewindConductiveHit(fighter, source) {
+    const combat = fighter.conductive;
+    if (combat?.phase !== "surge" || combat.rewindCooldown > 0 || !source || source.side === fighter.side) return;
+    const config = fighter.template.conductive;
+    const clock = fighter.wandererHistoryClock - config.rewindAgo;
+    const snapshot = fighter.wandererHistory.findLast((entry) => entry.clock <= clock + 1e-8);
+    if (!snapshot) return;
+    const point = getConductivePosition(fighter, snapshot.x, snapshot.y);
+    const before = { x: fighter.x, y: fighter.y };
+    fighter.x = point.x;
+    fighter.y = point.y;
+    fighter.hp = clamp(snapshot.hp, 1, fighter.maxHp);
+    fighter.knockback = null;
+    combat.rewindCooldown = config.rewindCooldown;
+    for (const position of [before, point]) {
+      effects.push({ type: "ring", ...position, radius: 8, growth: 520, life: 0.48, maxLife: 0.48,
+        width: 5, color: fighter.template.color });
+    }
+    spawnDamageText(fighter.x, fighter.y - fighter.r, "千声回溯", "#e5c0ff", true);
+    playSound("timeStop");
   }
 
   function updateTimeVortices(dt) {
@@ -4183,7 +4546,7 @@
   }
 
   function updateWandererHistory(fighter, dt) {
-    if (fighter.template.id !== "01" || fighter.hp <= 0) return;
+    if ((fighter.template.id !== "01" && !fighter.conductive) || fighter.hp <= 0) return;
     fighter.wandererHistoryClock += dt;
     const last = fighter.wandererHistory[fighter.wandererHistory.length - 1];
     if (!last || fighter.wandererHistoryClock - last.clock >= 0.05) {
@@ -4234,12 +4597,12 @@
     if (firstPipReached) {
       fighter.wandererFirstPipBuffAwarded = true;
       fighter.wandererRangeBonus += 0.5;
-      fighter.wandererDamageBonus += 10;
+      fighter.wandererDamageBonus += fighter.template.wandererDamageGrowth;
       effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 8, growth: 420, life: 0.48, maxLife: 0.48, color: "#ffd76b", width: 5 });
       spawnBurst(fighter.x, fighter.y, "#ffe7a0", 20, 190);
       spawnDamageText(fighter.x, fighter.y - fighter.r, "普攻强化", "#ffd76b", true);
       announce(`${fighter.template.name} · 时序强化`, "#ffd76b", 0.9);
-      addLog(`${fighter.template.name} 永久提升 0.5 格普攻范围与 10 点普攻伤害。`, "ability");
+      addLog(`${fighter.template.name} 永久提升 0.5 格普攻范围与 ${fighter.template.wandererDamageGrowth} 点普攻伤害。`, "ability");
       playSound("blade");
     }
     if (previous < 2 && fighter.specialEnergy >= 2) {
@@ -4316,8 +4679,11 @@
     playAttackVoice(fighter);
     fighter.abyssScytheSwing = 0.34;
     fighter.thrustAngle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
-    const dealt = applyDamage(opponent, fighter.template.abyssScytheDamage, fighter, "暗涌镰刀", {
-      color: "#c477ff"
+    const conductive = fighter.conductive?.phase === "surge";
+    const dealt = applyDamage(opponent, fighter.template.abyssScytheDamage, fighter, conductive ? "千声镰刀" : "暗涌镰刀", {
+      color: "#c477ff",
+      melee: conductive,
+      conductiveStrike: conductive
     }) || 0;
     healAbyssDamage(fighter, dealt);
     releaseVortexLock(opponent, true);
@@ -4332,7 +4698,7 @@
       color: "#b65dff"
     });
     spawnBurst(opponent.x, opponent.y, "#c477ff", 20, 220);
-    addLog(`${fighter.template.name} 挥出暗紫镰刀，造成 ${Math.round(dealt)} 点伤害并恢复生命。`, "ability");
+    addLog(`${fighter.template.name} 挥出暗紫镰刀，造成 ${Math.round(dealt)} 点伤害${conductive ? "。" : "并恢复生命。"}`, "ability");
     playSound("sword");
   }
 
@@ -4753,9 +5119,6 @@
 
   function spawnCantarellaJelly(owner, initialIndex = null) {
     if (!owner || owner.hp <= 0 || owner.template.id !== "05") return;
-    if (initialIndex === null && state === "playing") {
-      playAttackVoice(owner, "cantarellaSummon");
-    }
     const angle = initialIndex === null
       ? random(0, Math.PI * 2)
       : -Math.PI / 2 + initialIndex * Math.PI * 2 / owner.template.jellyStartingCount;
@@ -4795,6 +5158,8 @@
       cantarellaSlowTimer: activeMirage?.cantarellaMirageTimer || 0,
       cantarellaDreamed: Boolean(activeMirage && activeMirage.side !== owner.side),
       cantarellaMirageOwner: activeMirage || null,
+      cantarellaPoisonTimer: 0,
+      heartLanternSlow: 0,
       heartLanternSlowTimer: 0,
       defeated: false,
       phase: random(0, Math.PI * 2),
@@ -4819,6 +5184,13 @@
       width: 3
     });
     spawnBurst(x, y, "#c79cff", 12, 110);
+  }
+
+  function summonCantarellaJellies(owner) {
+    playAttackVoice(owner, "cantarellaSummon");
+    for (let index = 0; index < owner.template.jellySpawnCount; index += 1) {
+      spawnCantarellaJelly(owner);
+    }
   }
 
   function performCantarellaJellyAttack(unit, target) {
@@ -4851,11 +5223,14 @@
         return Math.abs(relative) <= Math.PI / 2;
       })
       .forEach((candidate) => {
-        applyDamage(candidate, owner.template.jellyAttackDamage, owner, "水母半圆击", {
+        const dealt = applyDamage(candidate, owner.template.jellyAttackDamage, owner, "水母半圆击", {
           color: "#c38fff",
           melee: true,
           noEnergy: true
         });
+        if (dealt > 0 && candidate.hp > 0) {
+          candidate.cantarellaPoisonTimer = owner.template.jellyPoisonDuration;
+        }
         spawnBurst(candidate.x, candidate.y, "#c38fff", 8, 120);
       });
     playSound("wind");
@@ -4866,8 +5241,8 @@
     owners.forEach((owner) => {
       owner.cantarellaJellySpawnClock -= dt;
       if (owner.cantarellaJellySpawnClock <= 0) {
-        spawnCantarellaJelly(owner);
-        owner.cantarellaJellySpawnClock = owner.template.jellySpawnInterval;
+        summonCantarellaJellies(owner);
+        owner.cantarellaJellySpawnClock += owner.template.jellySpawnInterval;
       }
     });
 
@@ -4882,13 +5257,15 @@
       unit.stunned = Math.max(0, unit.stunned - dt);
       unit.freeze = Math.max(0, unit.freeze - dt);
       unit.attackClock = Math.max(0, unit.attackClock - dt);
+      unit.cantarellaPoisonTimer = Math.max(0, unit.cantarellaPoisonTimer - dt);
       if (unit.cantarellaSlowTimer > 0) {
         unit.cantarellaSlowTimer = Math.max(0, unit.cantarellaSlowTimer - dt);
         if (unit.cantarellaSlowTimer === 0) unit.cantarellaDreamed = false;
       }
       if (unit.knockback) {
-        unit.x = clamp(unit.x + unit.knockback.vx * dt, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
-        unit.y = clamp(unit.y + unit.knockback.vy * dt, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+        const travelTime = Math.min(dt, unit.knockback.timer);
+        unit.x = clamp(unit.x + unit.knockback.vx * travelTime, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
+        unit.y = clamp(unit.y + unit.knockback.vy * travelTime, BOUNDARY + unit.r, ARENA_SIZE - BOUNDARY - unit.r);
         unit.knockback.timer -= dt;
         if (unit.knockback.timer <= 0) {
           unit.stunned = Math.max(unit.stunned, unit.knockback.stun || 0);
@@ -4906,7 +5283,7 @@
         const attackRange = unit.owner.template.jellyAttackRange * CELL_SIZE;
         const speed = unit.owner.template.jellySpeed * CELL_SIZE
           * (unit.cantarellaSlowTimer > 0 ? unit.owner.template.mirageSlowMultiplier : 1)
-          * (unit.heartLanternSlowTimer > 0 ? 0.65 : 1);
+          * (unit.heartLanternSlowTimer > 0 ? 1 - unit.heartLanternSlow : 1);
         if (dist > attackRange * 0.82) {
           unit.vx = (dx / dist) * speed;
           unit.vy = (dy / dist) * speed;
@@ -5016,7 +5393,7 @@
 
       for (let projectileIndex = projectiles.length - 1; projectileIndex >= 0; projectileIndex -= 1) {
         const projectile = projectiles[projectileIndex];
-        if (projectile.owner?.side === owner.side) continue;
+        if (projectile.owner?.side === owner.side || projectile.kind === "aeroSword") continue;
         if (Math.hypot(projectile.x - umbrella.x, projectile.y - umbrella.y) > umbrella.r + projectile.r) continue;
         spawnBurst(projectile.x, projectile.y, "#bda3ff", 12, 150);
         projectiles.splice(projectileIndex, 1);
@@ -5031,7 +5408,8 @@
         umbrella.hitCooldowns.set(target, 0.16);
         applyDamage(target, owner.template.attackDamage, owner, "伞击", {
           color: "#d6c1ff",
-          ranged: true
+          ranged: true,
+          cantarellaAttack: true
         });
         if (target.hp > 0) {
           target.x = clamp(target.x + Math.cos(umbrella.angle) * 7, BOUNDARY + target.r, ARENA_SIZE - BOUNDARY - target.r);
@@ -5185,7 +5563,8 @@
       ))
       .forEach((unit) => {
         applySpecialDamage(unit, fighter.template.perceptionDamage, fighter, "感知汲取", {
-          color: "#bd78ff"
+          color: "#bd78ff",
+          cantarellaAttack: true
         });
         spawnBurst(unit.x, unit.y, "#ad66f2", 18, 210);
       });
@@ -5970,6 +6349,7 @@
       });
       heartEnemyUnits(lantern.owner).forEach((unit) => {
         if (Math.hypot(unit.x - lantern.x, unit.y - lantern.y) > lantern.owner.template.heartLanternRadius * CELL_SIZE + unit.r) return;
+        unit.heartLanternSlow = lantern.owner.template.heartLanternSlow;
         unit.heartLanternSlowTimer = Math.max(unit.heartLanternSlowTimer || 0, 0.16);
         if ((lantern.damageCooldowns.get(unit) || 0) > 0) return;
         lantern.damageCooldowns.set(unit, lantern.owner.template.heartLanternTick);
@@ -6113,6 +6493,7 @@
   }
 
   function getAttackRangeCells(fighter) {
+    if (fighter.conductive?.phase === "surge") return fighter.template.abyssScytheRange;
     if (fighter.template.id === "01") {
       return fighter.template.attackRange + fighter.wandererRangeBonus;
     }
@@ -6133,12 +6514,7 @@
 
   function tryBasicAttack(fighter, opponent) {
     if (fighter.freeze > 0 || fighter.stunned > 0 || fighter.vortexLockTimer > 0 || fighter.charge || fighter.knockback) return;
-    if (
-      fighter.aeroAirTimer > 0
-      || fighter.aeroDashTimer > 0
-      || fighter.aeroPreLiftTimer > 0
-      || fighter.aeroSequenceActive
-    ) return;
+    if (fighter.aeroAirTimer > 0 || fighter.aeroUltimateTimer > 0) return;
     if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") return;
     if (fighter.template.id === "05" && fighter.cantarellaPerceptionReady) {
       const target = nearestOpponent(fighter) || opponent;
@@ -6151,7 +6527,9 @@
       return;
     }
     if (fighter.attackClock > 0 || fighter.template.attackType === "none") return;
-    if (fighter.template.id === "09") {
+    if (fighter.conductive) {
+      performConductiveAttack(fighter, opponent);
+    } else if (fighter.template.id === "09") {
       launchHeartWheels(fighter, opponent);
       fighter.attackClock = fighter.template.attackCooldown;
     } else if (fighter.template.id === "02" && fighter.abyssForm) {
@@ -6174,9 +6552,9 @@
         launchCantarellaUmbrella(fighter, opponent);
       }
     } else if (fighter.template.id === "08") {
-      if (fighter.aeroBasicUnlocked) {
-        beginAeroSkillDash(fighter);
-        fighter.attackClock = fighter.template.aeroSkillCooldown;
+      if (fighter.aeroWind < fighter.template.aeroWindMax && distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE) {
+        performSweep(fighter, opponent, false);
+        fighter.attackClock = fighter.template.attackCooldown;
       }
     } else if (fighter.template.id === "07") {
       const searchRange = getAttackRangeCells(fighter) * CELL_SIZE;
@@ -6456,7 +6834,8 @@
     const rangeCells = getAttackRangeCells(fighter);
     const range = rangeCells * CELL_SIZE;
     const damage = overclocked ? fighter.template.overclockDamage : empowered ? 80 : fighter.template.attackDamage;
-    if (fighter.template.id === "kakarot-test") {
+    const isAero = fighter.template.id === "08";
+    if (fighter.template.id === "kakarot-test" || isAero) {
       fighter.weaponSwingMax = overclocked ? 0.46 : 0.42;
       fighter.weaponSwing = fighter.weaponSwingMax;
     }
@@ -6470,13 +6849,22 @@
       empowered: empowered || overclocked
     });
     const strikeDamage = overclocked || empowered ? applySpecialDamage : applyDamage;
-    const dealt = strikeDamage(opponent, damage, fighter, overclocked ? "共鸣横扫" : empowered ? "回旋斩" : "横扫", {
-      color: fighter.template.color
-    }) || 0;
-    if (fighter.template.id === "kakarot-test" && dealt > 0 && state === "playing") {
+    const targets = isAero
+      ? getDamageableUnits().filter((target) => target.side !== fighter.side && target.hp > 0 && distance(fighter, target) <= range)
+      : [opponent];
+    let totalDamage = 0;
+    for (const target of targets) {
+      if (state !== "playing") break;
+      totalDamage += strikeDamage(target, damage, fighter, overclocked ? "共鸣横扫" : empowered ? "回旋斩" : "横扫", {
+        color: fighter.template.color,
+        melee: true
+      }) || 0;
+      spawnBurst(target.x, target.y, fighter.template.color, empowered ? 30 : 16, empowered ? 280 : 180);
+    }
+    if (fighter.template.id === "kakarot-test" && totalDamage > 0 && state === "playing") {
       gainKakarotSpecialEnergy(fighter, opponent);
     }
-    spawnBurst(opponent.x, opponent.y, fighter.template.color, empowered ? 30 : 16, empowered ? 280 : 180);
+    if (isAero && totalDamage > 0) addAeroWind(fighter, fighter.template.aeroWindOnHit);
     addLog(`${fighter.template.name} ${overclocked ? "共鸣解放" : empowered ? "强化" : ""}横扫半径 ${rangeCells} 格区域！`, "ability");
     playSound("sword");
   }
@@ -6585,19 +6973,12 @@
     if (fighter.template.ultimateType === "autoThreshold") return;
     if (fighter.stunned > 0 || fighter.freeze > 0 || fighter.vortexLockTimer > 0) return;
     const canAutocast = mode !== "play" || fighter.side !== 0;
+    if (fighter.conductive) {
+      if (canAutocast && canConductiveUseUltimate(fighter)) useAbility(fighter, opponent);
+      return;
+    }
     if (fighter.template.ultimateType === "aeroUnbound") {
-      if (
-        fighter.aeroUltimateUnlocked
-        && fighter.aeroUltimateCooldown <= 0
-        && fighter.aeroUltimateTimer <= 0
-        && fighter.aeroPreLiftTimer <= 0
-        && fighter.aeroAirTimer <= 0
-        && fighter.aeroDashTimer <= 0
-        && !fighter.aeroSequenceActive
-        && !fighter.voiceUltimatePending
-      ) {
-        useAbility(fighter, opponent);
-      }
+      if (canAutocast && canAeroUseUltimate(fighter)) useAbility(fighter, opponent);
       return;
     }
     if (fighter.template.ultimateType === "jinhsiDragon") {
@@ -6632,8 +7013,26 @@
     }
   }
 
+  function canAeroUseUltimate(fighter) {
+    return fighter.hp > 0
+      && fighter.energy >= 100
+      && fighter.abilityCooldown <= 0
+      && fighter.aeroUltimateTimer <= 0
+      && fighter.aeroAirTimer <= 0
+      && fighter.stunned <= 0
+      && fighter.freeze <= 0
+      && fighter.vortexLockTimer <= 0
+      && !fighter.knockback;
+  }
+
   function useAbility(fighter = player, opponent = enemy, options = {}) {
     if (!fighter || !opponent || state !== "playing") return;
+    if (fighter.conductive) {
+      if (!canConductiveUseUltimate(fighter)) return;
+      fighter.abilityCooldown = fighter.template.ultimateCooldown;
+      beginConductiveUltimate(fighter);
+      return;
+    }
     if (fighter.voiceUltimatePending) return;
     if (fighter.charge || fighter.knockback) return;
     if (fighter.template.transformThreshold) return;
@@ -6644,19 +7043,10 @@
     if (isVerinaUltimate && fighter.hp < 160) return;
     if (isJinhsiUltimate) {
       if (!fighter.jinhsiUltimateUnlocked || fighter.jinhsiUltimatePhase !== "idle") return;
-    } else if (isAeroUltimate) {
-      if (
-        !fighter.aeroUltimateUnlocked
-        || fighter.aeroUltimateTimer > 0
-        || fighter.aeroPreLiftTimer > 0
-        || fighter.aeroAirTimer > 0
-        || fighter.aeroDashTimer > 0
-        || fighter.aeroSequenceActive
-      ) return;
     } else if (!isVerinaUltimate && fighter.energy < 100) {
       return;
     }
-    if (isAeroUltimate ? fighter.aeroUltimateCooldown > 0 : fighter.abilityCooldown > 0) return;
+    if (fighter.abilityCooldown > 0 || (isAeroUltimate && !canAeroUseUltimate(fighter))) return;
     if (fighter.template.ultimateType === "abyssBurst" && !fighter.abyssForm) return;
     if (
       fighter.template.ultimateType === "abyssBurst"
@@ -6684,7 +7074,7 @@
         return;
       }
     }
-    if (!isAeroUltimate) fighter.energy = 0;
+    fighter.energy = 0;
     fighter.fullEnergyTime = 0;
     fighter.abilityCooldown = fighter.template.ultimateCooldown ?? fighter.template.cooldown;
     fighter.flash = 1;
@@ -6695,8 +7085,6 @@
         ? `${fighter.template.name} 释放已解锁的「${fighter.template.ability}」！`
         : isVerinaUltimate
           ? `${fighter.template.name} 场上有藤，触发「${fighter.template.ability}」！`
-          : isAeroUltimate
-            ? `${fighter.template.name} 触发「${fighter.template.ability}」！`
         : `${fighter.template.name} 共鸣能量已满，触发「${fighter.template.ability}」！`,
       "ability"
     );
@@ -6704,8 +7092,6 @@
       ? `${fighter.template.name}释放${fighter.template.ability}`
       : isVerinaUltimate
         ? `${fighter.template.name}场上有藤，触发${fighter.template.ability}`
-        : isAeroUltimate
-          ? `${fighter.template.name}触发${fighter.template.ability}`
       : `${fighter.template.name}共鸣能量已满，触发${fighter.template.ability}`;
 
     if (fighter.template.ultimateType === "windCharge") {
@@ -6742,14 +7128,11 @@
       startCantarellaMirage(fighter);
     } else if (isAeroUltimate) {
       fighter.aeroUltimateTimer = fighter.template.ultimateDuration;
-      fighter.aeroUltimateCooldown = fighter.template.ultimateCooldown;
-      fighter.aeroSwordClock = 0;
-      fighter.aeroEnhanced = true;
-      fighter.aeroUltimateUnlocked = false;
-      fighter.aeroWindGainLocked = true;
-      fighter.aeroUltimateReadyTimer = 0;
-      fighter.attackClock = Math.min(fighter.attackClock, 0.2);
-      refreshAeroAccess(fighter);
+      fighter.aeroSwordClock = fighter.template.aeroSwordInterval;
+      fighter.aeroOrbitDirection = Math.random() < 0.5 ? -1 : 1;
+      fighter.aeroOrbitWallContact = false;
+      fighter.aeroRetreatClock = 0;
+      fighter.aeroDashTimer = 0;
       effects.push({
         type: "aeroUltimateBurst",
         fighter,
@@ -6855,6 +7238,11 @@
       target.flash = Math.max(target.flash, 0.42);
       return 0;
     }
+    const conductiveBonus = options.conductiveStrike && source?.conductive?.phase === "surge";
+    if (conductiveBonus) finalAmount += source.template.conductive.surgeDamage;
+    if (options.cantarellaAttack && target.cantarellaPoisonTimer > 0) {
+      finalAmount *= source.template.poisonDamageMultiplier;
+    }
     if (target.cantarellaDreamed && !options.ignoreDream) {
       const dreamBonus = source?.template.mirageBonusDamage || 170;
       finalAmount += dreamBonus;
@@ -6918,6 +7306,11 @@
       : Math.max(0, target.hp - finalAmount);
     // Shield absorption still counts as a landed hit for energy and on-hit effects.
     const totalEffectiveDamage = absorbed + finalAmount;
+    if (conductiveBonus && totalEffectiveDamage > 0) {
+      spawnConductiveLightning(target);
+      restoreConductiveHeading(source);
+    }
+    if (totalEffectiveDamage > 0) rewindConductiveHit(target, source);
     target.flash = options.noText ? Math.max(target.flash, 0.16) : (finalAmount > 0 ? 1 : 0.45);
     if (target.template.id === "02" && !target.abyssForm && !options.selfDrain) gainAbyssEnergy(target, 20);
     if (source?.template.id === "04" && options.brantAttack) {
@@ -7308,28 +7701,17 @@
     for (let i = projectiles.length - 1; i >= 0; i -= 1) {
       const projectile = projectiles[i];
       if (!projectile.independent && projectile.owner?.vortexLockTimer > 0) continue;
-      const previousX = projectile.x;
-      const previousY = projectile.y;
+      if (projectile.kind === "conductiveArrow") {
+        if (updateConductiveArrow(projectile, dt)) projectiles.splice(i, 1);
+        continue;
+      }
       if (projectile.kind === "aeroSword") {
         updateAeroSwordProjectile(projectile, dt);
-        const barrier = heartBarrierBlockingProjectile(previousX, previousY, projectile.x, projectile.y, projectile.r);
-        if (barrier) {
-          effects.push({
-            type: "ring",
-            x: barrier.x,
-            y: projectile.y,
-            radius: projectile.r + 5,
-            growth: 260,
-            life: 0.3,
-            maxLife: 0.3,
-            color: "#ff899e",
-            width: 4
-          });
-          projectile.dead = true;
-        }
         if (projectile.dead) projectiles.splice(i, 1);
         continue;
       }
+      const previousX = projectile.x;
+      const previousY = projectile.y;
       if (projectile.kind === "heartWheel") {
         projectile.delay = Math.max(0, projectile.delay - dt);
         projectile.life -= dt;
@@ -7498,6 +7880,7 @@
     }
     for (let i = effects.length - 1; i >= 0; i -= 1) {
       const effect = effects[i];
+      if (effect.type === "aeroSwordTrail" && effect.active) continue;
       effect.life -= dt;
       if (effect.type === "ring") effect.radius += effect.growth * dt;
       if (effect.type === "fire") effect.radius += 36 * dt;
@@ -7619,15 +8002,8 @@
         else if (fighter.template.id === "07" && fighter.jinhsiUltimatePhase !== "idle") status = "腾空";
         else if (fighter.template.id === "07" && fighter.jinhsiUltimateUnlocked) status = "龙吟";
         else if (fighter.template.id === "07" && fighter.jinhsiEmpowered) status = "强化";
-        else if (fighter.template.id === "08" && fighter.aeroUltimateTimer > 0) status = `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`;
-        else if (fighter.template.id === "08" && fighter.aeroSequenceActive) status = "双刃斩击";
-        else if (fighter.template.id === "08" && fighter.aeroBasicUnlockTimer > 0) status = `技能解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
-        else if (fighter.template.id === "08" && fighter.aeroUltimateUnlocked) {
-          status = fighter.aeroUltimateCooldown > 0
-            ? `解放冷却 ${fighter.aeroUltimateCooldown.toFixed(1)}s`
-            : "共鸣解放就绪";
-        }
-        else if (fighter.template.id === "08") status = `风息 ${Math.round(fighter.aeroWind)}/100`;
+        else if (fighter.template.id === "08") status = getAeroStatus(fighter) || `风息 ${Math.round(fighter.aeroWind)}/100`;
+        else if (fighter.conductive) status = getConductiveStatus(fighter);
         else if (fighter.template.id === "09" && fighter.heartBarrierPending) status = `分界 ${fighter.heartBarrierWindup.toFixed(1)}s`;
         else if (fighter.template.id === "09" && heartBarriers.some((item) => item.owner === fighter)) status = "心界屏障";
         else if (fighter.template.id === "09") status = `随机技能 ${fighter.skillClock.toFixed(1)}s`;
@@ -7790,14 +8166,8 @@
       || player.cantarellaJellyDeaths >= player.template.jellyDeathsToUnlock;
     const jinhsiUnlocked = player.template.ultimateType !== "jinhsiDragon"
       || (player.jinhsiUltimateUnlocked && player.jinhsiUltimatePhase === "idle");
-    const aeroUnlocked = player.template.ultimateType !== "aeroUnbound"
-      || (
-        player.aeroUltimateUnlocked
-        && player.aeroUltimateTimer <= 0
-        && player.aeroAirTimer <= 0
-        && player.aeroDashTimer <= 0
-        && !player.aeroSequenceActive
-      );
+    const aeroUnlocked = player.template.ultimateType !== "aeroUnbound" || canAeroUseUltimate(player);
+    const conductiveUnlocked = !player.conductive || canConductiveUseUltimate(player);
     const verinaHealthReady = player.template.ultimateType !== "verinaBloom" || player.hp >= 160;
     const ultimateAvailable = !player.template.transformThreshold
       && player.template.ultimateType !== "autoThreshold"
@@ -7809,17 +8179,16 @@
       && cantarellaUnlocked
       && jinhsiUnlocked
       && aeroUnlocked
+      && conductiveUnlocked
       && !(player.template.ultimateType === "overclock" && player.overclock > 0);
-    const energyReady = player.template.ultimateType === "jinhsiDragon"
+    const energyReady = player.conductive
+      ? conductiveUnlocked
+      : player.template.ultimateType === "jinhsiDragon"
       ? jinhsiUnlocked
       : player.template.ultimateType === "verinaBloom"
         ? verinaUnlocked
-        : player.template.ultimateType === "aeroUnbound"
-          ? aeroUnlocked
         : energy >= 100;
-    const playerCooldownReady = player.template.ultimateType === "aeroUnbound"
-      ? player.aeroUltimateCooldown <= 0
-      : player.abilityCooldown <= 0;
+    const playerCooldownReady = player.abilityCooldown <= 0;
     const ready = mode === "play" && energyReady && playerCooldownReady && ultimateAvailable && state === "playing" && !manualPaused;
     dom.abilityButton.disabled = !ready;
     dom.abilityButton.classList.toggle("is-ready", ready);
@@ -7872,20 +8241,10 @@
         dom.battleStatus.textContent = `强化普攻 · ${player.jinhsiAttackCount}/4`;
       } else if (player.template.id === "07") {
         dom.battleStatus.textContent = `初始普攻 · ${player.jinhsiAttackCount}/4`;
-      } else if (player.template.id === "08" && player.aeroUltimateTimer > 0) {
-        dom.battleStatus.textContent = `飘渺无相 ${player.aeroUltimateTimer.toFixed(1)}s · 飞剑追击`;
-      } else if (player.template.id === "08" && player.aeroAirTimer > 0) {
-        dom.battleStatus.textContent = "双刃凌空 · 免疫伤害";
-      } else if (player.template.id === "08" && player.aeroDashTimer > 0) {
-        dom.battleStatus.textContent = "风迹突刺 · 20 格/秒";
-      } else if (player.template.id === "08" && player.aeroBasicUnlockTimer > 0) {
-        dom.battleStatus.textContent = `风息充盈 · ${player.aeroBasicUnlockTimer.toFixed(1)}s 后解锁技能`;
-      } else if (player.template.id === "08" && player.aeroUltimateUnlocked) {
-        dom.battleStatus.textContent = player.aeroUltimateCooldown > 0
-          ? `两次风息斩击完成 · 共鸣解放冷却 ${player.aeroUltimateCooldown.toFixed(1)}s`
-          : "两次风息斩击完成 · 共鸣解放就绪";
       } else if (player.template.id === "08") {
-        dom.battleStatus.textContent = `风息 ${Math.round(player.aeroWind)}/100`;
+        dom.battleStatus.textContent = getAeroStatus(player) || `风息 ${Math.round(player.aeroWind)}/100`;
+      } else if (player.conductive) {
+        dom.battleStatus.textContent = getConductiveStatus(player);
       } else if (player.template.id === "09" && player.heartBarrierPending) {
         dom.battleStatus.textContent = `心界分界蓄势 ${player.heartBarrierWindup.toFixed(1)}s`;
       } else if (player.template.id === "09" && heartBarriers.some((item) => item.owner === player)) {
@@ -7933,6 +8292,31 @@
     gauge.setAttribute("aria-label", knifeCount > 0 ? `永久时序飞刃 ${knifeCount} 柄` : `特殊能量 ${filled}/${maxValue}`);
   }
 
+  function getConductiveStatus(fighter) {
+    const combat = fighter.conductive;
+    if (combat.phase === "surge") return `千声翻涌 ${combat.timer.toFixed(1)}s`;
+    if (combat.phase === "loading") return `雷箭装填 ${combat.timer.toFixed(1)}s`;
+    if (combat.phase === "finishWindup" || combat.phase === "finishGap") return "千声终斩";
+    if (combat.hook?.stage === "pull") return "钩锁牵引";
+    if (combat.hook?.stage === "attached") return combat.hook.target ? "钩锁附着" : "钩锁锚定";
+    if (combat.hook) return "钩爪飞行";
+    if (canConductiveUseUltimate(fighter)) return "千声翻涌就绪";
+    if (combat.hookCooldown > 0) return `钩锁冷却 ${combat.hookCooldown.toFixed(1)}s`;
+    return "激战中";
+  }
+
+  function getAeroStatus(fighter) {
+    if (fighter.aeroUltimateTimer > 0) {
+      const movement = fighter.aeroDashTimer > 0 ? "后撤" : "环绕";
+      return `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s · ${movement}`;
+    }
+    if (fighter.aeroAirTimer > 0) return "双刃凌空";
+    if (fighter.aeroDashTimer > 0) return "风迹突进";
+    if (fighter.aeroWindUnlockTimer > 0) return `技能解锁 ${fighter.aeroWindUnlockTimer.toFixed(1)}s`;
+    if (fighter.abilityCooldown > 0) return `解放冷却 ${fighter.abilityCooldown.toFixed(1)}s`;
+    return canAeroUseUltimate(fighter) ? "共鸣解放就绪" : "";
+  }
+
   function updateAeroGauge(fighter, gauge, text) {
     const wind = Math.round(clamp(fighter.aeroWind, 0, fighter.template.aeroWindMax));
     const filled = Math.ceil(wind / 50);
@@ -7942,8 +8326,8 @@
     });
     if (fighter.aeroUltimateTimer > 0) {
       text.textContent = `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`;
-    } else if (fighter.aeroBasicUnlockTimer > 0) {
-      text.textContent = `${wind}/100 · ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`;
+    } else if (fighter.aeroWindUnlockTimer > 0) {
+      text.textContent = `${wind}/100 · ${fighter.aeroWindUnlockTimer.toFixed(1)}s`;
     } else {
       text.textContent = `${wind}/100`;
     }
@@ -8050,6 +8434,7 @@
     drawSummons();
     drawCantarellaJellies();
     if (mode !== "multi") drawContactLink();
+    drawConductiveHooks();
     drawProjectiles();
     drawCantarellaUmbrellas();
     drawEffects(true);
@@ -8128,18 +8513,8 @@
       return `龙刃层数 ${Math.round(fighter.specialEnergy)}/4 · ${modeText} ${fighter.jinhsiAttackCount}/4${ultimate}`;
     }
     if (id === "08") {
-      const modeText = fighter.aeroUltimateTimer > 0
-        ? `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s`
-        : fighter.aeroSequenceActive
-          ? "双刃斩击"
-        : fighter.aeroBasicUnlockTimer > 0
-            ? `技能解锁 ${fighter.aeroBasicUnlockTimer.toFixed(1)}s`
-            : fighter.aeroUltimateUnlocked
-              ? fighter.aeroUltimateCooldown > 0
-                ? `解放冷却 ${fighter.aeroUltimateCooldown.toFixed(1)}s`
-                : "共鸣解放就绪"
-              : "风息积攒";
-      return `风息 ${Math.round(fighter.aeroWind)}/100 · ${modeText}`;
+      const status = getAeroStatus(fighter);
+      return `风息 ${Math.round(fighter.aeroWind)}/100${status ? ` · ${status}` : ""}`;
     }
     if (id === "09") {
       const barrier = heartBarriers.find((item) => item.owner === fighter);
@@ -8170,9 +8545,11 @@
     if (fighter.stunned > 0) states.push("眩晕");
     if (fighter.freeze > 0) states.push("冻结");
     if (fighter.cantarellaSlowTimer > 0) states.push("减速");
+    if (fighter.cantarellaPoisonTimer > 0) states.push("中毒");
+    if (fighter.conductive && fighter.conductive.phase !== "normal") states.push(getConductiveStatus(fighter));
     if (fighter.aeroUltimateTimer > 0) states.push("飘渺无相");
     if (fighter.aeroAirTimer > 0) states.push("升空免疫");
-    if (fighter.aeroDashTimer > 0) states.push("风迹突刺");
+    if (fighter.aeroDashTimer > 0) states.push(fighter.aeroUltimateTimer > 0 ? "后撤" : "风迹突进");
     if (fighter.heartBarrierPending) states.push("分界蓄势");
     if (heartBarriers.some((item) => item.owner === fighter)) states.push("心界屏障");
     if (fighter.heartLanternSlowTimer > 0) states.push("赤灯减速");
@@ -9675,6 +10052,7 @@
       ctx.font = "700 6px 'Trebuchet MS'";
       ctx.textAlign = "center";
       ctx.fillText("水母", 0, r + 18);
+      drawCantarellaPoison(unit, r, visualTime + unit.phase);
       ctx.restore();
     });
   }
@@ -10248,6 +10626,35 @@
     });
   }
 
+  function drawCantarellaPoison(unit, radius, t) {
+    if (unit.cantarellaPoisonTimer <= 0) return;
+    ctx.save();
+    const fade = Math.min(1, unit.cantarellaPoisonTimer / 0.35);
+    const opacity = ctx.globalAlpha;
+    ctx.lineWidth = 1;
+    ctx.shadowColor = "#a253f2";
+    ctx.shadowBlur = 5;
+    for (let i = 0; i < 6; i += 1) {
+      const rise = (t * 0.65 + i / 6) % 1;
+      const side = i % 2 === 0 ? -1 : 1;
+      const x = side * (radius + 5 + Math.sin(rise * Math.PI) * (3 + i % 3 * 2));
+      const y = radius * (0.85 - rise * 2);
+      const size = 2.3 + i % 3 + rise;
+      ctx.globalAlpha = opacity * fade * Math.sin(rise * Math.PI);
+      ctx.fillStyle = "rgba(127, 47, 195, 0.56)";
+      ctx.strokeStyle = "#d892ff";
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#f6d5ff";
+      ctx.beginPath();
+      ctx.arc(x - size * 0.3, y - size * 0.35, size * 0.25, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   function drawTrainingDummy(fighter, t) {
     const radius = fighter.r;
     const pulse = 1 + Math.sin(t * 2.8) * 0.025;
@@ -10355,6 +10762,7 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText("无限生命木桩", 0, radius + 20);
+    drawCantarellaPoison(fighter, radius, t);
     ctx.restore();
   }
 
@@ -10518,6 +10926,8 @@
     } else if (fighter.template.id === "08") {
       drawAeroUltimateAura(fighter, radius, t);
       drawAeroWeapon(fighter, radius, t);
+    } else if (fighter.conductive) {
+      drawConductiveWeapon(fighter, radius, t);
     }
 
     if (fighter.overclock > 0) {
@@ -10584,6 +10994,8 @@
       ctx.fillText("迷梦", 0, -radius - 13);
       ctx.restore();
     }
+
+    drawCantarellaPoison(fighter, radius, t);
 
     if (fighter.paralyzed > 0) {
       drawElectricAura(radius + 3, t * 1.25, "#d0bcff", 0.8);
@@ -10952,6 +11364,11 @@
       angle = aimAngle - Math.PI * 0.9 + localSwing * Math.PI * 1.72;
       offsetX = Math.cos(aimAngle + Math.PI / 2) * radius * 0.34;
       offsetY = Math.sin(aimAngle + Math.PI / 2) * radius * 0.34;
+    } else if (fighter.weaponSwing > 0) {
+      const swing = aimAngle + (1 - fighter.weaponSwing / fighter.weaponSwingMax) * Math.PI * 2;
+      angle = swing + Math.PI / 2;
+      offsetX = Math.cos(swing) * radius * 1.3;
+      offsetY = Math.sin(swing) * radius * 1.3;
     } else if (fighter.aeroDashTimer > 0) {
       angle = fighter.aeroDashAngle - Math.PI / 2;
       offsetX = Math.cos(fighter.aeroDashAngle) * radius * 0.45;
@@ -11245,10 +11662,129 @@
     ctx.restore();
   }
 
+  function drawConductiveHooks() {
+    for (const fighter of getActiveFighters()) {
+      const hook = fighter.conductive?.hook;
+      if (!hook || fighter.hp <= 0) continue;
+      const target = hook.target?.hp > 0 ? hook.target : hook;
+      const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+      const distanceToHook = distance(fighter, target);
+      ctx.save();
+      ctx.translate(fighter.x, fighter.y);
+      ctx.rotate(angle);
+
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#211435";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(distanceToHook, 0);
+      ctx.stroke();
+
+      ctx.strokeStyle = hook.empowered ? "#d199ff" : "#a275df";
+      ctx.lineWidth = hook.empowered ? 2.6 : 1.6;
+      ctx.shadowColor = "#a355ff";
+      ctx.shadowBlur = hook.empowered ? 12 : 5;
+      ctx.setLineDash([9, 4]);
+      ctx.lineDashOffset = -visualTime * 55;
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.translate(distanceToHook, 0);
+      ctx.strokeStyle = "#eed5ff";
+      ctx.lineWidth = 2.3;
+      ctx.beginPath();
+      ctx.moveTo(-9, 0);
+      ctx.lineTo(1, 0);
+      ctx.moveTo(-2, 0);
+      ctx.lineTo(3, -6);
+      ctx.lineTo(9, -4);
+      ctx.moveTo(-2, 0);
+      ctx.lineTo(3, 6);
+      ctx.lineTo(9, 4);
+      ctx.stroke();
+      if (hook.stage !== "flight") {
+        ctx.strokeStyle = "rgba(197, 137, 255, 0.65)";
+        ctx.beginPath();
+        ctx.arc(0, 0, 12 + Math.sin(visualTime * 8) * 2, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  }
+
+  function drawConductiveWeapon(fighter, radius, t) {
+    const combat = fighter.conductive;
+    if (combat.phase === "surge") {
+      drawAbyssAura(radius, t);
+      drawAbyssScythe(fighter, radius, t);
+      return;
+    }
+
+    const shield = combat.weapon === "shield";
+    const weapon = weaponPortraits.get(shield ? "10" : "10:ranged");
+    if (!weapon?.complete || !weapon.naturalWidth) return;
+    const size = shield ? radius * 1.9 : radius * 2.4;
+    const width = size * weapon.naturalWidth / weapon.naturalHeight;
+    ctx.save();
+    ctx.rotate(combat.aim);
+    ctx.translate(radius * (shield ? 1.12 : 1.45), 0);
+    ctx.shadowColor = "#b36bff";
+    ctx.shadowBlur = combat.phase === "loading" ? 21 : 6;
+    ctx.drawImage(weapon, -width / 2, -size / 2, width, size);
+    if (combat.phase === "loading") {
+      ctx.fillStyle = "#f4d8ff";
+      ctx.shadowBlur = 18;
+      const progress = 1 - combat.timer / fighter.template.conductive.ultimateLoad;
+      ctx.beginPath();
+      ctx.arc(width * 0.5, 0, 3 + 10 * progress, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawConductiveArrow(arrow) {
+    const angle = Math.atan2(arrow.vy, arrow.vx);
+    ctx.save();
+    ctx.translate(arrow.x, arrow.y);
+    ctx.rotate(angle);
+    ctx.strokeStyle = arrow.color;
+    ctx.shadowColor = arrow.color;
+    ctx.shadowBlur = arrow.empowered ? 20 : 8;
+    ctx.lineWidth = arrow.empowered ? 5 : 2;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    if (arrow.empowered) {
+      const length = Math.max(70, Math.hypot(arrow.x - arrow.previousX, arrow.y - arrow.previousY) + 25);
+      ctx.moveTo(-length, 0);
+      ctx.lineTo(-length * 0.68, -8);
+      ctx.lineTo(-length * 0.46, 7);
+      ctx.lineTo(-length * 0.23, -4);
+    } else {
+      ctx.moveTo(-21, 0);
+    }
+    ctx.lineTo(4, 0);
+    ctx.stroke();
+
+    ctx.fillStyle = "#f3deff";
+    ctx.beginPath();
+    ctx.moveTo(10, 0);
+    ctx.lineTo(-3, -4);
+    ctx.lineTo(0, 0);
+    ctx.lineTo(-3, 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
   function drawProjectiles() {
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
     projectiles.forEach((projectile) => {
+      if (projectile.kind === "conductiveArrow") {
+        drawConductiveArrow(projectile);
+        return;
+      }
       if (projectile.kind === "heartWheel") {
         const rotation = visualTime * 7.5 + projectile.phase;
         const summonScale = projectile.delay > 0
@@ -11328,7 +11864,7 @@
   function drawEffects(front) {
     effects.forEach((effect) => {
       const alpha = clamp(effect.life / effect.maxLife, 0, 1);
-      const isFront = ["impact", "lightning", "deathSentenceLightning", "shield", "brantAnchorImpact", "jellySlash", "dreamBreak", "ankoFireExplosion", "blackFlameShockwave"].includes(effect.type);
+      const isFront = ["impact", "lightning", "deathSentenceLightning", "shield", "brantAnchorImpact", "jellySlash", "dreamBreak", "ankoFireExplosion", "blackFlameShockwave", "conductiveBolt"].includes(effect.type);
       if (isFront !== front) return;
       ctx.save();
       ctx.globalAlpha = alpha;
@@ -11735,13 +12271,45 @@
           );
           ctx.stroke();
         }
+      } else if (effect.type === "conductiveImpact") {
+        const progress = 1 - alpha;
+        const radius = effect.radius * (0.3 + progress * 0.7);
+        ctx.globalCompositeOperation = "lighter";
+        const flare = ctx.createRadialGradient(effect.x, effect.y, 0, effect.x, effect.y, radius);
+        flare.addColorStop(0, colorWithAlpha("#eee0ff", alpha * 0.48));
+        flare.addColorStop(0.68, colorWithAlpha(effect.color, alpha * 0.20));
+        flare.addColorStop(1, colorWithAlpha(effect.color, 0));
+        ctx.fillStyle = flare;
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.85);
+        ctx.lineWidth = 2 + alpha * 4;
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else if (effect.type === "conductiveBolt") {
+        ctx.globalCompositeOperation = "lighter";
+        ctx.shadowColor = effect.color;
+        ctx.shadowBlur = 20;
+        ctx.strokeStyle = effect.color;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        effect.points.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.stroke();
+        ctx.strokeStyle = "#f4deff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       } else if (effect.type === "timeFlash") {
         const expansion = (1 - alpha) * ARENA_SIZE * 0.72;
         ctx.globalCompositeOperation = "screen";
         ctx.fillStyle = colorWithAlpha(effect.color, alpha * 0.26);
         ctx.fillRect(0, 0, ARENA_SIZE, ARENA_SIZE);
         const flare = ctx.createRadialGradient(effect.x, effect.y, 1, effect.x, effect.y, 170 + expansion);
-        flare.addColorStop(0, colorWithAlpha("#fff7c2", alpha * 0.92));
+        flare.addColorStop(0, colorWithAlpha(effect.color === "#ffd76b" ? "#fff7c2" : "#f0dcff", alpha * 0.92));
         flare.addColorStop(0.2, colorWithAlpha(effect.color, alpha * 0.48));
         flare.addColorStop(1, colorWithAlpha(effect.color, 0));
         ctx.fillStyle = flare;
@@ -11756,6 +12324,7 @@
         const progress = 1 - alpha;
         const slashImage = aeroEffectPortraits.get("slash");
         const sweep = Math.sin(progress * Math.PI);
+        if (effect.fighter.conductive) ctx.filter = "hue-rotate(120deg)";
         ctx.translate(effect.x ?? ARENA_SIZE / 2, effect.y ?? ARENA_SIZE / 2);
         ctx.rotate(effect.angle);
         ctx.scale(1, effect.mirror ? -1 : 1);
@@ -11790,6 +12359,7 @@
           ctx.drawImage(slashImage, -imageWidth / 2, -imageHeight / 2, imageWidth, imageHeight);
         }
       } else if (effect.type === "aeroHit") {
+        if (effect.color !== "#72efb5") ctx.filter = "hue-rotate(120deg)";
         const progress = 1 - alpha;
         const slashImage = aeroEffectPortraits.get("slash");
         ctx.translate(effect.x, effect.y);
@@ -11846,7 +12416,8 @@
         ctx.globalCompositeOperation = "lighter";
         ctx.shadowColor = effect.color;
         ctx.shadowBlur = 22;
-        const trail = ctx.createLinearGradient(-190, 0, 20, 0);
+        const trailLength = effect.length * (0.5 + progress * 0.26);
+        const trail = ctx.createLinearGradient(-trailLength, 0, 20, 0);
         trail.addColorStop(0, "rgba(114,239,181,0)");
         trail.addColorStop(0.62, colorWithAlpha(effect.color, alpha * 0.42));
         trail.addColorStop(1, colorWithAlpha("#f0fff8", alpha * 0.9));
@@ -11854,7 +12425,7 @@
         ctx.lineWidth = 18 * alpha + 3;
         ctx.lineCap = "round";
         ctx.beginPath();
-        ctx.moveTo(-190 - progress * 40, 0);
+        ctx.moveTo(-trailLength, 0);
         ctx.lineTo(18, 0);
         ctx.stroke();
         ctx.fillStyle = colorWithAlpha("#dcfff0", alpha * 0.76);
@@ -11865,34 +12436,6 @@
         ctx.lineTo(10, 12);
         ctx.closePath();
         ctx.fill();
-      } else if (effect.type === "aeroLandingImpact") {
-        const impact = aeroEffectPortraits.get("impact");
-        const progress = 1 - alpha;
-        const diameter = effect.radius * 2.1 * (0.82 + progress * 0.18);
-        ctx.translate(effect.x, effect.y);
-        ctx.rotate(visualTime * 0.28);
-        ctx.globalCompositeOperation = "screen";
-        ctx.globalAlpha = alpha * 0.9;
-        if (impact?.complete && impact.naturalWidth > 0) {
-          ctx.shadowColor = "#8fffd1";
-          ctx.shadowBlur = 14;
-          ctx.drawImage(impact, -diameter / 2, -diameter / 2, diameter, diameter);
-        } else {
-          const fallback = ctx.createRadialGradient(0, 0, 3, 0, 0, diameter / 2);
-          fallback.addColorStop(0, colorWithAlpha("#effff8", alpha * 0.75));
-          fallback.addColorStop(0.46, colorWithAlpha("#72efb5", alpha * 0.32));
-          fallback.addColorStop(1, colorWithAlpha("#2b8868", 0));
-          ctx.fillStyle = fallback;
-          ctx.beginPath();
-          ctx.arc(0, 0, diameter / 2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = colorWithAlpha("#caffea", alpha * 0.62);
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(0, 0, effect.radius * (0.74 + progress * 0.22), 0, Math.PI * 2);
-        ctx.stroke();
       } else if (effect.type === "aeroUltimateBurst") {
         if (!effect.fighter) return;
         const progress = 1 - alpha;
@@ -13091,6 +13634,14 @@
 
   function triggerShowcaseTrainingBasic() {
     if (!showcaseTrainingActive || state !== "playing" || !player || !enemy) return;
+    if (player.aeroUltimateTimer > 0) {
+      dom.showcaseTrainingHint.textContent = "飘渺无相期间锁定普攻。";
+      return;
+    }
+    if (player.conductive && !["normal", "surge"].includes(player.conductive.phase)) {
+      dom.showcaseTrainingHint.textContent = "千声翻涌的起手和终斩期间锁定普攻。";
+      return;
+    }
     showcaseTrainingAutoStep = Math.max(showcaseTrainingAutoStep, 1);
     showcaseTrainingClock = Math.max(showcaseTrainingClock, 1.2);
     player.attackClock = 0;
@@ -13109,7 +13660,7 @@
       updateShowcaseTrainingReadout(true);
       return;
     }
-    const meleeLike = ["melee", "thrust", "hybrid", "jinhsiSlash", "cantarellaUmbrella"].includes(player.template.attackType)
+    const meleeLike = ["melee", "thrust", "hybrid", "jinhsiSlash", "cantarellaUmbrella", "aeroBlade"].includes(player.template.attackType)
       || player.abyssForm;
     if (meleeLike && distance(player, enemy) > Math.max(CELL_SIZE * 1.8, getAttackRangeCells(player) * CELL_SIZE * 0.82)) {
       positionShowcaseTrainingTarget(Math.max(1.65, getAttackRangeCells(player) * 0.78));
@@ -13134,6 +13685,14 @@
 
   function triggerShowcaseTrainingSkill() {
     if (!showcaseTrainingActive || state !== "playing" || !player || !enemy) return;
+    if (player.aeroUltimateTimer > 0) {
+      dom.showcaseTrainingHint.textContent = "飘渺无相期间锁定技能。";
+      return;
+    }
+    if (player.conductive?.phase && player.conductive.phase !== "normal") {
+      dom.showcaseTrainingHint.textContent = "千声翻涌期间锁定普通钩锁。";
+      return;
+    }
     showcaseTrainingAutoStep = Math.max(showcaseTrainingAutoStep, 2);
     showcaseTrainingClock = Math.max(showcaseTrainingClock, 4.6);
     player.stunned = 0;
@@ -13178,7 +13737,7 @@
         description = "船锚能量充满，布兰特进入绳索巡航状态。";
         break;
       case "05":
-        spawnCantarellaJelly(player);
+        summonCantarellaJellies(player);
         launchCantarellaUmbrella(player, enemy);
         description = "召唤水母，同时向木桩丢出旋转雨伞。";
         break;
@@ -13194,17 +13753,20 @@
         break;
       case "08":
         player.aeroWind = player.template.aeroWindMax;
-        player.aeroSequenceActive = false;
-        player.aeroAirTimer = 0;
-        player.aeroPreLiftTimer = 0;
-        player.aeroBasicUnlocked = false;
-        player.aeroSkillUnlocked = true;
+        player.aeroWindUnlockTimer = 0;
+        player.aeroDashTimer = 0;
         beginAeroAerialAttack(player);
         description = "风息充满，漂泊者升空演示两段全场斩击。";
         break;
       case "09":
         triggerHeartSkill(player);
         description = "随机释放一种心阵场地效果：细竹、纵线或赤灯。";
+        break;
+      case "10":
+        if (!player.conductive.hook) {
+          launchConductiveHook(player, Math.atan2(enemy.y - player.y, enemy.x - player.x));
+        }
+        description = "演示钩爪附着、持续电击与牵引落击。";
         break;
       default:
         player.specialEnergy = Math.max(3, player.specialEnergy);
@@ -13216,6 +13778,14 @@
 
   function triggerShowcaseTrainingUltimate() {
     if (!showcaseTrainingActive || state !== "playing" || !player || !enemy) return;
+    if (player.aeroUltimateTimer > 0) {
+      dom.showcaseTrainingHint.textContent = "飘渺无相正在持续。";
+      return;
+    }
+    if (player.conductive?.phase && player.conductive.phase !== "normal") {
+      dom.showcaseTrainingHint.textContent = "千声翻涌正在演示。";
+      return;
+    }
     showcaseTrainingAutoStep = Math.max(showcaseTrainingAutoStep, 3);
     showcaseTrainingClock = Math.max(showcaseTrainingClock, 8.2);
     player.stunned = 0;
@@ -13256,22 +13826,12 @@
         player.jinhsiAirborne = false;
       }
       if (player.template.id === "08") {
-        player.aeroUltimateUnlocked = true;
-        player.aeroUltimateTimer = 0;
-        player.aeroPreLiftTimer = 0;
         player.aeroAirTimer = 0;
-        player.aeroDashTimer = 0;
-        player.aeroSequenceActive = false;
       }
+      if (player.conductive) player.hp = Math.min(player.hp, player.template.ultimateThreshold - 1);
       player.energy = 100;
       player.fullEnergyTime = 1.1;
       useAbility(player, enemy, { voicePlayed: true });
-      if (player.template.id === "08") {
-        player.aeroUltimateTimer = Math.max(player.aeroUltimateTimer, player.template.ultimateDuration);
-        player.aeroEnhanced = true;
-        player.aeroUltimateUnlocked = false;
-        player.aeroSwordClock = Math.min(player.aeroSwordClock, 0.08);
-      }
     }
     dom.showcaseTrainingHint.textContent = description;
     updateShowcaseTrainingReadout(true);
@@ -13305,7 +13865,8 @@
       } else if (showcaseTrainingAutoStep === 2 && showcaseTrainingClock >= 8.2) {
         showcaseTrainingAutoStep = 3;
         triggerShowcaseTrainingUltimate();
-      } else if (showcaseTrainingAutoStep === 3 && showcaseTrainingClock >= 14) {
+      } else if (showcaseTrainingAutoStep === 3 && showcaseTrainingClock >= 14
+        && player.aeroUltimateTimer <= 0 && (!player.conductive || player.conductive.phase === "normal")) {
         showcaseTrainingClock = 0;
         showcaseTrainingAutoStep = 0;
         if (player.hp < player.maxHp * 0.3) player.hp = player.maxHp;
@@ -14123,8 +14684,7 @@
   });
   [
     ["slash", "assets/wanderer-aero-slash.png"],
-    ["dash", "assets/wanderer-aero-dash.png"],
-    ["impact", "assets/wanderer-aero-impact.png"]
+    ["dash", "assets/wanderer-aero-dash.png"]
   ].forEach(([name, source]) => {
     const image = new Image();
     image.src = canvasImageSource(source);
