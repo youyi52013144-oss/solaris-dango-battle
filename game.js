@@ -85,13 +85,13 @@
       fireCraterRadius: 5,
       ability: "羊角觉醒",
       abilityIcon: "♈",
-      abilityDesc: "生命低于 400 时自动长出羊角；敌人进入半径 2 格后召唤黑咩，前摇 0.3 秒，对半径 4 格内所有敌人造成 230 点伤害，冷却 1 秒。",
+      abilityDesc: "生命低于 400 时自动长出羊角；敌人进入半径 2 格后召唤黑咩，前摇 0.2 秒，对半径 4 格内所有敌人造成 230 点伤害，冷却 1 秒。",
       transformThreshold: 400,
       hornedDamage: 230,
       hornedSeekRange: 2,
       hornedHitRange: 4,
       hornedCooldown: 1,
-      blackSlamWindup: 0.3,
+      blackSlamWindup: 0.2,
       blackSlamClock: 0,
       cooldown: 0
     },
@@ -113,9 +113,9 @@
       speed: 8,
       radius: 27,
       stats: { power: 84, speed: 100, hp: 100 },
-      display: { attack: "30", speed: "8.0格/s", hp: "1000" },
+      display: { attack: "20", speed: "8.0格/s", hp: "1000" },
       attackType: "thrust",
-      attackDamage: 30,
+      attackDamage: 20,
       attackCooldown: 1,
       attackRange: 2,
       wandererDamageGrowth: 5,
@@ -202,19 +202,17 @@
       aeroDashSpeed: 30,
       aeroDashDistance: 5,
       aeroSlashDamage: 140,
-      aeroSwordInterval: 1.5,
-      aeroSwordSpeed: 60,
-      aeroSwordDamage: 40,
       aeroOrbitDistance: 7,
-      aeroRetreatRange: 4,
-      aeroRetreatDistance: 4,
-      aeroRetreatCooldown: 3,
+      aeroStrikeInterval: 1.5,
+      aeroStrikeSpeed: 40,
+      aeroStrikeDistance: 14,
+      aeroStrikeDamage: 40,
       ultimateType: "aeroUnbound",
       ultimateDuration: 15,
       ultimateCooldown: 33,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取，每 1.5 秒向最近敌人发射一柄 60 格/秒的穿透飞剑，沿途每个敌人受到 40 点伤害。距最近敌人约 7 格环绕，触边换向；敌人进入 4 格时，以 30 格/秒后撤 4 格，冷却 3 秒。",
+      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取；每 1.5 秒以 40 格/秒向最近敌人突进 14 格，对路径上每个敌人各造成 40 点伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。距最近敌人约 7 格环绕，触边换向。",
       cooldown: 33
     },
     {
@@ -238,13 +236,13 @@
       attackCooldown: 0,
       attackRange: 0,
       startingShield: 0,
-      alternateShield: 300,
+      alternateShield: 400,
       skillCooldown: 8,
       windFieldRadius: 8,
       windFieldDuration: 5,
       windFieldPullSpeed: 6,
       windFieldDamage: 50,
-      windFieldShield: 50,
+      windFieldShield: 60,
       ultimateType: "windCharge",
       ultimateCooldown: 30,
       chargeDuration: 3,
@@ -323,13 +321,13 @@
       brantChestDuration: 30,
       brantChestLimit: 3,
       brantTreasureSpeedMultiplier: 4,
-      brantPickupShield: 55,
+      brantPickupShield: 45,
       brantSpecialMax: 100,
       brantHitEnergy: 5,
       brantPickupEnergy: 25,
       brantAnchorEnergy: 50,
       brantAirborneDuration: 8,
-      brantAirborneDodgeChance: 0.25,
+      brantAirborneDodgeChance: 0.2,
       brantAnchorDamage: 180,
       brantAnchorWindup: 0.4,
       brantSmallRadiusX: 5.5,
@@ -373,8 +371,8 @@
       jellyAttackRange: 2,
       jellyAttackCooldown: 2,
       jellyHealOnDeath: 10,
-      jellySpawnInterval: 4,
-      jellySpawnCount: 2,
+      jellySpawnInterval: 2,
+      jellySpawnCount: 1,
       jellyStartingCount: 3,
       jellyDeathsToUnlock: 3,
       jellyPoisonDuration: 5,
@@ -447,12 +445,12 @@
       dark: "#5d2639",
       symbol: "心",
       image: "assets/xin.png",
-      hp: 1100,
+      hp: 1050,
       power: 1,
       speed: 6,
       radius: 27,
       stats: { power: 72, speed: 75, hp: 100 },
-      display: { attack: "5×6", speed: "6.0格/s", hp: "1100" },
+      display: { attack: "5×6", speed: "6.0格/s", hp: "1050" },
       attackType: "heartWheel",
       attackDamage: 5,
       attackCooldown: 2,
@@ -764,7 +762,7 @@
         "白咩每 3 秒发射火球，命中或触边后造成 30 点伤害，并在半径 5 格的圆形范围爆炸。",
         "爆炸留下半径 5 格的圆形爆炎弹坑，持续 4 秒，每 0.5 秒造成 10 点伤害。",
         "安可生命低于 400 时永久切换为羊角形态。",
-        "羊角形态下，敌人进入半径 2 格索敌范围后召唤黑咩；前摇 0.3 秒，可移动躲避。",
+        "羊角形态下，敌人进入半径 2 格索敌范围后召唤黑咩；前摇 0.2 秒，可移动躲避。",
         "黑咩砸地会对半径 4 格内的所有敌人造成 230 点伤害，冷却 1 秒。",
         "白咩火球、爆炎弹坑与黑咩砸击均属于特殊伤害。"
       ]
@@ -774,7 +772,7 @@
       range: "突刺初始半径 2 格；每轮第一格时序能量使半径 +0.5 格",
       interval: "1 秒",
       mechanics: [
-        "前刺造成 30 点基础伤害，近战命中恢复 20% 共鸣能量。",
+        "前刺造成 20 点基础伤害，近战命中恢复 20% 共鸣能量。",
         "普攻命中积累 1 格时序能量；只有达到第 1 格时永久增加 0.5 格普攻半径与 5 点普攻伤害，第 2、3 格不再增加属性。",
         "达到 2 格时回到 1 秒前的位置，并将生命值恢复为 1 秒前的数值。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
@@ -794,7 +792,7 @@
         "暗涌达到 100 后自动进入恐怖镰刀人形态。",
         "镰刀形态移速提升至 10 格/秒。",
         "镰刀横扫半径 3 格，造成 50 点伤害，冷却 1 秒。",
-        "镰刀形态每秒消耗 10 暗涌；生命高于 200 时每秒额外损失 50 生命，生命降至 200 或以下后停止扣血。",
+        "镰刀形态每秒消耗 10 暗涌，并每秒额外损失 50 生命；生命低于 200 后仍会继续扣血。",
         "触碰地图边缘后进入追击状态，每 1.2 秒重新调整一次行动方向追击敌方单位；命中一次后恢复原来的直线移动方向。",
         "形态内造成伤害时恢复伤害量 50% 的生命值，大招伤害同样生效。",
         "共鸣能量满且处于镰刀形态时，索敌最近敌人；敌人进入半径 5 格后自动释放湮灭万律。",
@@ -803,8 +801,8 @@
       ]
     },
     "08": {
-      role: "近战积攒 / 全场双斩 / 环绕飞剑",
-      range: "普攻半径 2 格；定期突进 5 格；大招环绕距离 7 格",
+      role: "近战积攒 / 全场双斩 / 无相突进",
+      range: "普攻半径 2 格；定期突进 5 格；大招突进 14 格、环绕距离 7 格",
       interval: "普攻 1.2 秒 / 突进 3 秒 / 双斩间隔 1 秒 / 共鸣解放 33 秒",
       mechanics: [
         "生命 1000、移动速度 8 格/秒。",
@@ -814,9 +812,9 @@
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
         "每刀消耗 50 风息并造成 140 点伤害。两刀完成后恢复普攻。",
         "共鸣能量满时可开启飘渺无相，持续 15 秒，冷却 33 秒。期间锁定普攻、技能及风息获取。",
-        "每 1.5 秒向最近敌人发射一柄 60 格/秒的飞剑。飞剑按实际运动轨迹对沿途每个敌人各造成一次 40 点伤害，触边消失后留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
+        "每 1.5 秒以 40 格/秒朝最近敌人突进 14 格，对路径上每个敌人各造成一次 40 点特殊伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
         "围绕最近敌人移动，过远时靠近，过近时远离，目标距离 7 格。触碰边界时切换顺逆时针。",
-        "敌人进入 4 格内时，以 30 格/秒向远离敌人的方向突进 4 格，冷却 3 秒。无相结束后恢复常规的普攻、技能和风息规则。"
+        "无相结束后恢复常规的普攻、技能和风息规则。"
       ]
     },
     "03": {
@@ -829,12 +827,12 @@
         "每 8 秒在脚下生成半径 8 格的圆形风场，持续 5 秒。",
         "风场以 6 格/秒牵引敌人向中心移动，敌人可用自身移速向外对抗。",
         "风场结束时爆炸，对仍处于范围内的敌人造成 50 点特殊伤害。",
-        "爆炸时若鉴心仍站在自己的风场内，获得 50 点护盾。",
+        "爆炸时若鉴心仍站在自己的风场内，获得 60 点护盾。",
         "共鸣解放需要原地蓄力 3 秒，期间不能移动，但仍会正常受到伤害。",
         "生命高于 300 且拥有护盾时：消耗 150 生命并增加 300 护盾，随后清空全部护盾。",
         "清空护盾后向最近敌人发出可穿透、半径 8 格、速度 15 格/秒的弧形风波。",
         "风波造成等同于实际清空护盾值的特殊伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
-        "不满足护盾与生命条件时：不消耗生命，蓄力结束后获得 300 点护盾。",
+        "不满足护盾与生命条件时：不消耗生命，蓄力结束后获得 400 点护盾。",
         "共鸣解放冷却固定为 30 秒。"
       ]
     },
@@ -863,9 +861,9 @@
         "近战伤害 50、冷却 1.5 秒；远程伤害 25、冷却 2 秒，弹速 12 格/秒。",
         "近战时隐藏手枪，远程时隐藏剑。",
         "每 10 秒在场地随机位置生成宝箱，存在 30 秒，场上最多同时存在 3 个；宝箱拾取范围为半径 1 格。",
-        "拾取宝箱获得 55 护盾和 25 点船锚能量，并在宝箱位置召唤船锚，前摇 0.4 秒后造成 180 点椭圆范围特殊伤害，覆盖面积约 60 格。",
+        "拾取宝箱获得 45 护盾和 25 点船锚能量，并在宝箱位置召唤船锚，前摇 0.4 秒后造成 180 点椭圆范围特殊伤害，覆盖面积约 60 格。",
         "普通攻击命中获得 5 点船锚能量；小宝箱船锚命中获得 50 点，大船锚不会增加能量。",
-        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间受到任何伤害时有 25% 概率完全闪避，仍可攻击。",
+        "船锚能量达到 100 后消耗并登上绳索，持续 8 秒；期间受到任何伤害时有 20% 概率完全闪避，仍可攻击。",
         "空中状态结束时瞬移到地图中心并保持定身，大船锚落地后恢复移动。",
         "大船锚造成 180 点椭圆范围特殊伤害，不增加船锚能量，覆盖面积约 100 格。",
         "共鸣解放持续 6 秒，移速翻倍，宝箱生成速度提升至 400%；冷却 15 秒。"
@@ -880,7 +878,7 @@
         "敌人或可索敌召唤物进入半径 4 格后，坎特蕾拉沿攻击方向丢出雨伞。",
         "雨伞保持 4 格索敌，以 2 格/秒直线飞行约 15 格，命中判定半径为 2 格；对每个接触目标最多造成 6 段、每段 10 点伤害并沿飞行方向击退。",
         "雨伞可以拦截敌方远程子弹，雨伞攻击冷却 4 秒。",
-        "登场时在身边召唤 3 只水母，此后每 4 秒召唤 2 只。",
+        "登场时在身边召唤 3 只水母，此后每 2 秒召唤 1 只。",
         "水母生命 30、移速 5 格/秒，具有碰撞体积且可被索敌，会自动追踪最近敌人。",
         "水母以半径 2 格进行半圆近战攻击，每次造成 20 点伤害，冷却 2 秒。",
         "水母命中施加 5 秒中毒，重复命中刷新持续时间。中毒目标受到伞击和感知汲取的最终伤害提高 50%，迷梦追加伤害独立计算。",
@@ -917,7 +915,7 @@
       range: "飞轮全图追踪；固定细竹环半径 3.4 格；蓝色障碍半径 2 格；天灯影响半径 8 格",
       interval: "普攻 2 秒 / 随机技能 7 秒 / 共鸣解放 60 秒",
       mechanics: [
-        "生命 1100、移动速度 6 格/秒。",
+        "生命 1050、移动速度 6 格/秒。",
         "每 2 秒召唤 6 枚红色环形飞轮，原地悬停 0.2 秒后以 20 格/秒追踪最近敌人；每枚命中造成 5 点伤害，且最多在场 2 秒。",
         "每 7 秒从绿、蓝、红三种场地效果中随机释放一种。",
         "绿色·细竹：5 柄细竹作为固定障碍生成在施放位置，不跟随心团子移动；敌方单位撞到后改变移动方向并受到 15 点特殊伤害，该细竹随后损毁。",
@@ -1434,10 +1432,9 @@
       aeroWind: 0,
       aeroWindUnlockTimer: 0,
       aeroUltimateTimer: 0,
-      aeroSwordClock: 0,
+      aeroStrikeClock: 0,
       aeroOrbitDirection: 1,
       aeroOrbitWallContact: false,
-      aeroRetreatClock: 0,
       aeroAirTimer: 0,
       aeroAirSecondClock: 0,
       aeroAirResumeX: 1,
@@ -1445,6 +1442,10 @@
       aeroDashClock: template.aeroDashCooldown || 0,
       aeroDashTimer: 0,
       aeroDashAngle: 0,
+      aeroDashSpeed: template.aeroDashSpeed || 0,
+      aeroDashDamage: 0,
+      aeroDashHitIds: null,
+      aeroDashTrail: null,
       conductive: template.conductive ? {
         phase: "normal",
         timer: 0,
@@ -2603,14 +2604,28 @@
     updateHud();
   }
 
+  function timeStopTeleportBounds(unitRadius) {
+    const minX = BOUNDARY + unitRadius;
+    const minY = BOUNDARY + unitRadius;
+    const maxY = ARENA_SIZE - BOUNDARY - unitRadius;
+    let maxX = ARENA_SIZE - BOUNDARY - unitRadius;
+    heartBarriers.forEach((barrier) => {
+      maxX = Math.min(maxX, barrier.x - barrier.halfWidth - unitRadius - 2);
+    });
+    return { minX, maxX: Math.max(minX + 1, maxX), minY, maxY };
+  }
+
   function teleportTimeStopCaster(caster, color = "#ffe58f") {
     const previousX = caster.x;
     const previousY = caster.y;
-    const x = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
-    const y = random(BOUNDARY + caster.r, ARENA_SIZE - BOUNDARY - caster.r);
+    // 心界屏障会把右半场变成不可移动区域，瞬移必须落在屏障左侧的可行动区域内。
+    const bounds = timeStopTeleportBounds(caster.r);
+    const x = random(bounds.minX, bounds.maxX);
+    const y = random(bounds.minY, bounds.maxY);
     const point = caster.conductive ? getConductivePosition(caster, x, y) : { x, y };
-    caster.x = point.x;
-    caster.y = point.y;
+    caster.heartBarrierLock = null;
+    caster.x = clamp(point.x, bounds.minX, bounds.maxX);
+    caster.y = clamp(point.y, bounds.minY, bounds.maxY);
     const angle = random(0, Math.PI * 2);
     const speed = getEffectiveMoveSpeed(caster);
     caster.vx = Math.cos(angle) * speed;
@@ -2761,6 +2776,8 @@
 
     const barrier = orbiting || dashing ? heartBarriers.find((item) => fighter.x <= item.x) : null;
     const moveTime = dashing ? Math.min(dt, fighter.aeroDashTimer) : dt;
+    const travelOriginX = fighter.x;
+    const travelOriginY = fighter.y;
     fighter.x += fighter.vx * moveTime;
     fighter.y += fighter.vy * moveTime;
     fighter.tilt += ((fighter.vx / 1800) - fighter.tilt) * Math.min(1, dt * 5);
@@ -2799,7 +2816,12 @@
       if (hitWall && !fighter.aeroOrbitWallContact) fighter.aeroOrbitDirection *= -1;
       fighter.aeroOrbitWallContact = hitWall;
     }
-    if (dashing) fighter.aeroDashTimer = hitWall ? 0 : Math.max(0, fighter.aeroDashTimer - moveTime);
+    if (dashing) {
+      fighter.aeroDashTimer = hitWall ? 0 : Math.max(0, fighter.aeroDashTimer - moveTime);
+      if (fighter.aeroDashDamage > 0) applyAeroStrikeDamage(fighter, travelOriginX, travelOriginY);
+      if (fighter.aeroDashTrail) fighter.aeroDashTrail.points.push({ x: fighter.x, y: fighter.y });
+      if (fighter.aeroDashTimer <= 0) endAeroStrike(fighter);
+    }
 
     fighter.attackClock -= dt * getActionSpeed(fighter);
   }
@@ -2903,14 +2925,10 @@
     }
     if (fighter.template.id === "02" && fighter.abyssForm) {
       fighter.abyssEnergy = Math.max(0, fighter.abyssEnergy - fighter.template.abyssDrainPerSecond * dt);
-      if (fighter.hp > 200) {
-        fighter.abyssLifeClock -= dt;
-        if (fighter.abyssLifeClock <= 0 && fighter.hp > 0) {
-          fighter.abyssLifeClock += 1;
-          dealRawDamage(fighter, fighter.template.abyssLifeDrainPerSecond, null, "暗涌侵蚀", "#a967ff");
-        }
-      } else {
-        fighter.abyssLifeClock = 1;
+      fighter.abyssLifeClock -= dt;
+      if (fighter.abyssLifeClock <= 0 && fighter.hp > 0) {
+        fighter.abyssLifeClock += 1;
+        dealRawDamage(fighter, fighter.template.abyssLifeDrainPerSecond, null, "暗涌侵蚀", "#a967ff");
       }
       if (fighter.abyssEnergy <= 0) exitAbyssForm(fighter);
     }
@@ -3352,17 +3370,16 @@
   function updateWandererAeroState(fighter, dt) {
     if (fighter.hp <= 0 || state !== "playing") return;
     if (fighter.aeroUltimateTimer > 0) {
-      const elapsed = Math.min(dt, fighter.aeroUltimateTimer);
       fighter.aeroUltimateTimer = Math.max(0, fighter.aeroUltimateTimer - dt);
-      fighter.aeroRetreatClock = Math.max(0, fighter.aeroRetreatClock - elapsed);
-      fighter.aeroSwordClock -= elapsed;
-      if (fighter.aeroSwordClock <= 1e-8) {
-        fireAeroSword(fighter);
-        fighter.aeroSwordClock += fighter.template.aeroSwordInterval;
+      fighter.aeroStrikeClock -= dt;
+      if (fighter.aeroStrikeClock <= 0 && fighter.aeroDashTimer <= 0) {
+        startAeroStrike(fighter);
+        fighter.aeroStrikeClock = fighter.template.aeroStrikeInterval;
       }
       if (fighter.aeroUltimateTimer <= 1e-8) {
         fighter.aeroUltimateTimer = 0;
         fighter.aeroDashTimer = 0;
+        endAeroStrike(fighter);
         announce(fighter.template.name + " · 无相结束", fighter.template.color, 1);
         addLog(fighter.template.name + " 的「飘渺无相」结束，恢复常规战斗。", "system");
       }
@@ -3403,19 +3420,14 @@
     const target = orbiting || fighter.aeroDashClock <= 0 ? nearestOpponent(fighter) : null;
     const targetDistance = target ? distance(fighter, target) : 0;
 
-    if (fighter.aeroDashTimer <= 0 && target) {
+    if (fighter.aeroDashTimer <= 0 && target && !orbiting) {
       const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-      if (orbiting && fighter.aeroRetreatClock <= 0 && targetDistance <= config.aeroRetreatRange * CELL_SIZE) {
-        startAeroDash(fighter, angle + Math.PI, config.aeroRetreatDistance, "无相 · 后撤");
-        fighter.aeroRetreatClock = config.aeroRetreatCooldown;
-      } else if (!orbiting) {
-        startAeroDash(fighter, angle, config.aeroDashDistance, "风迹突进");
-        fighter.aeroDashClock = config.aeroDashCooldown;
-      }
+      startAeroDash(fighter, angle, config.aeroDashDistance, "风迹突进");
+      fighter.aeroDashClock = config.aeroDashCooldown;
     }
 
     if (fighter.aeroDashTimer > 0) {
-      const speed = config.aeroDashSpeed * CELL_SIZE;
+      const speed = (fighter.aeroDashSpeed || config.aeroDashSpeed) * CELL_SIZE;
       fighter.vx = Math.cos(fighter.aeroDashAngle) * speed;
       fighter.vy = Math.sin(fighter.aeroDashAngle) * speed;
     } else if (orbiting && target) {
@@ -3433,9 +3445,10 @@
     }
   }
 
-  function startAeroDash(fighter, angle, distanceCells, label) {
+  function startAeroDash(fighter, angle, distanceCells, label, speedCells = fighter.template.aeroDashSpeed) {
     fighter.aeroDashAngle = angle;
-    fighter.aeroDashTimer = distanceCells / fighter.template.aeroDashSpeed;
+    fighter.aeroDashSpeed = speedCells;
+    fighter.aeroDashTimer = distanceCells / speedCells;
     effects.push({
       type: "aeroDashBurst",
       fighter,
@@ -3521,106 +3534,73 @@
     playSound(second ? "blade" : "sword");
   }
 
-  function fireAeroSword(fighter) {
+  function startAeroStrike(fighter) {
+    const config = fighter.template;
     const target = nearestOpponent(fighter);
-    if (!target) return;
-    const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-    const speed = fighter.template.aeroSwordSpeed * CELL_SIZE;
-    playAttackVoice(fighter);
-    const startX = fighter.x;
-    const startY = fighter.y;
-    const trailEffect = {
-      type: "aeroSwordTrail",
-      points: [{ x: startX, y: startY }],
+    const angle = target
+      ? Math.atan2(target.y - fighter.y, target.x - fighter.x)
+      : (fighter.aeroDashAngle || random(0, Math.PI * 2));
+    const trail = {
+      type: "aeroGreenTrail",
+      points: [{ x: fighter.x, y: fighter.y }],
       active: true,
       life: 2,
       maxLife: 2,
       color: "#72efb5"
     };
-    effects.push(trailEffect);
-    projectiles.push({
-      owner: fighter,
-      kind: "aeroSword",
-      independent: true,
-      x: startX,
-      y: startY,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      r: CELL_SIZE * 2,
-      collisionRadius: CELL_SIZE * 0.14,
-      damage: fighter.template.aeroSwordDamage,
-      color: "#72efb5",
-      hitIds: new Set(),
-      trailEffect
-    });
+    effects.push(trail);
+    fighter.aeroDashAngle = angle;
+    fighter.aeroDashSpeed = config.aeroStrikeSpeed;
+    fighter.aeroDashTimer = config.aeroStrikeDistance / config.aeroStrikeSpeed;
+    fighter.aeroDashDamage = config.aeroStrikeDamage;
+    fighter.aeroDashHitIds = new Set();
+    fighter.aeroDashTrail = trail;
     effects.push({
-      type: "ring",
+      type: "aeroDashBurst",
+      fighter,
       x: fighter.x,
       y: fighter.y,
-      radius: fighter.r + 6,
-      growth: 160,
-      life: 0.32,
-      maxLife: 0.32,
-      color: "#72efb5",
-      width: 4
+      angle,
+      length: config.aeroStrikeDistance * CELL_SIZE,
+      life: 0.34,
+      maxLife: 0.34,
+      color: config.color
     });
-    addLog(`${fighter.template.name} 朝最近敌人方向射出一柄 ${fighter.template.aeroSwordSpeed} 格/秒的飞剑。`, "ability");
+    playAttackVoice(fighter);
+    addLog(`${fighter.template.name} 化作绿色残影，以 ${config.aeroStrikeSpeed} 格/秒朝最近敌人突进 ${config.aeroStrikeDistance} 格。`, "ability");
     playSound("windup");
   }
 
-  function updateAeroSwordProjectile(projectile, dt) {
-    const owner = projectile.owner;
-    const previousX = projectile.x;
-    const previousY = projectile.y;
-    const wallX = projectile.vx > 0 ? ARENA_SIZE - BOUNDARY : BOUNDARY;
-    const wallY = projectile.vy > 0 ? ARENA_SIZE - BOUNDARY : BOUNDARY;
-    const timeToWallX = projectile.vx === 0 ? Infinity : (wallX - previousX) / projectile.vx;
-    const timeToWallY = projectile.vy === 0 ? Infinity : (wallY - previousY) / projectile.vy;
-    const timeToWall = Math.max(0, Math.min(timeToWallX, timeToWallY));
-    let travelTime = Math.min(dt, timeToWall);
-    const barrier = heartBarrierBlockingProjectile(
-      previousX, previousY,
-      previousX + projectile.vx * travelTime, previousY + projectile.vy * travelTime,
-      projectile.collisionRadius
-    );
-    if (barrier) {
-      const edgeX = barrier.x - Math.sign(projectile.vx) * (barrier.halfWidth + projectile.collisionRadius);
-      travelTime = projectile.vx === 0 ? 0 : clamp((edgeX - previousX) / projectile.vx, 0, travelTime);
-    }
-    projectile.x += projectile.vx * travelTime;
-    projectile.y += projectile.vy * travelTime;
-    const trail = projectile.trailEffect;
-    trail.points.push({ x: projectile.x, y: projectile.y });
-    const hits = traceHostileUnits(
-      owner,
-      projectile.collisionRadius,
-      previousX,
-      previousY,
-      projectile.x,
-      projectile.y
-    );
+  function applyAeroStrikeDamage(fighter, fromX, fromY) {
+    const hits = traceHostileUnits(fighter, fighter.r * 0.82, fromX, fromY, fighter.x, fighter.y);
+    if (!hits.length) return;
+    if (!fighter.aeroDashHitIds) fighter.aeroDashHitIds = new Set();
     hits.forEach((hit) => {
-      if (projectile.hitIds.has(hit.unit)) return;
-      projectile.hitIds.add(hit.unit);
-      applySpecialDamage(hit.unit, projectile.damage, owner, "气动飞剑", {
-        color: projectile.color,
+      if (hit.unit.hp <= 0 || fighter.aeroDashHitIds.has(hit.unit)) return;
+      fighter.aeroDashHitIds.add(hit.unit);
+      applySpecialDamage(hit.unit, fighter.aeroDashDamage, fighter, "无相突进", {
+        color: "#72efb5",
         noEnergy: true
       });
       effects.push({
         type: "aeroHit",
         x: hit.unit.x,
         y: hit.unit.y,
-        angle: Math.atan2(projectile.vy, projectile.vx),
+        angle: fighter.aeroDashAngle,
         life: 0.34,
         maxLife: 0.34,
-        color: projectile.color
+        color: "#72efb5"
       });
-      spawnBurst(hit.unit.x, hit.unit.y, projectile.color, 12, 180);
+      spawnBurst(hit.unit.x, hit.unit.y, "#72efb5", 14, 200);
     });
-    if (barrier || timeToWall <= dt) {
-      projectile.dead = true;
-      trail.active = false;
-    }
+  }
+
+  function endAeroStrike(fighter) {
+    if (fighter.aeroDashTrail) fighter.aeroDashTrail.active = false;
+    fighter.aeroDashTrail = null;
+    fighter.aeroDashDamage = 0;
+    fighter.aeroDashHitIds = null;
+    fighter.aeroDashSpeed = fighter.template.aeroDashSpeed;
   }
 
   function traceHostileUnits(owner, collisionRadius, startX, startY, endX, endY) {
@@ -5393,7 +5373,7 @@
 
       for (let projectileIndex = projectiles.length - 1; projectileIndex >= 0; projectileIndex -= 1) {
         const projectile = projectiles[projectileIndex];
-        if (projectile.owner?.side === owner.side || projectile.kind === "aeroSword") continue;
+        if (projectile.owner?.side === owner.side) continue;
         if (Math.hypot(projectile.x - umbrella.x, projectile.y - umbrella.y) > umbrella.r + projectile.r) continue;
         spawnBurst(projectile.x, projectile.y, "#bda3ff", 12, 150);
         projectiles.splice(projectileIndex, 1);
@@ -7128,11 +7108,11 @@
       startCantarellaMirage(fighter);
     } else if (isAeroUltimate) {
       fighter.aeroUltimateTimer = fighter.template.ultimateDuration;
-      fighter.aeroSwordClock = fighter.template.aeroSwordInterval;
+      fighter.aeroStrikeClock = fighter.template.aeroStrikeInterval;
       fighter.aeroOrbitDirection = Math.random() < 0.5 ? -1 : 1;
       fighter.aeroOrbitWallContact = false;
-      fighter.aeroRetreatClock = 0;
       fighter.aeroDashTimer = 0;
+      endAeroStrike(fighter);
       effects.push({
         type: "aeroUltimateBurst",
         fighter,
@@ -7705,11 +7685,6 @@
         if (updateConductiveArrow(projectile, dt)) projectiles.splice(i, 1);
         continue;
       }
-      if (projectile.kind === "aeroSword") {
-        updateAeroSwordProjectile(projectile, dt);
-        if (projectile.dead) projectiles.splice(i, 1);
-        continue;
-      }
       const previousX = projectile.x;
       const previousY = projectile.y;
       if (projectile.kind === "heartWheel") {
@@ -7880,7 +7855,7 @@
     }
     for (let i = effects.length - 1; i >= 0; i -= 1) {
       const effect = effects[i];
-      if (effect.type === "aeroSwordTrail" && effect.active) continue;
+      if (effect.type === "aeroGreenTrail" && effect.active) continue;
       effect.life -= dt;
       if (effect.type === "ring") effect.radius += effect.growth * dt;
       if (effect.type === "fire") effect.radius += 36 * dt;
@@ -8307,7 +8282,7 @@
 
   function getAeroStatus(fighter) {
     if (fighter.aeroUltimateTimer > 0) {
-      const movement = fighter.aeroDashTimer > 0 ? "后撤" : "环绕";
+      const movement = fighter.aeroDashTimer > 0 ? "突进" : "环绕";
       return `无相 ${fighter.aeroUltimateTimer.toFixed(1)}s · ${movement}`;
     }
     if (fighter.aeroAirTimer > 0) return "双刃凌空";
@@ -8549,7 +8524,7 @@
     if (fighter.conductive && fighter.conductive.phase !== "normal") states.push(getConductiveStatus(fighter));
     if (fighter.aeroUltimateTimer > 0) states.push("飘渺无相");
     if (fighter.aeroAirTimer > 0) states.push("升空免疫");
-    if (fighter.aeroDashTimer > 0) states.push(fighter.aeroUltimateTimer > 0 ? "后撤" : "风迹突进");
+    if (fighter.aeroDashTimer > 0) states.push(fighter.aeroUltimateTimer > 0 ? "无相突进" : "风迹突进");
     if (fighter.heartBarrierPending) states.push("分界蓄势");
     if (heartBarriers.some((item) => item.owner === fighter)) states.push("心界屏障");
     if (fighter.heartLanternSlowTimer > 0) states.push("赤灯减速");
@@ -11799,43 +11774,6 @@
         ctx.restore();
         return;
       }
-      if (projectile.kind === "aeroSword") {
-        const sword = aeroEffectPortraits.get("dash");
-        const angle = Math.atan2(projectile.vy, projectile.vx);
-        const width = projectile.r * 0.92;
-        const height = sword?.naturalWidth
-          ? width * (sword.naturalHeight / sword.naturalWidth)
-          : projectile.r * 0.72;
-        ctx.save();
-        ctx.translate(projectile.x, projectile.y);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.globalAlpha = 0.9;
-        ctx.shadowColor = "#5de5af";
-        ctx.shadowBlur = 7;
-        ctx.rotate(angle + Math.PI * 0.75);
-        if (sword?.complete && sword.naturalWidth > 0) {
-          ctx.drawImage(sword, -width / 2, -height / 2, width, height);
-        } else {
-          ctx.fillStyle = "#9df4d0";
-          ctx.beginPath();
-          ctx.ellipse(0, 0, width * 0.42, projectile.r * 0.13, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-        ctx.save();
-        ctx.translate(projectile.x, projectile.y);
-        ctx.rotate(angle);
-        ctx.globalCompositeOperation = "lighter";
-        ctx.globalAlpha = 0.12;
-        ctx.fillStyle = projectile.color;
-        ctx.shadowColor = projectile.color;
-        ctx.shadowBlur = 8;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, projectile.r * 0.62, projectile.r * 0.18, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-        return;
-      }
       ctx.shadowColor = projectile.kind === "fireball" ? "#ff6b3d" : projectile.color;
       ctx.shadowBlur = projectile.kind === "fireball" ? 28 : 16;
       const gradient = ctx.createRadialGradient(
@@ -12384,7 +12322,7 @@
           ctx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
           ctx.stroke();
         }
-      } else if (effect.type === "aeroSwordTrail") {
+      } else if (effect.type === "aeroGreenTrail") {
         const fade = effect.life >= 1 ? 1 : clamp(effect.life, 0, 1);
         const points = effect.points || [];
         if (points.length >= 2) {
