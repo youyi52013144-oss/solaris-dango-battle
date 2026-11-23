@@ -85,13 +85,13 @@
       fireCraterRadius: 5,
       ability: "羊角觉醒",
       abilityIcon: "♈",
-      abilityDesc: "生命低于 400 时自动长出羊角；敌人进入半径 2 格后召唤黑咩，前摇 0.2 秒，对半径 4 格内所有敌人造成 230 点伤害，冷却 1 秒。",
+      abilityDesc: "生命低于 400 时自动长出羊角；敌人进入半径 2 格后召唤黑咩，前摇 0.3 秒，对半径 4 格内所有敌人造成 260 点伤害，冷却 1 秒。",
       transformThreshold: 400,
-      hornedDamage: 230,
+      hornedDamage: 260,
       hornedSeekRange: 2,
       hornedHitRange: 4,
       hornedCooldown: 1,
-      blackSlamWindup: 0.2,
+      blackSlamWindup: 0.3,
       blackSlamClock: 0,
       cooldown: 0
     },
@@ -123,11 +123,11 @@
       knifeDamage: 25,
       ultimateType: "timeStop",
       ultimateDuration: 5,
-      ultimateCooldown: 20,
+      ultimateCooldown: 18,
       ability: "时序停界",
       abilityIcon: "◷",
-      abilityDesc: "共鸣能量满后冻结全图时间至少 5 秒；吸收场上全部时间乱流，每个额外延长 3 秒。冻结期间普攻不积累时序能量，自身每 1 秒随机瞬移并朝随机方向移动，穿越其他单位时不会碰撞；冷却 20 秒。",
-      cooldown: 20
+      abilityDesc: "共鸣能量满后冻结全图时间至少 5 秒；吸收场上全部时间乱流，每个额外延长 3 秒。冻结期间普攻不积累时序能量，自身每 1 秒随机瞬移并朝随机方向移动，穿越其他单位时不会碰撞；冷却 18 秒。",
+      cooldown: 18
     },
     {
       id: "02",
@@ -204,7 +204,7 @@
       aeroSlashDamage: 140,
       aeroOrbitDistance: 7,
       aeroStrikeInterval: 1.5,
-      aeroStrikeSpeed: 40,
+      aeroStrikeSpeed: 55,
       aeroStrikeDistance: 14,
       aeroStrikeDamage: 40,
       ultimateType: "aeroUnbound",
@@ -212,7 +212,7 @@
       ultimateCooldown: 33,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取；每 1.5 秒以 40 格/秒向最近敌人突进 14 格，对路径上每个敌人各造成 40 点伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。距最近敌人约 7 格环绕，触边换向。",
+      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取；每 1.5 秒以 55 格/秒向最近敌人突进 14 格，对路径上每个敌人各造成 40 点伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。距最近敌人约 7 格环绕，触边换向。",
       cooldown: 33
     },
     {
@@ -248,12 +248,12 @@
       chargeDuration: 3,
       ultimateShieldCost: 150,
       ultimateShieldGain: 300,
-      windWaveRadius: 8,
+      windWaveRadius: 12,
       windWaveSpeed: 15,
       windWaveStun: 1,
       ability: "涤罪心渊",
       abilityIcon: "风",
-      abilityDesc: "蓄力 3 秒后释放以 15 格/秒移动、半径 8 格的穿透风波；生命高于 300 且拥有护盾时，消耗 150 生命并增加 300 护盾，随后清空全部护盾并按其当前盾量转化为伤害，否则获得 300 点护盾。冷却 30 秒。",
+      abilityDesc: "蓄力 3 秒后释放以 15 格/秒移动、半径 12 格的穿透风波（特殊伤害）；生命高于 300 且拥有护盾时，消耗 150 生命并增加 300 护盾，随后清空全部护盾并按其当前盾量转化为伤害，否则获得 400 点护盾。冷却 30 秒。",
       cooldown: 30
     },
     {
@@ -762,8 +762,8 @@
         "白咩每 3 秒发射火球，命中或触边后造成 30 点伤害，并在半径 5 格的圆形范围爆炸。",
         "爆炸留下半径 5 格的圆形爆炎弹坑，持续 4 秒，每 0.5 秒造成 10 点伤害。",
         "安可生命低于 400 时永久切换为羊角形态。",
-        "羊角形态下，敌人进入半径 2 格索敌范围后召唤黑咩；前摇 0.2 秒，可移动躲避。",
-        "黑咩砸地会对半径 4 格内的所有敌人造成 230 点伤害，冷却 1 秒。",
+        "羊角形态下，敌人进入半径 2 格索敌范围后召唤黑咩；前摇 0.3 秒，可移动躲避。",
+        "黑咩砸地会对半径 4 格内的所有敌人造成 260 点伤害，冷却 1 秒。",
         "白咩火球、爆炎弹坑与黑咩砸击均属于特殊伤害。"
       ]
     },
@@ -780,7 +780,7 @@
         "场上最多同时存在 3 个时间乱流。",
         "共鸣能量满后可释放时序停界，基础冻结 5 秒。若场上存在时间乱流则全部吸收，每个额外延长 3 秒。",
         "冻结期间只有漂泊者可以移动与攻击，普攻不会增加时序能量；自身每 1 秒随机瞬移并以随机方向移动，穿越其他单位时不会发生碰撞。",
-        "时序停界冷却 20 秒。"
+        "时序停界冷却 18 秒。"
       ]
     },
     "02": {
@@ -812,14 +812,14 @@
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
         "每刀消耗 50 风息并造成 140 点伤害。两刀完成后恢复普攻。",
         "共鸣能量满时可开启飘渺无相，持续 15 秒，冷却 33 秒。期间锁定普攻、技能及风息获取。",
-        "每 1.5 秒以 40 格/秒朝最近敌人突进 14 格，对路径上每个敌人各造成一次 40 点特殊伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
+        "每 1.5 秒以 55 格/秒朝最近敌人突进 14 格，对路径上每个敌人各造成一次 40 点特殊伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
         "围绕最近敌人移动，过远时靠近，过近时远离，目标距离 7 格。触碰边界时切换顺逆时针。",
         "无相结束后恢复常规的普攻、技能和风息规则。"
       ]
     },
     "03": {
       role: "风属性肉盾 / 牵引控场",
-      range: "风场半径 8 格；风波半径 8 格",
+      range: "风场半径 8 格；风波半径 12 格",
       interval: "风场 8 秒 / 共鸣解放 30 秒",
       mechanics: [
         "生命 1200，开局没有护盾；后续获得的护盾优先吸收伤害，破碎后淡绿色风屏障消失。",
@@ -830,7 +830,7 @@
         "爆炸时若鉴心仍站在自己的风场内，获得 60 点护盾。",
         "共鸣解放需要原地蓄力 3 秒，期间不能移动，但仍会正常受到伤害。",
         "生命高于 300 且拥有护盾时：消耗 150 生命并增加 300 护盾，随后清空全部护盾。",
-        "清空护盾后向最近敌人发出可穿透、半径 8 格、速度 15 格/秒的弧形风波。",
+        "清空护盾后向最近敌人发出可穿透、半径 12 格、速度 15 格/秒的弧形风波。",
         "风波造成等同于实际清空护盾值的特殊伤害，并将命中敌人沿风波方向击退到墙边，眩晕 1 秒。",
         "不满足护盾与生命条件时：不消耗生命，蓄力结束后获得 400 点护盾。",
         "共鸣解放冷却固定为 30 秒。"
@@ -2579,6 +2579,11 @@
     timeStopTimer = Math.max(0, timeStopTimer - dt);
     addResonanceEnergy(caster, 3 * dt);
     updateFighter(caster, target, dt, false);
+    // 冻结期间只有施法者在行动，这里再按心界屏障硬钳制一次，避免任何位移（瞬移、击退、穿墙）
+    // 把它带进屏障右侧的不可移动区域。
+    const movable = timeStopTeleportBounds(caster.r);
+    caster.x = clamp(caster.x, movable.minX, movable.maxX);
+    caster.y = clamp(caster.y, movable.minY, movable.maxY);
     updateStatuses(caster, dt);
     if (!caster.conductive) {
       caster.timeStopTeleportClock = Math.max(0, caster.timeStopTeleportClock - dt);
@@ -2774,7 +2779,9 @@
       fighter.vy = (fighter.vy / speed) * speedLimit;
     }
 
-    const barrier = orbiting || dashing ? heartBarriers.find((item) => fighter.x <= item.x) : null;
+    const barrier = orbiting || dashing || timeStopOwner === fighter
+      ? heartBarriers.find((item) => fighter.x <= item.x)
+      : null;
     const moveTime = dashing ? Math.min(dt, fighter.aeroDashTimer) : dt;
     const travelOriginX = fighter.x;
     const travelOriginY = fighter.y;
