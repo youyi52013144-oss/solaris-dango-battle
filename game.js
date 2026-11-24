@@ -154,22 +154,26 @@
       attackCooldown: 1,
       attackRange: 2,
       ultimateType: "abyssBurst",
-      ultimateDamage: 300,
+      ultimateDamage: 150,
       ultimateSeekRadius: 5,
       ultimateBlastRadius: 5,
-      ultimateHealRatio: 0.5,
+      ultimateHpThreshold: 300,
       ability: "湮灭万律",
       abilityIcon: "☾",
-      abilityDesc: "恐怖镰刀人形态下、共鸣能量满且敌人在半径 5 格内时触发；以该敌人为中心引爆半径 5 格的暗能量，造成 300 点伤害并恢复 50 点暗涌。冷却 15 秒。",
-      cooldown: 15,
+      abilityDesc: "生命低于 300 且共鸣能量满时，敌人进入半径 5 格后触发；以该敌人为中心引爆半径 5 格的暗能量，造成 150 点伤害；若释放时处于恐怖镰刀人形态，该伤害提升 100%（300 点）。冷却 16 秒。",
+      cooldown: 16,
       abyssThreshold: 100,
       abyssScytheDamage: 50,
       abyssScytheRange: 3,
       abyssScytheCooldown: 1,
+      abyssScytheEnergyGain: 10,
       abyssFormSpeed: 10,
       abyssDrainPerSecond: 10,
-      abyssLifeDrainPerSecond: 50,
-      abyssHitHealRatio: 0.5
+      abyssLifestealRatio: 0.5,
+      abyssHitEnergyGain: 20,
+      abyssSelfHitDamage: 50,
+      abyssSelfHitInterval: 0.5,
+      abyssHomingCooldownTime: 0.8
     },
     {
       id: "08",
@@ -785,19 +789,19 @@
     },
     "02": {
       role: "近战突刺 / 双形态爆发",
-      range: "突刺半径 2 格；镰刀横扫半径 3 格",
-      interval: "常态 1 秒 / 镰刀形态 1 秒",
+      range: "突刺半径 2 格；镰刀横扫半径 3 格；湮灭万律半径 5 格",
+      interval: "常态 1 秒 / 镰刀形态 1 秒 / 共鸣解放 16 秒",
       mechanics: [
-        "普通前刺造成 30 点伤害；普通形态受到敌方攻击时增加 20 暗涌。",
-        "暗涌达到 100 后自动进入恐怖镰刀人形态。",
-        "镰刀形态移速提升至 10 格/秒。",
-        "镰刀横扫半径 3 格，造成 50 点伤害，冷却 1 秒。",
-        "镰刀形态每秒消耗 10 暗涌，并每秒额外损失 50 生命；生命低于 200 后仍会继续扣血。",
-        "触碰地图边缘后进入追击状态，每 1.2 秒重新调整一次行动方向追击敌方单位；命中一次后恢复原来的直线移动方向。",
-        "形态内造成伤害时恢复伤害量 50% 的生命值，大招伤害同样生效。",
-        "共鸣能量满且处于镰刀形态时，索敌最近敌人；敌人进入半径 5 格后自动释放湮灭万律。",
-        "湮灭万律以该敌人为中心造成半径 5 格的 300 点特殊伤害，自身不会位移。",
-        "释放后固定恢复 50 暗涌；冷却 15 秒。"
+        "普通前刺造成 30 点伤害，冷却 1 秒，判定半径 2 格。",
+        "技能·受击反噬：每次受击都会额外承受 50 点自身伤害，每 0.5 秒最多触发一次；该自身伤害不计入暗涌获取。",
+        "普通形态下受击额外获得 20 点暗涌；暗涌上限 100，满时自动进入恐怖镰刀人形态。",
+        "恐怖镰刀人形态每秒消耗 10 点暗涌；暗涌归零时形态与下列三条效果一并移除。",
+        "效果1·镰刃：移速提升至 10 格/秒；普攻替换为半径 3 格的镰刀横扫，命中造成 50 点伤害并恢复 10 点暗涌，冷却 1 秒。",
+        "效果2·追击：触碰地图边缘后调整一次行动方向为追击敌方单位；命中一次后恢复原来的直线移动方向，并使该效果进入 0.8 秒冷却。",
+        "效果3·吸血：自身造成的所有伤害为自己回复伤害量 50% 的生命；被护盾吸收的部分不计入回复。",
+        "湮灭万律需要生命低于 300 且共鸣能量满，敌人在半径 5 格内时触发。",
+        "以该敌人为中心引爆半径 5 格的暗能量，造成 150 点特殊伤害；若释放时处于镰刀人形态，该伤害提升 100%（300 点）。",
+        "湮灭万律冷却 16 秒。"
       ]
     },
     "08": {
@@ -1423,11 +1427,11 @@
       timeSlowTimer: 0,
       abyssForm: false,
       abyssEnergy: 0,
-      abyssLifeClock: 1,
       abyssHoming: false,
+      abyssHomingCooldown: 0,
       abyssSavedVx: 0,
       abyssSavedVy: 0,
-      abyssRetargetClock: 0,
+      abyssSelfHitClock: 0,
       abyssScytheSwing: 0,
       aeroWind: 0,
       aeroWindUnlockTimer: 0,
@@ -1734,10 +1738,16 @@
       dom.abilityButton.title = "生命低于 600 且冷却就绪时自动开启";
       return;
     }
-    if (fighter.ultimateType === "abyssBurst" && !fighter.abyssForm) {
+    // 这里可能收到战斗实例，也可能收到角色模板（角色面板），两者都要能安全取值。
+    const labelTemplate = fighter.template || fighter;
+    if (
+      labelTemplate.ultimateType === "abyssBurst"
+      && Number.isFinite(fighter.hp)
+      && fighter.hp >= labelTemplate.ultimateHpThreshold
+    ) {
       dom.abilityKey.textContent = "E";
-      dom.abilityLabel.textContent = "需镰刀形态";
-      dom.abilityButton.title = "进入恐怖镰刀人形态后才能释放";
+      dom.abilityLabel.textContent = "需生命 < 300";
+      dom.abilityButton.title = "生命低于 300 且共鸣能量满时才能释放";
       return;
     }
     dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
@@ -2735,16 +2745,6 @@
       return;
     }
 
-    if (fighter.template.id === "02" && fighter.abyssForm && fighter.abyssHoming && opponent) {
-      fighter.abyssRetargetClock = Math.max(0, fighter.abyssRetargetClock - dt);
-      if (fighter.abyssRetargetClock === 0) {
-        const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
-        const speed = getEffectiveMoveSpeed(fighter);
-        fighter.vx = Math.cos(angle) * speed;
-        fighter.vy = Math.sin(angle) * speed;
-        fighter.abyssRetargetClock = 1.2;
-      }
-    }
     if (fighter.template.id === "04") {
       const facingTarget = nearestOpponent(fighter) || opponent;
       if (facingTarget) {
@@ -2930,14 +2930,13 @@
         triggerHeartSkill(fighter);
       }
     }
-    if (fighter.template.id === "02" && fighter.abyssForm) {
-      fighter.abyssEnergy = Math.max(0, fighter.abyssEnergy - fighter.template.abyssDrainPerSecond * dt);
-      fighter.abyssLifeClock -= dt;
-      if (fighter.abyssLifeClock <= 0 && fighter.hp > 0) {
-        fighter.abyssLifeClock += 1;
-        dealRawDamage(fighter, fighter.template.abyssLifeDrainPerSecond, null, "暗涌侵蚀", "#a967ff");
+    if (fighter.template.id === "02") {
+      fighter.abyssSelfHitClock = Math.max(0, fighter.abyssSelfHitClock - dt);
+      fighter.abyssHomingCooldown = Math.max(0, fighter.abyssHomingCooldown - dt);
+      if (fighter.abyssForm) {
+        fighter.abyssEnergy = Math.max(0, fighter.abyssEnergy - fighter.template.abyssDrainPerSecond * dt);
+        if (fighter.abyssEnergy <= 0) exitAbyssForm(fighter);
       }
-      if (fighter.abyssEnergy <= 0) exitAbyssForm(fighter);
     }
     if (fighter.template.id === "kakarot-test" && fighter.specialEnergy >= 3 && fighter.deathSentenceClock > 0) {
       fighter.deathSentenceClock = Math.max(0, fighter.deathSentenceClock - dt);
@@ -4614,7 +4613,6 @@
     if (fighter.abyssForm) return;
     fighter.abyssForm = true;
     fighter.abyssEnergy = fighter.template.abyssThreshold;
-    fighter.abyssLifeClock = 1;
     fighter.attackClock = Math.min(fighter.attackClock, 0.25);
     effects.push({ type: "ring", x: fighter.x, y: fighter.y, radius: 14, growth: 720, life: 0.7, maxLife: 0.7, color: "#b565ff", width: 10 });
     spawnBurst(fighter.x, fighter.y, "#c981ff", 42, 320);
@@ -4638,7 +4636,7 @@
   function restoreAbyssTrajectory(fighter) {
     if (!fighter.abyssHoming) return;
     fighter.abyssHoming = false;
-    fighter.abyssRetargetClock = 0;
+    fighter.abyssHomingCooldown = fighter.template.abyssHomingCooldownTime || 0;
     const savedSpeed = Math.hypot(fighter.abyssSavedVx, fighter.abyssSavedVy);
     if (savedSpeed > 0.01) {
       const speed = getEffectiveMoveSpeed(fighter);
@@ -4647,19 +4645,24 @@
     }
   }
 
+  // 效果2：触碰地图边缘后调整一次行动方向为追击敌方单位；命中一次后恢复原方向并进入冷却。
   function activateAbyssHoming(fighter) {
     if (!fighter.abyssForm) return;
+    if (fighter.abyssHomingCooldown > 0) return;
+    const target = nearestOpponent(fighter);
+    if (!target) return;
     if (!fighter.abyssHoming) {
       fighter.abyssHoming = true;
       fighter.abyssSavedVx = fighter.vx;
       fighter.abyssSavedVy = fighter.vy;
     }
-    fighter.abyssRetargetClock = 0;
+    fighter.vx = Math.cos(Math.atan2(target.y - fighter.y, target.x - fighter.x)) * getEffectiveMoveSpeed(fighter);
+    fighter.vy = Math.sin(Math.atan2(target.y - fighter.y, target.x - fighter.x)) * getEffectiveMoveSpeed(fighter);
   }
 
   function healAbyssDamage(fighter, damage) {
     if (!fighter.abyssForm || damage <= 0) return;
-    healFighter(fighter, damage * fighter.template.abyssHitHealRatio, { color: "#d9a3ff" });
+    healFighter(fighter, damage * (fighter.template.abyssLifestealRatio || 0), { color: "#d9a3ff" });
   }
 
   function performAbyssSweep(fighter, opponent) {
@@ -4672,9 +4675,13 @@
       melee: conductive,
       conductiveStrike: conductive
     }) || 0;
-    healAbyssDamage(fighter, dealt);
+    // 效果1：镰刀命中恢复 10 点暗涌（生命回复由形态的吸血效果统一结算）。
+    if (dealt > 0 && fighter.abyssForm) {
+      gainAbyssEnergy(fighter, fighter.template.abyssScytheEnergyGain);
+    }
     releaseVortexLock(opponent, true);
-    restoreAbyssTrajectory(fighter);
+    // 效果2：命中一次后恢复原来的直线移动方向，并进入 0.8 秒冷却。
+    if (dealt > 0) restoreAbyssTrajectory(fighter);
     effects.push({
       type: "abyssSlash",
       fighter,
@@ -4685,7 +4692,12 @@
       color: "#b65dff"
     });
     spawnBurst(opponent.x, opponent.y, "#c477ff", 20, 220);
-    addLog(`${fighter.template.name} 挥出暗紫镰刀，造成 ${Math.round(dealt)} 点伤害${conductive ? "。" : "并恢复生命。"}`, "ability");
+    addLog(
+      conductive
+        ? `${fighter.template.name} 挥出暗紫镰刀，造成 ${Math.round(dealt)} 点伤害。`
+        : `${fighter.template.name} 挥出暗紫镰刀，造成 ${Math.round(dealt)} 点伤害${dealt > 0 ? "，回复 10 点暗涌" : ""}。`,
+      "ability"
+    );
     playSound("sword");
   }
 
@@ -7034,7 +7046,10 @@
       return;
     }
     if (fighter.abilityCooldown > 0 || (isAeroUltimate && !canAeroUseUltimate(fighter))) return;
-    if (fighter.template.ultimateType === "abyssBurst" && !fighter.abyssForm) return;
+    if (
+      fighter.template.ultimateType === "abyssBurst"
+      && fighter.hp >= fighter.template.ultimateHpThreshold
+    ) return;
     if (
       fighter.template.ultimateType === "abyssBurst"
       && distance(fighter, opponent) > fighter.template.ultimateSeekRadius * CELL_SIZE
@@ -7087,16 +7102,17 @@
       const blastX = opponent.x;
       const blastY = opponent.y;
       const blastRadius = fighter.template.ultimateBlastRadius * CELL_SIZE;
-      let totalDamage = 0;
+      // 镰刀人形态下伤害提升 100%。
+      const burstDamage = fighter.abyssForm
+        ? fighter.template.ultimateDamage * 2
+        : fighter.template.ultimateDamage;
       getDamageableUnits()
         .filter((target) => target.side !== fighter.side && target.hp > 0 && Math.hypot(target.x - blastX, target.y - blastY) <= blastRadius)
         .forEach((target) => {
-          totalDamage += applySpecialDamage(target, fighter.template.ultimateDamage, fighter, "湮灭万律", {
+          applySpecialDamage(target, burstDamage, fighter, "湮灭万律", {
             color: "#c878ff"
-          }) || 0;
+          });
         });
-      healAbyssDamage(fighter, totalDamage);
-      fighter.abyssEnergy = Math.min(100, fighter.abyssEnergy + 50);
       restoreAbyssTrajectory(fighter);
       effects.push({ type: "abyssBurst", x: blastX, y: blastY, radius: blastRadius, life: 0.8, maxLife: 0.8, color: "#b65dff" });
       spawnBurst(blastX, blastY, "#c97aff", 60, 420);
@@ -7288,9 +7304,11 @@
       source.cantarellaMirageDamageDealt = true;
     }
     if (target.trainingDummy) showcaseTrainingDamage += finalAmount;
+    const hpBeforeHit = target.hp;
     target.hp = target.trainingInvulnerable
       ? Math.max(1, target.hp)
       : Math.max(0, target.hp - finalAmount);
+    const rawHpDamage = Math.max(0, hpBeforeHit - target.hp);
     // Shield absorption still counts as a landed hit for energy and on-hit effects.
     const totalEffectiveDamage = absorbed + finalAmount;
     if (conductiveBonus && totalEffectiveDamage > 0) {
@@ -7299,7 +7317,19 @@
     }
     if (totalEffectiveDamage > 0) rewindConductiveHit(target, source);
     target.flash = options.noText ? Math.max(target.flash, 0.16) : (finalAmount > 0 ? 1 : 0.45);
-    if (target.template.id === "02" && !target.abyssForm && !options.selfDrain) gainAbyssEnergy(target, 20);
+    // 效果3：恐怖镰刀人形态下，自身造成的所有伤害回复 50% 生命；护盾吸收的部分不计入。
+    if (source?.template.id === "02" && source.abyssForm && rawHpDamage > 0) {
+      healAbyssDamage(source, rawHpDamage);
+    }
+    // 技能：受击反噬 —— 每次受击额外承受 50 点自身伤害，0.5 秒内只触发一次；
+    // 普通形态受击额外获得 20 暗涌（自身伤害不计入暗涌获取）。
+    if (target.template.id === "02" && !options.selfDamage) {
+      if (target.abyssSelfHitClock <= 0 && target.hp > 0) {
+        target.abyssSelfHitClock = target.template.abyssSelfHitInterval;
+        dealRawDamage(target, target.template.abyssSelfHitDamage, null, "湮灭反噬", "#c77dff");
+      }
+      if (!target.abyssForm) gainAbyssEnergy(target, target.template.abyssHitEnergyGain);
+    }
     if (source?.template.id === "04" && options.brantAttack) {
       gainBrantSpecialEnergy(source, source.template.brantHitEnergy);
     }
@@ -8154,7 +8184,7 @@
     const ultimateAvailable = !player.template.transformThreshold
       && player.template.ultimateType !== "autoThreshold"
       && !player.charge
-      && !(player.template.ultimateType === "abyssBurst" && !player.abyssForm)
+      && !(player.template.ultimateType === "abyssBurst" && player.hp >= player.template.ultimateHpThreshold)
       && abyssInRange
       && verinaUnlocked
       && verinaHealthReady
@@ -13750,6 +13780,7 @@
       if (player.template.id === "02") {
         positionShowcaseTrainingTarget(3.8);
         if (!player.abyssForm) enterAbyssForm(player);
+        player.hp = Math.min(player.hp, player.template.ultimateHpThreshold - 1);
       }
       if (player.template.id === "03") {
         player.hp = Math.max(player.hp, 600);
