@@ -561,6 +561,63 @@
       abilityIcon: "雷",
       abilityDesc: "生命低于 190 时解锁，冷却 60 秒。装填雷箭、沿钩锁突袭并震击落点后，进入 18 秒千声翻涌。期间以附雷镰刀追击，并可短暂停时和受击回溯。结束时释放两段全场斩击。",
       cooldown: 60
+    },
+    {
+      id: "sigrika",
+      voiceOrder: 13,
+      name: "西格莉卡团子",
+      element: "日 · 符文型",
+      tagline: "七枚符文，日灵同辉。",
+      color: "#ffc267",
+      dark: "#7c4a1c",
+      symbol: "符",
+      image: "assets/sigrika.png",
+      hp: 900,
+      power: 1,
+      speed: 7,
+      radius: 27,
+      stats: { power: 84, speed: 88, hp: 90 },
+      display: { attack: "50", speed: "7.0格/s", hp: "900" },
+      attackType: "sigrikaFist",
+      attackDamage: 50,
+      attackCooldown: 2,
+      attackRange: 2,
+      sigrikaRuneTotal: 7,
+      sigrikaRuneRadius: 1,
+      sigrikaPunchLength: 4,
+      sigrikaPunchWidth: 1.7,
+      sigrikaKickWindup: 0.2,
+      sigrikaKickRadius: 3,
+      sigrikaKickDamage: 60,
+      sigrikaKickStun: 2.5,
+      sigrikaEnhancedKickRadius: 8,
+      sigrikaEnhancedKickMultiplier: 2,
+      skillCooldown: 5,
+      sigrikaSkillRange: 4,
+      sigrikaFieldRadius: 6,
+      sigrikaFieldDuration: 6,
+      sigrikaBladeInterval: 0.25,
+      sigrikaBladeWindup: 0.3,
+      sigrikaBladeRadius: 3,
+      sigrikaBladeDamage: 50,
+      sigrikaGiantRuneRadius: 8,
+      sigrikaAnalyzeTime: 5,
+      sigrikaRuneBurstDamage: 200,
+      sigrikaRuneBurstInterval: 1,
+      sigrikaSunInterval: 3,
+      sigrikaSunRadius: 8,
+      sigrikaSunRise: 0.5,
+      sigrikaSunFall: 0.5,
+      sigrikaSunRest: 2,
+      sigrikaSunDamage: 120,
+      sigrikaSunFalls: 2,
+      ultimateType: "sigrikaSun",
+      ultimateDuration: 0,
+      ultimateCooldown: 13,
+      ability: "日灵庇佑",
+      abilityIcon: "☀",
+      abilityDesc: "符文达到 4 枚且共鸣能量满时可开启。下一次踢击范围扩大至半径 8 格、伤害提升 100%，并获得日灵辅助：滞空无法被索敌与伤害、移速提升 100%、改为追击最近敌人。强化踢击命中后额外同步引爆范围内未解析完成的巨型符文；释放踢击后日灵辅助结束。冷却 13 秒。",
+      cooldown: 13
     }
   ];
 
@@ -951,6 +1008,24 @@
         "每 9 秒冻结时间 1 秒并随机瞬移一次。受击时回到 0.5 秒前的位置和生命值，冷却 4.5 秒。",
         "千声翻涌结束 0.5 秒后停止移动，间隔 1 秒释放两道相反方向的全场斜斩，每道 140 点伤害。第二斩结束后恢复常规普攻、钩锁和移动。"
       ]
+    },
+    "sigrika": {
+      role: "符文收集 / 日灵召唤 / 范围爆发",
+      range: "日轮拳前方 4 格直线；裂地踢半径 3 格；强化踢半径 8 格；链刃领域半径 6 格；巨型符文与日灵光圈半径 8 格",
+      interval: "普攻 2 秒 / 技能 5 秒 / 大招 13 秒 / 日灵光圈 3 秒一枚",
+      mechanics: [
+        "900 生命、7 格/秒移速。登场时普攻、技能与大招全部锁定。",
+        "登场时在场地内随机散布 7 枚符文；角色移动进入符文半径 1 格内即可收集，符文随后消失。",
+        "符文增益：1 枚解锁普攻；2 枚解锁技能；3 枚解锁衍生普攻（与普攻同时触发）；4 枚解锁大招；5 枚技能替换为强化技能；6 枚获得日灵光圈；7 枚光圈消失时留下未解析的巨型符文。",
+        "普攻：敌人进入自身半径 2 格后挥拳，对前方 4 格直线范围造成 50 点伤害，冷却 2 秒。",
+        "衍生普攻：普攻命中后在被命中敌人脚下追加一次前摇 0.2 秒、半径 3 格的踢击，造成 60 点伤害并眩晕 2.5 秒。",
+        "技能：敌人进入半径 4 格后，在其脚下展开半径 6 格、持续 6 秒的链刃领域；每 0.25 秒在领域内随机位置生成一柄镰刃，前摇 0.3 秒后落地，对半径 3 格内敌人造成 50 点伤害。冷却 5 秒。",
+        "强化技能：在自身脚下生成半径 8 格的巨型符文，自身站在范围内累计解析 5 秒即解析完成，随后间隔 1 秒连续爆炸两次，每次对范围内敌人造成 200 点伤害。冷却 5 秒，场上最多同时保留 2 枚。",
+        "大招：符文达到 4 枚且共鸣能量满时可开启。下一次踢击范围扩大至半径 8 格、伤害提升 100%（120 点）；同时获得日灵辅助：滞空无法被索敌与伤害，移速提升 100%，移动改为追击最近敌人。",
+        "日灵辅助期间若强化踢击范围内存在未解析完成的巨型符文（中心位于范围内），踢击会同步引爆该符文两次；释放强化踢击后日灵辅助结束。",
+        "终极增益：符文达到 6 枚后，每 3 秒在场地随机位置展开半径 8 格的日灵光圈；圈心的日灵腾空 0.5 秒后坠落 0.5 秒，落地对范围内敌人造成 120 点伤害，休整 2 秒后重复一次，两次坠落后光圈消失。",
+        "符文达到 7 枚后，日灵光圈消失时会在原地留下未解析的巨型符文。"
+      ]
     }
   };
 
@@ -1242,6 +1317,13 @@
   let heartLanterns = [];
   let heartBarriers = [];
   let heartSequence = 0;
+  let sigrikaRunes = [];
+  let sigrikaFields = [];
+  let sigrikaGiantRunes = [];
+  let sigrikaSuns = [];
+  let sigrikaKicks = [];
+  let sigrikaSequence = 0;
+  const sigrikaSpiritPortraits = new Map();
   const jinhsiMatchRangeBonuses = new Map();
   let pickups = [];
   let floatingTexts = [];
@@ -1314,7 +1396,7 @@
   const getConfigId = () => mode === "multi" || configSide === "left" ? selectedId : enemyId;
   const getActiveFighters = () => mode === "multi" ? multiFighters : [player, enemy].filter(Boolean);
   const getDamageableUnits = () => [
-    ...getActiveFighters().filter((fighter) => fighter && !fighter.jinhsiAirborne),
+    ...getActiveFighters().filter((fighter) => fighter && !fighter.jinhsiAirborne && !fighter.sigrikaAirborne),
     ...cantarellaJellies.filter((unit) => unit.owner?.hp > 0 && unit.hp > 0)
   ];
 
@@ -1435,6 +1517,11 @@
       abyssSavedVy: 0,
       abyssSelfHitClock: 0,
       abyssScytheSwing: 0,
+      sigrikaRunes: 0,
+      sigrikaSunClock: 0,
+      sigrikaSunAssist: false,
+      sigrikaAirborne: false,
+      sigrikaPunchSwing: 0,
       aeroWind: 0,
       aeroWindUnlockTimer: 0,
       aeroUltimateTimer: 0,
@@ -1750,6 +1837,16 @@
       dom.abilityKey.textContent = "E";
       dom.abilityLabel.textContent = "需生命 < 300";
       dom.abilityButton.title = "生命低于 300 且共鸣能量满时才能释放";
+      return;
+    }
+    if (
+      labelTemplate.ultimateType === "sigrikaSun"
+      && Number.isFinite(fighter.sigrikaRunes)
+      && fighter.sigrikaRunes < 4
+    ) {
+      dom.abilityKey.textContent = "E";
+      dom.abilityLabel.textContent = "需 4 枚符文";
+      dom.abilityButton.title = "收集 4 枚符文并蓄满共鸣能量后才能释放";
       return;
     }
     dom.abilityKey.textContent = mode === "play" ? "E" : "AUTO";
@@ -2233,6 +2330,12 @@
     heartLanterns = [];
     heartBarriers = [];
     heartSequence = 0;
+    sigrikaRunes = [];
+    sigrikaFields = [];
+    sigrikaGiantRunes = [];
+    sigrikaSuns = [];
+    sigrikaKicks = [];
+    sigrikaSequence = 0;
     pickups = [];
     floatingTexts = [];
     timeStopOwner = null;
@@ -2261,6 +2364,9 @@
     multiFighters.slice(2).forEach(spawnWhiteSheep);
     setupVerinaPlants();
     setupCantarellaJellies();
+    multiFighters.forEach((fighter) => {
+      if (fighter.template.id === "sigrika") spawnSigrikaRunes(fighter);
+    });
     battleTimer = roundSeconds;
     pickupTimer = random(3.4, 5.4);
     countdownClock = 3.05;
@@ -2308,6 +2414,9 @@
     [player, enemy].forEach(spawnWhiteSheep);
     setupVerinaPlants();
     setupCantarellaJellies();
+    [player, enemy].forEach((fighter) => {
+      if (fighter.template.id === "sigrika") spawnSigrikaRunes(fighter);
+    });
     battleTimer = roundSeconds;
     pickupTimer = random(3.4, 5.4);
     countdownClock = 3.05;
@@ -2468,6 +2577,7 @@
     updateSummons(dt);
     updateCantarellaSystem(dt);
     updateHeartSystem(dt);
+    updateSigrikaSystem(dt);
     updateJinhsiSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
@@ -2542,6 +2652,7 @@
     updateSummons(dt);
     updateCantarellaSystem(dt);
     updateHeartSystem(dt);
+    updateSigrikaSystem(dt);
     updateJinhsiSystem(dt);
     updateVerinaPlants(dt);
     updateBrantSystem(dt);
@@ -2707,6 +2818,7 @@
     fighter.weaponSwing = Math.max(0, fighter.weaponSwing - dt);
     fighter.thrustTime = Math.max(0, fighter.thrustTime - dt);
     fighter.abyssScytheSwing = Math.max(0, fighter.abyssScytheSwing - dt);
+    fighter.sigrikaPunchSwing = Math.max(0, fighter.sigrikaPunchSwing - dt);
 
     if (fighter.aeroAirTimer > 0) {
       fighter.vx = 0;
@@ -2757,8 +2869,9 @@
 
     const orbiting = fighter.aeroUltimateTimer > 0;
     if (fighter.template.id === "08") steerAeroMovement(fighter, dt);
+    if (fighter.template.id === "sigrika") steerSigrikaMovement(fighter, dt, isPlayer);
     const dashing = fighter.aeroDashTimer > 0;
-    if (!orbiting && !dashing && !fighter.conductive?.chaseHeading && isPlayer && (mode === "play" || showcaseTrainingActive)) {
+    if (!orbiting && !dashing && !fighter.sigrikaAirborne && !fighter.conductive?.chaseHeading && isPlayer && (mode === "play" || showcaseTrainingActive)) {
       const inputX = (keys.ArrowRight || keys.KeyD || touchDirection.right ? 1 : 0)
         - (keys.ArrowLeft || keys.KeyA || touchDirection.left ? 1 : 0);
       const inputY = (keys.ArrowDown || keys.KeyS || touchDirection.down ? 1 : 0)
@@ -2776,7 +2889,7 @@
 
     const speedLimit = getEffectiveMoveSpeed(fighter);
     const speed = Math.hypot(fighter.vx, fighter.vy);
-    if (speed > 0 && !orbiting && !dashing) {
+    if (speed > 0 && !orbiting && !dashing && !fighter.sigrikaAirborne) {
       fighter.vx = (fighter.vx / speed) * speedLimit;
       fighter.vy = (fighter.vy / speed) * speedLimit;
     }
@@ -2938,6 +3051,30 @@
       if (fighter.abyssForm) {
         fighter.abyssEnergy = Math.max(0, fighter.abyssEnergy - fighter.template.abyssDrainPerSecond * dt);
         if (fighter.abyssEnergy <= 0) exitAbyssForm(fighter);
+      }
+    }
+    if (fighter.template.id === "sigrika" && fighter.hp > 0) {
+      if (fighter.skillClock > 0) fighter.skillClock = Math.max(0, fighter.skillClock - dt);
+      if (
+        fighter.skillClock === 0
+        && !fighter.sigrikaAirborne
+        && fighter.stunned <= 0
+        && fighter.freeze <= 0
+        && fighter.vortexLockTimer <= 0
+      ) {
+        if (sigrikaUnlocked(fighter, 5)) {
+          // 强化技能：在自身脚下留下巨型符文，场上最多同时保留 2 枚。
+          if (sigrikaGiantRunes.filter((rune) => rune.owner === fighter).length < 2) {
+            spawnSigrikaGiantRune(fighter, fighter.x, fighter.y);
+            fighter.skillClock = fighter.template.skillCooldown;
+          }
+        } else if (sigrikaUnlocked(fighter, 2)) {
+          const skillTarget = nearestOpponent(fighter);
+          if (skillTarget && distance(fighter, skillTarget) <= fighter.template.sigrikaSkillRange * CELL_SIZE) {
+            spawnSigrikaField(fighter, skillTarget);
+            fighter.skillClock = fighter.template.skillCooldown;
+          }
+        }
       }
     }
     if (fighter.template.id === "kakarot-test" && fighter.specialEnergy >= 3 && fighter.deathSentenceClock > 0) {
@@ -6366,9 +6503,523 @@
     }
   }
 
+  // ------------------------------------------------------- 西格莉卡团子：符文体系
+
+  function sigrikaUnlocked(fighter, threshold) {
+    return Boolean(fighter) && fighter.template.id === "sigrika" && fighter.sigrikaRunes >= threshold;
+  }
+
+  function spawnSigrikaRunes(owner) {
+    const total = owner.template.sigrikaRuneTotal;
+    for (let index = 0; index < total; index += 1) {
+      let x = ARENA_SIZE / 2;
+      let y = ARENA_SIZE / 2;
+      for (let attempt = 0; attempt < 30; attempt += 1) {
+        x = random(BOUNDARY + CELL_SIZE * 1.6, ARENA_SIZE - BOUNDARY - CELL_SIZE * 1.6);
+        y = random(BOUNDARY + CELL_SIZE * 1.6, ARENA_SIZE - BOUNDARY - CELL_SIZE * 1.6);
+        const clearOfRunes = sigrikaRunes.every((rune) => Math.hypot(rune.x - x, rune.y - y) > CELL_SIZE * 2.4);
+        const clearOfFighters = getActiveFighters().every((fighter) => Math.hypot(fighter.x - x, fighter.y - y) > CELL_SIZE * 2);
+        if (clearOfRunes && clearOfFighters) break;
+      }
+      sigrikaRunes.push({
+        id: ++sigrikaSequence,
+        owner,
+        x,
+        y,
+        phase: random(0, Math.PI * 2),
+        style: index % 2
+      });
+    }
+    addLog(`${owner.template.name} 在场地内展开 ${total} 枚符文，移动到符文上即可收集。`, "ability");
+    announce(`${owner.template.name} · 符文散布`, owner.template.color, 1.2);
+  }
+
+  function collectSigrikaRune(fighter, rune) {
+    const index = sigrikaRunes.indexOf(rune);
+    if (index >= 0) sigrikaRunes.splice(index, 1);
+    fighter.sigrikaRunes = Math.min(fighter.template.sigrikaRuneTotal, fighter.sigrikaRunes + 1);
+    const labels = [
+      "普攻解锁",
+      "技能解锁",
+      "衍生普攻解锁",
+      "大招解锁",
+      "强化技能解锁",
+      "终极增益·日灵光圈",
+      "终极增益强化·巨型符文"
+    ];
+    const label = labels[fighter.sigrikaRunes - 1] || "符文共鸣";
+    effects.push({ type: "sigrikaRunePickup", x: rune.x, y: rune.y, life: 0.65, maxLife: 0.65, color: "#ffd27a" });
+    spawnBurst(rune.x, rune.y, "#ffe6a8", 22, 210);
+    announce(`${fighter.template.name} · ${label}`, "#ffd98c", 1.1);
+    addLog(`${fighter.template.name} 收集第 ${fighter.sigrikaRunes} 枚符文：${label}。`, "ability");
+    playSound("pickup");
+  }
+
+  function updateSigrikaRunes(dt) {
+    if (!sigrikaRunes.length) return;
+    const collectors = getActiveFighters().filter((fighter) => fighter.template.id === "sigrika" && fighter.hp > 0);
+    for (let i = sigrikaRunes.length - 1; i >= 0; i -= 1) {
+      const rune = sigrikaRunes[i];
+      rune.phase += dt * 1.5;
+      if (!rune.owner || rune.owner.hp <= 0) {
+        sigrikaRunes.splice(i, 1);
+        continue;
+      }
+      const collector = collectors.find((fighter) => fighter === rune.owner
+        && Math.hypot(fighter.x - rune.x, fighter.y - rune.y) <= CELL_SIZE * fighter.template.sigrikaRuneRadius + fighter.r * 0.55);
+      if (collector) collectSigrikaRune(collector, rune);
+    }
+  }
+
+  // 技能：链刃领域
+  function spawnSigrikaField(owner, target) {
+    sigrikaFields.push({
+      id: ++sigrikaSequence,
+      owner,
+      x: target.x,
+      y: target.y,
+      radius: owner.template.sigrikaFieldRadius * CELL_SIZE,
+      life: owner.template.sigrikaFieldDuration,
+      maxLife: owner.template.sigrikaFieldDuration,
+      bladeClock: 0,
+      phase: random(0, Math.PI * 2),
+      blades: []
+    });
+    effects.push({
+      type: "ring",
+      x: target.x,
+      y: target.y,
+      radius: 18,
+      growth: 620,
+      life: 0.6,
+      maxLife: 0.6,
+      color: "#ffb45e",
+      width: 7
+    });
+    announce(`${owner.template.name} · 链刃领域`, "#ffc06a", 1.1);
+    addLog(`${owner.template.name} 在敌人脚下展开半径 ${owner.template.sigrikaFieldRadius} 格的链刃领域。`, "ability");
+    playSound("windup");
+  }
+
+  function updateSigrikaFields(dt) {
+    for (let i = sigrikaFields.length - 1; i >= 0; i -= 1) {
+      const field = sigrikaFields[i];
+      if (!field.owner || field.owner.hp <= 0) {
+        sigrikaFields.splice(i, 1);
+        continue;
+      }
+      field.phase += dt * 1.3;
+      field.life = Math.max(0, field.life - dt);
+      if (field.life > 0) {
+        field.bladeClock -= dt;
+        if (field.bladeClock <= 0) {
+          field.bladeClock = field.owner.template.sigrikaBladeInterval;
+          const angle = random(0, Math.PI * 2);
+          const offset = Math.sqrt(Math.random()) * field.radius * 0.9;
+          field.blades.push({
+            x: field.x + Math.cos(angle) * offset,
+            y: field.y + Math.sin(angle) * offset,
+            timer: field.owner.template.sigrikaBladeWindup,
+            maxTimer: field.owner.template.sigrikaBladeWindup,
+            angle: random(0, Math.PI * 2)
+          });
+          if (field.blades.length > 48) field.blades.shift();
+        }
+      }
+      for (let b = field.blades.length - 1; b >= 0; b -= 1) {
+        const blade = field.blades[b];
+        blade.timer -= dt;
+        if (blade.timer > 0) continue;
+        field.blades.splice(b, 1);
+        const owner = field.owner;
+        const hitRadius = owner.template.sigrikaBladeRadius * CELL_SIZE;
+        getDamageableUnits()
+          .filter((target) => target.side !== owner.side
+            && target.hp > 0
+            && Math.hypot(target.x - blade.x, target.y - blade.y) <= hitRadius + target.r * 0.35)
+          .forEach((target) => {
+            applySpecialDamage(target, owner.template.sigrikaBladeDamage, owner, "链刃坠击", { color: "#ffc06a" });
+          });
+        effects.push({
+          type: "sigrikaBlade",
+          x: blade.x,
+          y: blade.y,
+          radius: hitRadius,
+          life: 0.34,
+          maxLife: 0.34,
+          color: "#ffcf87"
+        });
+        spawnBurst(blade.x, blade.y, "#ffd79a", 10, 150);
+      }
+      if (field.life <= 0 && !field.blades.length) sigrikaFields.splice(i, 1);
+    }
+  }
+
+  // 巨型符文：站入其中解析 5 秒后发生两次爆炸
+  function spawnSigrikaGiantRune(owner, x, y) {
+    // 日灵光圈每 3 秒就会留下巨型符文，必须限制数量，否则整个战场会被光圈铺满。
+    while (sigrikaGiantRunes.length >= 4) sigrikaGiantRunes.shift();
+    sigrikaGiantRunes.push({
+      id: ++sigrikaSequence,
+      owner,
+      x,
+      y,
+      radius: owner.template.sigrikaGiantRuneRadius * CELL_SIZE,
+      progress: 0,
+      need: owner.template.sigrikaAnalyzeTime,
+      state: "idle",
+      explosions: 0,
+      burstClock: 0,
+      phase: random(0, Math.PI * 2)
+    });
+    effects.push({
+      type: "ring",
+      x,
+      y,
+      radius: 20,
+      growth: 720,
+      life: 0.7,
+      maxLife: 0.7,
+      color: "#ffe08a",
+      width: 6
+    });
+    addLog(`${owner.template.name} 留下半径 ${owner.template.sigrikaGiantRuneRadius} 格的巨型符文，站入其中可解析。`, "ability");
+    playSound("windup");
+  }
+
+  function sigrikaRuneBlast(rune) {
+    const owner = rune.owner;
+    if (!owner) return;
+    getDamageableUnits()
+      .filter((target) => target.side !== owner.side
+        && target.hp > 0
+        && Math.hypot(target.x - rune.x, target.y - rune.y) <= rune.radius)
+      .forEach((target) => {
+        applySpecialDamage(target, owner.template.sigrikaRuneBurstDamage, owner, "符文爆裂", { color: "#ffd36a" });
+      });
+    effects.push({
+      type: "sigrikaRuneBurst",
+      x: rune.x,
+      y: rune.y,
+      radius: rune.radius,
+      life: 0.75,
+      maxLife: 0.75,
+      color: "#ffe08a"
+    });
+    spawnBurst(rune.x, rune.y, "#ffe9a8", 46, 360);
+    screenShake = Math.max(screenShake, 12);
+    playSound("abyss");
+  }
+
+  function updateSigrikaGiantRunes(dt) {
+    for (let i = sigrikaGiantRunes.length - 1; i >= 0; i -= 1) {
+      const rune = sigrikaGiantRunes[i];
+      if (!rune.owner || rune.owner.hp <= 0) {
+        sigrikaGiantRunes.splice(i, 1);
+        continue;
+      }
+      rune.phase += dt * 0.8;
+      if (rune.state === "idle") {
+        const inside = Math.hypot(rune.owner.x - rune.x, rune.owner.y - rune.y) <= rune.radius;
+        if (!inside) continue;
+        rune.progress = Math.min(rune.need, rune.progress + dt);
+        if (rune.progress >= rune.need) {
+          rune.state = "bursting";
+          rune.explosions = 0;
+          rune.burstClock = 0.25;
+          announce(`${rune.owner.template.name} · 符文解析完成`, "#fff0b8", 1.2);
+          addLog(`${rune.owner.template.name} 的巨型符文解析完毕，即将连续爆裂两次。`, "ability");
+        }
+        continue;
+      }
+      rune.burstClock -= dt;
+      if (rune.burstClock > 0) continue;
+      sigrikaRuneBlast(rune);
+      rune.explosions += 1;
+      rune.burstClock = rune.owner.template.sigrikaRuneBurstInterval;
+      if (rune.explosions >= 2) sigrikaGiantRunes.splice(i, 1);
+    }
+  }
+
+  // 终极增益：日灵光圈
+  function spawnSigrikaSun(owner) {
+    sigrikaSuns.push({
+      id: ++sigrikaSequence,
+      owner,
+      x: random(BOUNDARY + CELL_SIZE * 2, ARENA_SIZE - BOUNDARY - CELL_SIZE * 2),
+      y: random(BOUNDARY + CELL_SIZE * 2, ARENA_SIZE - BOUNDARY - CELL_SIZE * 2),
+      radius: owner.template.sigrikaSunRadius * CELL_SIZE,
+      phase: "rise",
+      clock: owner.template.sigrikaSunRise,
+      falls: 0,
+      seed: random(0, Math.PI * 2)
+    });
+    announce(`${owner.template.name} · 日灵降临`, "#ffd27a", 1);
+    addLog(`${owner.template.name} 展开半径 ${owner.template.sigrikaSunRadius} 格的日灵光圈，日灵将坠落两次。`, "ability");
+    playSound("timeStop");
+  }
+
+  function updateSigrikaSuns(dt) {
+    for (let i = sigrikaSuns.length - 1; i >= 0; i -= 1) {
+      const sun = sigrikaSuns[i];
+      if (!sun.owner || sun.owner.hp <= 0) {
+        sigrikaSuns.splice(i, 1);
+        continue;
+      }
+      sun.clock -= dt;
+      if (sun.clock > 0) continue;
+      if (sun.phase === "rise") {
+        sun.phase = "fall";
+        sun.clock = sun.owner.template.sigrikaSunFall;
+      } else if (sun.phase === "fall") {
+        const owner = sun.owner;
+        getDamageableUnits()
+          .filter((target) => target.side !== owner.side
+            && target.hp > 0
+            && Math.hypot(target.x - sun.x, target.y - sun.y) <= sun.radius)
+          .forEach((target) => {
+            applySpecialDamage(target, owner.template.sigrikaSunDamage, owner, "日灵坠击", { color: "#ffd27a" });
+          });
+        effects.push({
+          type: "sigrikaSunSlam",
+          x: sun.x,
+          y: sun.y,
+          radius: sun.radius,
+          life: 0.65,
+          maxLife: 0.65,
+          color: "#ffe0a0"
+        });
+        spawnBurst(sun.x, sun.y, "#ffe6ae", 40, 300);
+        screenShake = Math.max(screenShake, 10);
+        playSound("blade");
+        sun.falls += 1;
+        if (sun.falls >= owner.template.sigrikaSunFalls) {
+          if (owner.sigrikaRunes >= 7) spawnSigrikaGiantRune(owner, sun.x, sun.y);
+          sigrikaSuns.splice(i, 1);
+        } else {
+          sun.phase = "rest";
+          sun.clock = owner.template.sigrikaSunRest;
+        }
+      } else {
+        sun.phase = "rise";
+        sun.clock = sun.owner.template.sigrikaSunRise;
+      }
+    }
+  }
+
+  // 衍生普攻：踢击
+  function startSigrikaKick(owner, x, y, enhanced) {
+    const config = owner.template;
+    sigrikaKicks.push({
+      id: ++sigrikaSequence,
+      owner,
+      x,
+      y,
+      timer: config.sigrikaKickWindup,
+      maxTimer: config.sigrikaKickWindup,
+      radius: (enhanced ? config.sigrikaEnhancedKickRadius : config.sigrikaKickRadius) * CELL_SIZE,
+      damage: enhanced ? config.sigrikaKickDamage * config.sigrikaEnhancedKickMultiplier : config.sigrikaKickDamage,
+      stun: config.sigrikaKickStun,
+      enhanced
+    });
+  }
+
+  function resolveSigrikaKick(kick) {
+    const owner = kick.owner;
+    if (!owner || owner.hp <= 0) return;
+    getDamageableUnits()
+      .filter((target) => target.side !== owner.side
+        && target.hp > 0
+        && Math.hypot(target.x - kick.x, target.y - kick.y) <= kick.radius)
+      .forEach((target) => {
+        applySpecialDamage(target, kick.damage, owner, kick.enhanced ? "日灵强踢" : "裂地裂踢", { color: "#ffc069" });
+        if (target.hp > 0) target.stunned = Math.max(target.stunned, kick.stun);
+      });
+    effects.push({
+      type: "sigrikaKick",
+      x: kick.x,
+      y: kick.y,
+      radius: kick.radius,
+      life: 0.62,
+      maxLife: 0.62,
+      color: kick.enhanced ? "#ffefc0" : "#ffcf87",
+      enhanced: kick.enhanced
+    });
+    spawnBurst(kick.x, kick.y, "#ffe6a8", kick.enhanced ? 64 : 34, kick.enhanced ? 430 : 280);
+    screenShake = Math.max(screenShake, kick.enhanced ? 16 : 8);
+    playSound(kick.enhanced ? "abyss" : "blade");
+    addLog(
+      kick.enhanced
+        ? `${owner.template.name} 打出日灵强踢，半径 ${owner.template.sigrikaEnhancedKickRadius} 格的冲击波引爆全场。`
+        : `${owner.template.name} 追加一记裂地踢，眩晕范围内敌人 ${kick.stun} 秒。`,
+      "ability"
+    );
+    if (!kick.enhanced) return;
+    // 强化踢击同步引爆范围内未解析完成的巨型符文
+    [...sigrikaGiantRunes].forEach((rune) => {
+      if (rune.owner !== owner) return;
+      if (Math.hypot(rune.x - kick.x, rune.y - kick.y) > kick.radius) return;
+      sigrikaRuneBlast(rune);
+      sigrikaRuneBlast(rune);
+      const index = sigrikaGiantRunes.indexOf(rune);
+      if (index >= 0) sigrikaGiantRunes.splice(index, 1);
+    });
+    // 日灵辅助结束
+    owner.sigrikaSunAssist = false;
+    owner.sigrikaAirborne = false;
+    const speed = getEffectiveMoveSpeed(owner);
+    const angle = Math.hypot(owner.vx, owner.vy) > 0.01 ? Math.atan2(owner.vy, owner.vx) : owner.thrustAngle || 0;
+    owner.vx = Math.cos(angle) * speed;
+    owner.vy = Math.sin(angle) * speed;
+    announce(`${owner.template.name} · 日灵回归`, "#ffd88f", 1);
+    effects.push({
+      type: "ring",
+      x: owner.x,
+      y: owner.y,
+      radius: owner.r + 8,
+      growth: 520,
+      life: 0.6,
+      maxLife: 0.6,
+      color: "#ffe6a8",
+      width: 6
+    });
+  }
+
+  // 普攻：直线日轮拳
+  function performSigrikaPunch(fighter, opponent) {
+    const config = fighter.template;
+    const angle = Math.atan2(opponent.y - fighter.y, opponent.x - fighter.x);
+    fighter.thrustAngle = angle;
+    fighter.sigrikaPunchSwing = 0.34;
+    fighter.weaponSwing = 0.3;
+    const length = config.sigrikaPunchLength * CELL_SIZE;
+    const halfWidth = (config.sigrikaPunchWidth * CELL_SIZE) / 2;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const hits = [];
+    getDamageableUnits()
+      .filter((target) => target.side !== fighter.side && target.hp > 0)
+      .forEach((target) => {
+        const dx = target.x - fighter.x;
+        const dy = target.y - fighter.y;
+        const forward = dx * cos + dy * sin;
+        const lateral = -dx * sin + dy * cos;
+        if (forward < -target.r * 0.25 || forward > length + target.r * 0.6) return;
+        if (Math.abs(lateral) > halfWidth + target.r * 0.65) return;
+        applyDamage(target, config.attackDamage, fighter, "日轮拳", {
+          color: "#ffcf7a",
+          melee: true
+        });
+        hits.push(target);
+        effects.push({
+          type: "sigrikaPunchHit",
+          x: target.x,
+          y: target.y,
+          angle,
+          life: 0.32,
+          maxLife: 0.32,
+          color: "#ffe0a0"
+        });
+        spawnBurst(target.x, target.y, "#ffd88f", 16, 210);
+      });
+    effects.push({
+      type: "sigrikaPunchBeam",
+      x: fighter.x,
+      y: fighter.y,
+      angle,
+      length,
+      width: config.sigrikaPunchWidth * CELL_SIZE,
+      life: 0.28,
+      maxLife: 0.28,
+      color: "#ffe0a0"
+    });
+    playSound("sword");
+    if (!hits.length) return;
+    if (sigrikaUnlocked(fighter, 3)) {
+      const enhanced = fighter.sigrikaSunAssist;
+      startSigrikaKick(fighter, hits[0].x, hits[0].y, enhanced);
+      addLog(`${fighter.template.name} 挥拳命中，接一记${enhanced ? "日灵强踢" : "裂地踢"}。`, "ability");
+    }
+  }
+
+  function startSigrikaSunAssist(fighter) {
+    fighter.sigrikaSunAssist = true;
+    fighter.sigrikaAirborne = true;
+    fighter.sigrikaPunchSwing = 0;
+    fighter.attackClock = Math.min(fighter.attackClock, 0.2);
+    effects.push({
+      type: "ring",
+      x: fighter.x,
+      y: fighter.y,
+      radius: fighter.r + 10,
+      growth: 760,
+      life: 0.8,
+      maxLife: 0.8,
+      color: "#ffe08a",
+      width: 10
+    });
+    spawnBurst(fighter.x, fighter.y, "#ffe9a8", 48, 320);
+    announce(`${fighter.template.name} · 日灵庇佑`, "#ffe08a", 1.3);
+    addLog(`${fighter.template.name} 借助日灵滞空，下一次踢击范围与伤害大幅强化。`, "ability");
+    playSound("timeStop");
+  }
+
+  // 移动：滞空时追击最近敌人；符文集齐前自动寻路拾取
+  function steerSigrikaMovement(fighter, dt, isPlayer) {
+    if (fighter.sigrikaAirborne) {
+      const target = nearestOpponent(fighter);
+      const speed = getEffectiveMoveSpeed(fighter) * 2;
+      if (target) {
+        const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
+        fighter.vx = Math.cos(angle) * speed;
+        fighter.vy = Math.sin(angle) * speed;
+      }
+      return;
+    }
+    if (isPlayer && mode === "play") return;
+    if (fighter.sigrikaRunes >= fighter.template.sigrikaRuneTotal) return;
+    let nearest = null;
+    let best = Infinity;
+    sigrikaRunes.forEach((rune) => {
+      if (rune.owner !== fighter) return;
+      const targetDistance = Math.hypot(rune.x - fighter.x, rune.y - fighter.y);
+      if (targetDistance < best) {
+        best = targetDistance;
+        nearest = rune;
+      }
+    });
+    if (!nearest) return;
+    const speed = getEffectiveMoveSpeed(fighter);
+    const angle = Math.atan2(nearest.y - fighter.y, nearest.x - fighter.x);
+    fighter.vx = Math.cos(angle) * speed;
+    fighter.vy = Math.sin(angle) * speed;
+  }
+
+  function updateSigrikaSystem(dt) {
+    updateSigrikaRunes(dt);
+    updateSigrikaFields(dt);
+    updateSigrikaGiantRunes(dt);
+    updateSigrikaSuns(dt);
+    for (let i = sigrikaKicks.length - 1; i >= 0; i -= 1) {
+      const kick = sigrikaKicks[i];
+      kick.timer -= dt;
+      if (kick.timer > 0) continue;
+      sigrikaKicks.splice(i, 1);
+      resolveSigrikaKick(kick);
+    }
+    getActiveFighters()
+      .filter((fighter) => fighter.template.id === "sigrika" && fighter.hp > 0)
+      .forEach((fighter) => {
+        if (fighter.sigrikaRunes < 6) return;
+        fighter.sigrikaSunClock -= dt;
+        if (fighter.sigrikaSunClock > 0) return;
+        fighter.sigrikaSunClock = fighter.template.sigrikaSunInterval;
+        spawnSigrikaSun(fighter);
+      });
+  }
+
   function spawnWhiteSheep(owner) {
-    if (!owner || owner.template.summonType !== "whiteSheep") return;
-    const angle = random(0, Math.PI * 2);
+    if (!owner || owner.template.summonType !== "whiteSheep") return;    const angle = random(0, Math.PI * 2);
     const speed = 3.3 * CELL_SIZE;
     summonUnits.push({
       owner,
@@ -6528,6 +7179,7 @@
       return;
     }
     if (fighter.attackClock > 0 || fighter.template.attackType === "none") return;
+    if (fighter.template.id === "sigrika" && !sigrikaUnlocked(fighter, 1)) return;
     if (fighter.conductive) {
       performConductiveAttack(fighter, opponent);
     } else if (fighter.template.id === "09") {
@@ -6569,6 +7221,11 @@
           performJinhsiSlash(fighter, opponent);
           fighter.attackClock = fighter.template.attackCooldown;
         }
+      }
+    } else if (fighter.template.id === "sigrika") {
+      if (distance(fighter, opponent) <= fighter.template.attackRange * CELL_SIZE + opponent.r * 0.15) {
+        performSigrikaPunch(fighter, opponent);
+        fighter.attackClock = fighter.template.attackCooldown;
       }
     } else if (fighter.template.attackType === "thrust") {
       if (inMeleeRange(fighter, opponent)) {
@@ -7052,6 +7709,7 @@
       fighter.template.ultimateType === "abyssBurst"
       && fighter.hp >= fighter.template.ultimateHpThreshold
     ) return;
+    if (fighter.template.ultimateType === "sigrikaSun" && !sigrikaUnlocked(fighter, 4)) return;
     if (
       fighter.template.ultimateType === "abyssBurst"
       && distance(fighter, opponent) > fighter.template.ultimateSeekRadius * CELL_SIZE
@@ -7131,6 +7789,8 @@
       playSound("timeStop");
     } else if (fighter.template.ultimateType === "cantarellaMirage") {
       startCantarellaMirage(fighter);
+    } else if (fighter.template.ultimateType === "sigrikaSun") {
+      startSigrikaSunAssist(fighter);
     } else if (isAeroUltimate) {
       fighter.aeroUltimateTimer = fighter.template.ultimateDuration;
       fighter.aeroStrikeClock = fighter.template.aeroStrikeInterval;
@@ -7216,7 +7876,7 @@
 
   function applyDamage(target, amount, source, label, options = {}) {
     if (!target || target.hp <= 0 || state !== "playing") return;
-    if (target.jinhsiAirborne || target.aeroAirTimer > 0) return 0;
+    if (target.jinhsiAirborne || target.sigrikaAirborne || target.aeroAirTimer > 0) return 0;
     let finalAmount = Math.max(1, amount);
     const specialDamage = options.category === DAMAGE_CATEGORIES.SPECIAL;
     const meleeDamage = !specialDamage && (options.melee === true
@@ -7401,7 +8061,7 @@
 
   function dealRawDamage(target, amount, source, label, color) {
     if (!target || target.hp <= 0 || state !== "playing") return;
-    if (target.jinhsiAirborne || target.aeroAirTimer > 0) return 0;
+    if (target.jinhsiAirborne || target.sigrikaAirborne || target.aeroAirTimer > 0) return 0;
     if (target.trainingDummy) showcaseTrainingDamage += Math.max(1, amount);
     target.hp = target.trainingInvulnerable
       ? Math.max(1, target.hp)
@@ -8017,6 +8677,7 @@
         else if (fighter.template.id === "07" && fighter.jinhsiUltimateUnlocked) status = "龙吟";
         else if (fighter.template.id === "07" && fighter.jinhsiEmpowered) status = "强化";
         else if (fighter.template.id === "08") status = getAeroStatus(fighter) || `风息 ${Math.round(fighter.aeroWind)}/100`;
+        else if (fighter.template.id === "sigrika") status = getSigrikaStatus(fighter);
         else if (fighter.conductive) status = getConductiveStatus(fighter);
         else if (fighter.template.id === "09" && fighter.heartBarrierPending) status = `分界 ${fighter.heartBarrierWindup.toFixed(1)}s`;
         else if (fighter.template.id === "09" && heartBarriers.some((item) => item.owner === fighter)) status = "心界屏障";
@@ -8108,6 +8769,8 @@
     const enemyHasSpecial = ["kakarot-test", "01", "07", "08"].includes(enemy.template.id);
     const playerHasAbyss = player.template.id === "02";
     const enemyHasAbyss = enemy.template.id === "02";
+    const playerHasSigrika = player.template.id === "sigrika";
+    const enemyHasSigrika = enemy.template.id === "sigrika";
     const playerHasBrant = player.template.id === "04";
     const enemyHasBrant = enemy.template.id === "04";
     dom.playerSpecialGauge.hidden = !playerHasSpecial;
@@ -8116,8 +8779,8 @@
     dom.enemySpecialGauge.classList.toggle("is-jinhsi", enemy.template.id === "07");
     dom.playerSpecialGauge.classList.toggle("is-aero", player.template.id === "08");
     dom.enemySpecialGauge.classList.toggle("is-aero", enemy.template.id === "08");
-    dom.playerAbyssGauge.hidden = !playerHasAbyss;
-    dom.enemyAbyssGauge.hidden = !enemyHasAbyss;
+    dom.playerAbyssGauge.hidden = !(playerHasAbyss || playerHasSigrika);
+    dom.enemyAbyssGauge.hidden = !(enemyHasAbyss || enemyHasSigrika);
     dom.playerBrantGauge.hidden = !playerHasBrant;
     dom.enemyBrantGauge.hidden = !enemyHasBrant;
     if (playerHasSpecial) {
@@ -8164,6 +8827,18 @@
       dom.enemyAbyssGauge.querySelector("i").style.width = `${clamp(enemy.abyssEnergy, 0, 100)}%`;
       dom.enemyAbyssText.textContent = `${Math.round(enemy.abyssEnergy)}`;
     }
+    if (playerHasSigrika) {
+      const total = player.template.sigrikaRuneTotal;
+      dom.playerAbyssGauge.querySelector("span").textContent = "符文";
+      dom.playerAbyssGauge.querySelector("i").style.width = `${clamp((player.sigrikaRunes / total) * 100, 0, 100)}%`;
+      dom.playerAbyssText.textContent = `${player.sigrikaRunes}/${total}`;
+    }
+    if (enemyHasSigrika) {
+      const total = enemy.template.sigrikaRuneTotal;
+      dom.enemyAbyssGauge.querySelector("span").textContent = "符文";
+      dom.enemyAbyssGauge.querySelector("i").style.width = `${clamp((enemy.sigrikaRunes / total) * 100, 0, 100)}%`;
+      dom.enemyAbyssText.textContent = `${enemy.sigrikaRunes}/${total}`;
+    }
     if (playerHasBrant) {
       dom.playerBrantGauge.querySelector("i").style.width = `${clamp(player.brantSpecialEnergy, 0, 100)}%`;
       dom.playerBrantText.textContent = `${Math.round(player.brantSpecialEnergy)}`;
@@ -8187,6 +8862,7 @@
       && player.template.ultimateType !== "autoThreshold"
       && !player.charge
       && !(player.template.ultimateType === "abyssBurst" && player.hp >= player.template.ultimateHpThreshold)
+      && !(player.template.ultimateType === "sigrikaSun" && player.sigrikaRunes < 4)
       && abyssInRange
       && verinaUnlocked
       && verinaHealthReady
@@ -8257,6 +8933,8 @@
         dom.battleStatus.textContent = `初始普攻 · ${player.jinhsiAttackCount}/4`;
       } else if (player.template.id === "08") {
         dom.battleStatus.textContent = getAeroStatus(player) || `风息 ${Math.round(player.aeroWind)}/100`;
+      } else if (player.template.id === "sigrika") {
+        dom.battleStatus.textContent = getSigrikaStatus(player);
       } else if (player.conductive) {
         dom.battleStatus.textContent = getConductiveStatus(player);
       } else if (player.template.id === "09" && player.heartBarrierPending) {
@@ -8317,6 +8995,13 @@
     if (canConductiveUseUltimate(fighter)) return "千声翻涌就绪";
     if (combat.hookCooldown > 0) return `钩锁冷却 ${combat.hookCooldown.toFixed(1)}s`;
     return "激战中";
+  }
+
+  function getSigrikaStatus(fighter) {
+    const total = fighter.template.sigrikaRuneTotal;
+    if (fighter.sigrikaAirborne) return `日灵庇佑 · 追击中`;
+    if (fighter.sigrikaRunes < total) return `符文 ${fighter.sigrikaRunes}/${total} · 寻符`;
+    return `符文 ${fighter.sigrikaRunes}/${total}`;
   }
 
   function getAeroStatus(fighter) {
@@ -8444,6 +9129,7 @@
     drawCraters();
     drawTimeVortices();
     drawPickups();
+    drawSigrikaGround();
     drawTrails();
     drawSummons();
     drawCantarellaJellies();
@@ -8462,6 +9148,7 @@
     drawParticles();
     drawWindWaves();
     drawEffects(false);
+    drawSigrikaImpact();
     drawFloatingTexts();
     drawVoicePauseEffect();
     ctx.restore();
@@ -8541,6 +9228,10 @@
           ? `屏障 ${barrier.life.toFixed(1)}s`
           : `技能 ${fighter.skillClock.toFixed(1)}s`;
       return `心阵 竹${bambooCount} 线${blueCount} 灯${lanternCount} · ${modeText}`;
+    }
+    if (id === "sigrika") {
+      const total = fighter.template.sigrikaRuneTotal;
+      return `符文 ${fighter.sigrikaRunes}/${total}${fighter.sigrikaAirborne ? " · 日灵庇佑" : ""}`;
     }
     return `特殊能量 ${Math.round(fighter.specialEnergy || 0)}`;
   }
@@ -10605,6 +11296,388 @@
     ctx.textAlign = "center";
     ctx.fillText("CHARGE", centerX, centerY - 16);
     ctx.restore();
+  }
+
+  // ------------------------------------------------------- 西格莉卡团子：绘制
+
+  function drawSigrikaSigil(x, y, size, spin, color, alpha, style = 0) {
+    if (size <= 0) return;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.globalCompositeOperation = "lighter";
+    ctx.globalAlpha = clamp(alpha, 0, 1);
+    ctx.strokeStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = size * 0.55;
+    ctx.lineWidth = Math.max(1.1, size * 0.055);
+    ctx.beginPath();
+    ctx.arc(0, 0, size, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    for (let i = 0; i < 8; i += 1) {
+      const angle = spin + (i / 8) * Math.PI * 2;
+      ctx.moveTo(Math.cos(angle) * size * 0.34, Math.sin(angle) * size * 0.34);
+      ctx.lineTo(Math.cos(angle) * size * 0.96, Math.sin(angle) * size * 0.96);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, size * 0.44, 0, Math.PI * 2);
+    ctx.stroke();
+    if (style === 1) {
+      ctx.beginPath();
+      ctx.arc(0, 0, size * 0.7, spin * 0.7, spin * 0.7 + Math.PI * 1.3);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawSigrikaGround() {
+    // 地上的符文
+    sigrikaRunes.forEach((rune) => {
+      const color = rune.style === 0 ? "#ffd27a" : "#8fd8ff";
+      const pulse = 1 + Math.sin(rune.phase * 2.1) * 0.09;
+      const size = CELL_SIZE * 0.62 * pulse;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(rune.x, rune.y, 2, rune.x, rune.y, size * 2.4);
+      glow.addColorStop(0, colorWithAlpha(color, 0.42));
+      glow.addColorStop(1, colorWithAlpha(color, 0));
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(rune.x, rune.y, size * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      drawSigrikaSigil(rune.x, rune.y, size, rune.phase, color, 0.88, rune.style);
+      ctx.save();
+      ctx.globalAlpha = 0.4;
+      ctx.strokeStyle = colorWithAlpha(color, 0.55);
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([4, 7]);
+      ctx.lineDashOffset = -rune.phase * 8;
+      ctx.beginPath();
+      ctx.arc(rune.x, rune.y, CELL_SIZE, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    // 链刃领域
+    sigrikaFields.forEach((field) => {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(field.x, field.y, 4, field.x, field.y, field.radius);
+      glow.addColorStop(0, "rgba(255,184,96,0.16)");
+      glow.addColorStop(0.72, "rgba(255,152,64,0.07)");
+      glow.addColorStop(1, "rgba(255,152,64,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(field.x, field.y, field.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 0.6;
+      ctx.strokeStyle = "rgba(255,196,116,0.8)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([9, 7]);
+      ctx.lineDashOffset = -field.phase * 16;
+      ctx.beginPath();
+      ctx.arc(field.x, field.y, field.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 0.35;
+      ctx.beginPath();
+      ctx.arc(field.x, field.y, field.radius * 0.56, field.phase, field.phase + Math.PI * 1.4);
+      ctx.stroke();
+      ctx.restore();
+      field.blades.forEach((blade) => {
+        const progress = 1 - blade.timer / blade.maxTimer;
+        const height = CELL_SIZE * (2.6 * (1 - progress) + 0.7);
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = 0.3 + progress * 0.6;
+        ctx.strokeStyle = "rgba(255,228,176,0.92)";
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.moveTo(blade.x + Math.cos(blade.angle) * 7, blade.y - height);
+        ctx.lineTo(blade.x - Math.cos(blade.angle) * 7, blade.y - height * 0.35);
+        ctx.stroke();
+        ctx.globalAlpha = 0.28 + progress * 0.5;
+        ctx.strokeStyle = "rgba(255,196,116,0.85)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(blade.x, blade.y, CELL_SIZE * 0.5 * (0.7 + progress * 0.4), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+    });
+
+    // 巨型符文
+    sigrikaGiantRunes.forEach((rune) => {
+      const ratio = rune.state === "bursting" ? 1 : rune.progress / rune.need;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(rune.x, rune.y, 4, rune.x, rune.y, rune.radius);
+      glow.addColorStop(0, "rgba(255,228,152,0.2)");
+      glow.addColorStop(0.75, "rgba(255,202,112,0.09)");
+      glow.addColorStop(1, "rgba(255,192,92,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(rune.x, rune.y, rune.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 0.72;
+      ctx.strokeStyle = "rgba(255,226,152,0.85)";
+      ctx.lineWidth = 2.2;
+      ctx.setLineDash([13, 9]);
+      ctx.lineDashOffset = rune.phase * 18;
+      ctx.beginPath();
+      ctx.arc(rune.x, rune.y, rune.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 0.95;
+      ctx.strokeStyle = "#fff2bc";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(rune.x, rune.y, rune.radius - 11, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ratio);
+      ctx.stroke();
+      ctx.restore();
+      drawSigrikaSigil(rune.x, rune.y, rune.radius * 0.34, rune.phase * 0.8, "#ffe08a", 0.82, 1);
+      drawSigrikaSigil(rune.x, rune.y, rune.radius * 0.2, -rune.phase, "#fff3c4", 0.7, 0);
+      if (rune.state === "idle" && rune.progress > 0) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255,242,196,0.92)";
+        ctx.font = "600 15px system-ui, -apple-system, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`${(rune.need - rune.progress).toFixed(1)}s`, rune.x, rune.y + rune.radius - 16);
+        ctx.restore();
+      }
+    });
+
+    // 日灵光圈
+    sigrikaSuns.forEach((sun) => {
+      const config = sun.owner.template;
+      const lift = sun.phase === "rise"
+        ? 46 * (1 - sun.clock / config.sigrikaSunRise)
+        : sun.phase === "fall"
+          ? 46 * (sun.clock / config.sigrikaSunFall)
+          : 0;
+      const spiritY = sun.y - lift;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(sun.x, sun.y, 8, sun.x, sun.y, sun.radius);
+      glow.addColorStop(0, "rgba(255,228,154,0.24)");
+      glow.addColorStop(0.62, "rgba(255,206,124,0.11)");
+      glow.addColorStop(1, "rgba(255,192,92,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(sun.x, sun.y, sun.radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 0.62;
+      ctx.strokeStyle = "rgba(255,224,154,0.85)";
+      ctx.lineWidth = 2.4;
+      ctx.setLineDash([15, 11]);
+      ctx.lineDashOffset = -visualTime * 22;
+      ctx.beginPath();
+      ctx.arc(sun.x, sun.y, sun.radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const beam = ctx.createLinearGradient(sun.x, sun.y - sun.radius, sun.x, sun.y + sun.radius);
+      beam.addColorStop(0, "rgba(255,238,178,0)");
+      beam.addColorStop(0.5, "rgba(255,238,178,0.14)");
+      beam.addColorStop(1, "rgba(255,238,178,0)");
+      ctx.fillStyle = beam;
+      ctx.fillRect(sun.x - 16, sun.y - sun.radius, 32, sun.radius * 2);
+      ctx.restore();
+      const spirit = sigrikaSpiritPortraits.get("sun");
+      const size = CELL_SIZE * 1.9;
+      ctx.save();
+      ctx.globalAlpha = 0.34;
+      ctx.fillStyle = "rgba(50,28,8,0.6)";
+      ctx.beginPath();
+      ctx.ellipse(sun.x, sun.y + 5, size * 0.32, size * 0.13, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      if (spirit?.complete && spirit.naturalWidth > 0) {
+        const height = size * (spirit.naturalHeight / spirit.naturalWidth);
+        ctx.save();
+        ctx.globalAlpha = 0.96;
+        ctx.drawImage(spirit, sun.x - size / 2, spiritY - height / 2, size, height);
+        ctx.restore();
+      }
+    });
+  }
+
+  function drawSigrikaImpact() {
+    effects.forEach((effect) => {
+      const alpha = effect.maxLife > 0 ? clamp(effect.life / effect.maxLife, 0, 1) : 1;
+      if (effect.type === "sigrikaPunchBeam") {
+        ctx.save();
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(effect.angle);
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = alpha * 0.85;
+        const beam = ctx.createLinearGradient(0, 0, effect.length, 0);
+        beam.addColorStop(0, "rgba(255,234,178,0.9)");
+        beam.addColorStop(0.68, "rgba(255,214,140,0.32)");
+        beam.addColorStop(1, "rgba(255,198,116,0)");
+        ctx.fillStyle = beam;
+        ctx.beginPath();
+        ctx.moveTo(0, -effect.width * 0.14);
+        ctx.lineTo(effect.length, -effect.width * 0.52);
+        ctx.lineTo(effect.length, effect.width * 0.52);
+        ctx.lineTo(0, effect.width * 0.14);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      } else if (effect.type === "sigrikaPunchHit") {
+        const fist = sigrikaSpiritPortraits.get("fist");
+        const size = CELL_SIZE * 1.5 * (1 + (1 - alpha) * 0.5);
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.translate(effect.x, effect.y);
+        ctx.rotate(effect.angle);
+        if (fist?.complete && fist.naturalWidth > 0) {
+          ctx.drawImage(fist, -size / 2, -size / 2, size, size);
+        }
+        ctx.restore();
+      } else if (effect.type === "sigrikaKick") {
+        const progress = 1 - alpha;
+        const radius = effect.radius;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        // 核心闪光
+        const core = ctx.createRadialGradient(effect.x, effect.y, 2, effect.x, effect.y, radius * (0.2 + progress * 0.9));
+        core.addColorStop(0, colorWithAlpha("#fffdf2", alpha * 0.9));
+        core.addColorStop(0.45, colorWithAlpha(effect.color, alpha * 0.35));
+        core.addColorStop(1, colorWithAlpha(effect.color, 0));
+        ctx.fillStyle = core;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, radius * (0.2 + progress * 0.9), 0, Math.PI * 2);
+        ctx.fill();
+        // 冲击环
+        for (let ring = 0; ring < 3; ring += 1) {
+          const ringRadius = radius * (0.25 + progress * 0.8) - ring * 14;
+          if (ringRadius <= 0) continue;
+          ctx.globalAlpha = alpha * (0.7 - ring * 0.18);
+          ctx.strokeStyle = ring === 0 ? "#fff6d8" : effect.color;
+          ctx.lineWidth = (effect.enhanced ? 8 : 5) - ring * 1.2;
+          ctx.beginPath();
+          ctx.arc(effect.x, effect.y, ringRadius, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        // 放射裂痕
+        ctx.globalAlpha = alpha * 0.65;
+        ctx.strokeStyle = colorWithAlpha(effect.color, alpha * 0.9);
+        ctx.lineWidth = effect.enhanced ? 3.4 : 2.2;
+        ctx.beginPath();
+        for (let i = 0; i < 10; i += 1) {
+          const angle = (i / 10) * Math.PI * 2 + progress * 0.6;
+          const inner = radius * 0.18;
+          const outer = radius * (0.42 + ((i * 37) % 70) / 210) * (0.7 + progress * 0.6);
+          ctx.moveTo(effect.x + Math.cos(angle) * inner, effect.y + Math.sin(angle) * inner);
+          ctx.lineTo(effect.x + Math.cos(angle) * outer, effect.y + Math.sin(angle) * outer);
+        }
+        ctx.stroke();
+        ctx.restore();
+        // 日灵/裂地踢的打击贴图
+        const fist = sigrikaSpiritPortraits.get("fist");
+        if (fist?.complete && fist.naturalWidth > 0) {
+          const size = (effect.enhanced ? radius * 0.95 : radius * 1.15) * (0.7 + (1 - alpha) * 0.5);
+          ctx.save();
+          ctx.globalCompositeOperation = "lighter";
+          ctx.globalAlpha = alpha * 0.75;
+          ctx.drawImage(fist, effect.x - size / 2, effect.y - size / 2, size, size);
+          ctx.restore();
+        }
+      } else if (effect.type === "sigrikaRuneBurst") {
+        const progress = 1 - alpha;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        const core = ctx.createRadialGradient(effect.x, effect.y, 2, effect.x, effect.y, effect.radius);
+        core.addColorStop(0, colorWithAlpha("#fffbe8", alpha * 0.85));
+        core.addColorStop(0.5, colorWithAlpha("#ffe08a", alpha * 0.4));
+        core.addColorStop(1, colorWithAlpha("#ffca6a", 0));
+        ctx.fillStyle = core;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, effect.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.strokeStyle = "#fff2bc";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, effect.radius * (0.3 + progress * 0.7), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+        drawSigrikaSigil(effect.x, effect.y, effect.radius * (0.3 + progress * 0.35), progress * 3, "#fff6d0", alpha * 0.9, 1);
+      } else if (effect.type === "sigrikaSunSlam") {
+        const progress = 1 - alpha;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        const glow = ctx.createRadialGradient(effect.x, effect.y, 4, effect.x, effect.y, effect.radius);
+        glow.addColorStop(0, colorWithAlpha("#fffbe4", alpha * 0.55));
+        glow.addColorStop(0.55, colorWithAlpha(effect.color, alpha * 0.22));
+        glow.addColorStop(1, colorWithAlpha(effect.color, 0));
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, effect.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.strokeStyle = "#ffe9b4";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, effect.radius * (0.35 + progress * 0.62), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      } else if (effect.type === "sigrikaBlade") {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = alpha * 0.85;
+        ctx.strokeStyle = "#ffdca0";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, effect.radius * (0.15 + (1 - alpha) * 0.5), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      } else if (effect.type === "sigrikaRunePickup") {
+        const progress = 1 - alpha;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = alpha * 0.9;
+        ctx.strokeStyle = effect.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(effect.x, effect.y, 10 + progress * 34, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+        drawSigrikaSigil(effect.x, effect.y, 12 + progress * 26, progress * 4, effect.color, alpha * 0.9, 0);
+      }
+    });
+    // 滞空的日灵光柱
+    getActiveFighters().filter((fighter) => fighter.sigrikaAirborne).forEach((fighter) => {
+      const pulse = 0.72 + Math.sin(visualTime * 5) * 0.12;
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const glow = ctx.createRadialGradient(fighter.x, fighter.y, 2, fighter.x, fighter.y, fighter.r * 2.6);
+      glow.addColorStop(0, `rgba(255,236,168,${0.5 * pulse})`);
+      glow.addColorStop(1, "rgba(255,220,140,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(fighter.x, fighter.y, fighter.r * 2.6, 0, Math.PI * 2);
+      ctx.fill();
+      const beam = ctx.createLinearGradient(fighter.x, fighter.y - 150, fighter.x, fighter.y + 20);
+      beam.addColorStop(0, "rgba(255,240,180,0)");
+      beam.addColorStop(0.72, "rgba(255,240,180,0.2)");
+      beam.addColorStop(1, "rgba(255,240,180,0)");
+      ctx.fillStyle = beam;
+      ctx.fillRect(fighter.x - 18, fighter.y - 150, 36, 170);
+      ctx.restore();
+      const spirit = sigrikaSpiritPortraits.get("sunGold");
+      const size = fighter.r * 2.2;
+      if (spirit?.complete && spirit.naturalWidth > 0) {
+        const height = size * (spirit.naturalHeight / spirit.naturalWidth);
+        ctx.save();
+        ctx.globalAlpha = 0.82 + Math.sin(visualTime * 4) * 0.1;
+        ctx.drawImage(spirit, fighter.x - size / 2, fighter.y - fighter.r - height * 0.95, size, height);
+        ctx.restore();
+      }
+    });
   }
 
   function drawPickups() {
@@ -13512,6 +14585,11 @@
     [player, enemy].forEach(spawnWhiteSheep);
     setupVerinaPlants();
     setupCantarellaJellies();
+    if (player.template.id === "sigrika") {
+      // 演示模式直接给满符文，便于展示完整技能组。
+      player.sigrikaRunes = player.template.sigrikaRuneTotal;
+      player.sigrikaSunClock = player.template.sigrikaSunInterval;
+    }
     showcaseTrainingClock = 0;
     showcaseTrainingAutoStep = 0;
     showcaseTrainingReadoutClock = 0;
@@ -13637,7 +14715,7 @@
       updateShowcaseTrainingReadout(true);
       return;
     }
-    const meleeLike = ["melee", "thrust", "hybrid", "jinhsiSlash", "cantarellaUmbrella", "aeroBlade"].includes(player.template.attackType)
+    const meleeLike = ["melee", "thrust", "hybrid", "jinhsiSlash", "cantarellaUmbrella", "aeroBlade", "sigrikaFist"].includes(player.template.attackType)
       || player.abyssForm;
     if (meleeLike && distance(player, enemy) > Math.max(CELL_SIZE * 1.8, getAttackRangeCells(player) * CELL_SIZE * 0.82)) {
       positionShowcaseTrainingTarget(Math.max(1.65, getAttackRangeCells(player) * 0.78));
@@ -13745,6 +14823,11 @@
         }
         description = "演示钩爪附着、持续电击与牵引落击。";
         break;
+      case "sigrika":
+        spawnSigrikaField(player, enemy);
+        spawnSigrikaGiantRune(player, player.x, player.y + CELL_SIZE * 2);
+        description = "演示链刃领域与巨型符文，站入符文可解析。";
+        break;
       default:
         player.specialEnergy = Math.max(3, player.specialEnergy);
         break;
@@ -13806,6 +14889,15 @@
       if (player.template.id === "08") {
         player.aeroAirTimer = 0;
       }
+      if (player.template.id === "sigrika") {
+        player.sigrikaRunes = player.template.sigrikaRuneTotal;
+        if (player.sigrikaAirborne) {
+          player.sigrikaAirborne = false;
+          player.sigrikaSunAssist = false;
+        }
+        positionShowcaseTrainingTarget(2.4);
+        description = "符文已集齐，日灵庇佑开启后追击木桩，下一记踢击将大幅强化。";
+      }
       if (player.conductive) player.hp = Math.min(player.hp, player.template.ultimateThreshold - 1);
       player.energy = 100;
       player.fullEnergyTime = 1.1;
@@ -13843,8 +14935,11 @@
       } else if (showcaseTrainingAutoStep === 2 && showcaseTrainingClock >= 8.2) {
         showcaseTrainingAutoStep = 3;
         triggerShowcaseTrainingUltimate();
+      } else if (showcaseTrainingAutoStep === 3 && player.sigrikaSunAssist && showcaseTrainingClock >= 10.5) {
+        triggerShowcaseTrainingBasic();
       } else if (showcaseTrainingAutoStep === 3 && showcaseTrainingClock >= 14
-        && player.aeroUltimateTimer <= 0 && (!player.conductive || player.conductive.phase === "normal")) {
+        && player.aeroUltimateTimer <= 0 && (!player.conductive || player.conductive.phase === "normal")
+        && !player.sigrikaSunAssist) {
         showcaseTrainingClock = 0;
         showcaseTrainingAutoStep = 0;
         if (player.hp < player.maxHp * 0.3) player.hp = player.maxHp;
@@ -14667,6 +15762,15 @@
     const image = new Image();
     image.src = canvasImageSource(source);
     aeroEffectPortraits.set(name, image);
+  });
+  [
+    ["sun", "assets/sigrika-spirit.png"],
+    ["sunGold", "assets/sigrika-spirit-gold.png"],
+    ["fist", "assets/sigrika-fist.png"]
+  ].forEach(([name, source]) => {
+    const image = new Image();
+    image.src = canvasImageSource(source);
+    sigrikaSpiritPortraits.set(name, image);
   });
   FIGHTERS.filter((fighter) => fighter.weaponImage).forEach((fighter) => {
     const weapon = new Image();
