@@ -10,6 +10,8 @@
   const DEFAULT_ROUND_SECONDS = 300;
   const WINNING_SCORE = 2;
   const PARALYSIS_DURATION = 10;
+  // 同一目标脱离时间乱流后的免疫时长。
+  const VORTEX_IMMUNITY_SECONDS = 10;
   const DAMAGE_CATEGORIES = Object.freeze({
     NORMAL: "normal",
     MELEE: "melee",
@@ -207,16 +209,16 @@
       aeroDashDistance: 5,
       aeroSlashDamage: 140,
       aeroOrbitDistance: 7,
-      aeroStrikeInterval: 1.5,
+      aeroStrikeInterval: 1,
       aeroStrikeSpeed: 55,
       aeroStrikeDistance: 14,
-      aeroStrikeDamage: 50,
+      aeroStrikeDamage: 40,
       ultimateType: "aeroUnbound",
       ultimateDuration: 15,
       ultimateCooldown: 33,
       ability: "飘渺无相",
       abilityIcon: "风",
-      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取；每 1.5 秒以 55 格/秒向最近敌人突进 14 格，对路径上每个敌人各造成 50 点伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。距最近敌人约 7 格环绕，触边换向。",
+      abilityDesc: "共鸣能量满时开启，持续 15 秒，冷却 33 秒。期间锁定普攻、技能与风息获取；每 1 秒以 55 格/秒向最近敌人突进 14 格，对路径上每个敌人各造成 40 点伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。距最近敌人约 7 格环绕，触边换向。",
       cooldown: 33
     },
     {
@@ -780,7 +782,7 @@
         "普攻命中积累 1 格时序能量；只有达到第 1 格时永久增加 0.5 格普攻半径与 5 点普攻伤害，第 2、3 格不再增加属性。",
         "达到 2 格时回到 1 秒前的位置，并将生命值恢复为 1 秒前的数值。",
         "达到 3 格时清空能量，并在随机位置生成一个直径 7 格、持续 15 秒的时间乱流。",
-        "其他团子与坎特蕾拉的水母进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 15 秒内不会再次受到任何乱流影响。白咩、芽/藤等其他召唤物不受时间乱流影响。",
+        "其他团子与坎特蕾拉的水母进入时间乱流后停止行动，直到乱流结束或受到一次漂泊者攻击；离开乱流后 10 秒内不会再次受到任何乱流影响。白咩、芽/藤等其他召唤物不受时间乱流影响。",
         "场上最多同时存在 3 个时间乱流。",
         "共鸣能量满后可释放时序停界，基础冻结 5 秒。若场上存在时间乱流则全部吸收，每个额外延长 3 秒。",
         "冻结期间只有漂泊者可以移动与攻击，普攻不会增加时序能量；自身每 1 秒随机瞬移并以随机方向移动，穿越其他单位时不会发生碰撞。",
@@ -816,7 +818,7 @@
         "技能默认锁定；解锁后依次释放地图左上至右下、右上至左下的全场直线斩击，两刀间隔 1 秒。",
         "每刀消耗 50 风息并造成 140 点伤害。两刀完成后恢复普攻。",
         "共鸣能量满时可开启飘渺无相，持续 15 秒，冷却 33 秒。期间锁定普攻、技能及风息获取。",
-        "每 1.5 秒以 55 格/秒朝最近敌人突进 14 格，对路径上每个敌人各造成一次 50 点特殊伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
+        "每 1 秒以 55 格/秒朝最近敌人突进 14 格，对路径上每个敌人各造成一次 40 点特殊伤害，并留下先完整显示 1 秒、再渐隐 1 秒的绿色轨迹。",
         "围绕最近敌人移动，过远时靠近，过近时远离，目标距离 7 格。触碰边界时切换顺逆时针。",
         "无相结束后恢复常规的普攻、技能和风息规则。"
       ]
@@ -4077,8 +4079,8 @@
         if (fighter.vortexLockId === vortex.id) {
           fighter.vortexLockId = null;
           fighter.vortexLockTimer = 0;
-          fighter.vortexImmunityTimer = 15;
-          fighter.vortexImmunity.set(vortex.id, 15);
+          fighter.vortexImmunityTimer = VORTEX_IMMUNITY_SECONDS;
+          fighter.vortexImmunity.set(vortex.id, VORTEX_IMMUNITY_SECONDS);
         }
       });
       timeVortices.splice(i, 1);
@@ -4474,8 +4476,8 @@
         if (fighter.vortexLockId === removed.id) {
           fighter.vortexLockId = null;
           fighter.vortexLockTimer = 0;
-          fighter.vortexImmunityTimer = 15;
-          fighter.vortexImmunity.set(removed.id, 15);
+          fighter.vortexImmunityTimer = VORTEX_IMMUNITY_SECONDS;
+          fighter.vortexImmunity.set(removed.id, VORTEX_IMMUNITY_SECONDS);
         }
       });
     }
@@ -4500,8 +4502,8 @@
     target.vortexLockId = null;
     target.vortexLockTimer = 0;
     if (attacked) {
-      target.vortexImmunityTimer = 15;
-      target.vortexImmunity.set(vortexId, 15);
+      target.vortexImmunityTimer = VORTEX_IMMUNITY_SECONDS;
+      target.vortexImmunity.set(vortexId, VORTEX_IMMUNITY_SECONDS);
       announce(`${target.template?.name || "单位"} 脱离时间乱流`, "#ffe49a", 0.7);
     }
   }
@@ -7180,7 +7182,7 @@
         if (target.vortexLockId) {
           target.vortexLockId = null;
           target.vortexLockTimer = 0;
-          target.vortexImmunityTimer = 15;
+          target.vortexImmunityTimer = VORTEX_IMMUNITY_SECONDS;
         }
       });
       timeVortices = [];
