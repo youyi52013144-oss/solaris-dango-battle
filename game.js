@@ -2869,7 +2869,7 @@
 
     const orbiting = fighter.aeroUltimateTimer > 0;
     if (fighter.template.id === "08") steerAeroMovement(fighter, dt);
-    if (fighter.template.id === "sigrika") steerSigrikaMovement(fighter, dt, isPlayer);
+    if (fighter.template.id === "sigrika") steerSigrikaMovement(fighter, dt);
     const dashing = fighter.aeroDashTimer > 0;
     if (!orbiting && !dashing && !fighter.sigrikaAirborne && !fighter.conductive?.chaseHeading && isPlayer && (mode === "play" || showcaseTrainingActive)) {
       const inputX = (keys.ArrowRight || keys.KeyD || touchDirection.right ? 1 : 0)
@@ -6964,33 +6964,14 @@
     playSound("timeStop");
   }
 
-  // 移动：滞空时追击最近敌人；符文集齐前自动寻路拾取
-  function steerSigrikaMovement(fighter, dt, isPlayer) {
-    if (fighter.sigrikaAirborne) {
-      const target = nearestOpponent(fighter);
-      const speed = getEffectiveMoveSpeed(fighter) * 2;
-      if (target) {
-        const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
-        fighter.vx = Math.cos(angle) * speed;
-        fighter.vy = Math.sin(angle) * speed;
-      }
-      return;
-    }
-    if (isPlayer && mode === "play") return;
-    if (fighter.sigrikaRunes >= fighter.template.sigrikaRuneTotal) return;
-    let nearest = null;
-    let best = Infinity;
-    sigrikaRunes.forEach((rune) => {
-      if (rune.owner !== fighter) return;
-      const targetDistance = Math.hypot(rune.x - fighter.x, rune.y - fighter.y);
-      if (targetDistance < best) {
-        best = targetDistance;
-        nearest = rune;
-      }
-    });
-    if (!nearest) return;
-    const speed = getEffectiveMoveSpeed(fighter);
-    const angle = Math.atan2(nearest.y - fighter.y, nearest.x - fighter.x);
+  // 移动：常规状态遵循基础行动逻辑（随机直线移动，仅在碰撞或触边后改变方向）；
+  // 只有日灵庇佑滞空期间才改为追击最近敌人。
+  function steerSigrikaMovement(fighter, dt) {
+    if (!fighter.sigrikaAirborne) return;
+    const target = nearestOpponent(fighter);
+    if (!target) return;
+    const speed = getEffectiveMoveSpeed(fighter) * 2;
+    const angle = Math.atan2(target.y - fighter.y, target.x - fighter.x);
     fighter.vx = Math.cos(angle) * speed;
     fighter.vy = Math.sin(angle) * speed;
   }
@@ -9000,7 +8981,7 @@
   function getSigrikaStatus(fighter) {
     const total = fighter.template.sigrikaRuneTotal;
     if (fighter.sigrikaAirborne) return `日灵庇佑 · 追击中`;
-    if (fighter.sigrikaRunes < total) return `符文 ${fighter.sigrikaRunes}/${total} · 寻符`;
+    if (fighter.sigrikaRunes < total) return `符文 ${fighter.sigrikaRunes}/${total}`;
     return `符文 ${fighter.sigrikaRunes}/${total}`;
   }
 
